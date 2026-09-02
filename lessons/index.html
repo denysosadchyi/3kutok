@@ -5,13 +5,107 @@
 <title>Урок · Design Engineering</title>
 <style>
 :root{--bg:#faf9f7;--surface:#fff;--border:#e4e0da;--text:#201e1a;--muted:#6b6459;--accent:#b5502f;--accent-soft:#f4e6df}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}.layout{display:flex;min-height:100vh}.sidebar{width:280px;position:sticky;top:0;height:100vh;overflow:auto;padding:32px 20px;background:var(--surface);border-right:1px solid var(--border)}.title{font-weight:800;margin:0 0 4px}.progress{font-size:12px;color:var(--muted);margin:0 0 22px}.lessons{display:grid;gap:3px}.lessons a{display:grid;grid-template-columns:28px 1fr;gap:8px;min-height:44px;padding:8px 10px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:13px}.lessons a:hover{background:var(--bg);color:var(--text)}.lessons a[aria-current=page]{background:var(--accent-soft);color:var(--text);font-weight:700}.num{color:var(--accent);font-variant-numeric:tabular-nums}.state{display:block;font-size:11px;font-weight:500;color:var(--muted);margin-top:2px}main{flex:1;display:grid;place-items:center;padding:48px}.empty{width:min(100%,680px);border-top:2px solid var(--text);padding-top:24px}.lesson-number{color:var(--accent);font-size:13px;font-weight:800}.empty h1{font-size:clamp(32px,5vw,58px);line-height:1.05;letter-spacing:-.025em;margin:12px 0 18px}.empty p{color:var(--muted);max-width:58ch}.back{display:inline-flex;min-height:44px;align-items:center;margin-top:18px;color:var(--text);font-weight:700;text-underline-offset:4px}.mobile{display:none}.skip{position:fixed;left:12px;top:12px;transform:translateY(-150%);padding:10px;background:var(--text);color:#fff;z-index:2}.skip:focus{transform:none}a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}@media(max-width:800px){.sidebar{display:none}.mobile{display:block;margin-bottom:28px}.mobile summary{min-height:48px;padding:13px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-weight:700;cursor:pointer}.mobile nav{display:grid;background:var(--surface);border:1px solid var(--border);border-top:0;padding:8px}.mobile a{padding:10px;color:var(--muted)}main{display:block;padding:24px 20px}.empty{margin-top:72px}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:280px;flex-shrink:0;position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;padding:32px 20px;background:var(--surface);border-right:1px solid var(--border)}
+.title{font-size:15px;font-weight:800;margin:0 0 4px}
+.progress{font-size:12px;color:var(--muted);margin:0 0 22px}
+.lessons{display:grid;gap:3px}
+.lessons a{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;min-height:44px;padding:8px 10px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:13px;line-height:1.35}
+.lessons a:hover{background:var(--bg);color:var(--text)}
+.lessons a[aria-current=page]{background:var(--accent-soft);color:var(--text);font-weight:700}
+.num{color:var(--accent);font-variant-numeric:tabular-nums}
+.state{display:block;font-size:11px;font-weight:500;color:var(--muted);margin-top:2px}
+main{flex:1;min-width:0;display:grid;place-items:center;padding:48px 24px}
+.empty{width:min(100%,680px);border-top:2px solid var(--text);padding-top:24px}
+.lesson-number{color:var(--accent);font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.empty h1{font-size:clamp(30px,5vw,58px);line-height:1.05;letter-spacing:-.025em;margin:12px 0 18px;overflow-wrap:anywhere}
+.empty p{color:var(--muted);max-width:58ch}
+.back{display:inline-flex;min-height:44px;align-items:center;margin-top:18px;color:var(--text);font-weight:700;text-underline-offset:4px}
+.mobile{display:none}
+.skip{position:fixed;left:12px;top:12px;transform:translateY(-150%);padding:10px 14px;background:var(--text);color:#fff;border-radius:8px;z-index:10}
+.skip:focus{transform:none}
+a:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:3px}
+@media(max-width:900px){
+  .sidebar{display:none}
+  .mobile{display:block;margin:0 0 28px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+  .mobile summary{min-height:48px;padding:13px 16px;font-weight:700;cursor:pointer}
+  .mobile nav{display:grid;padding:0 10px 10px}
+  .mobile a{display:block;min-height:44px;padding:10px;color:var(--muted);text-decoration:none;border-top:1px solid var(--border)}
+  .mobile a[aria-current=page]{color:var(--text);font-weight:700}
+  main{display:block;padding:32px 20px 64px}
+}
 </style>
 </head>
-<body><a class="skip" href="#content">Перейти до матеріалу</a><div class="layout"><aside class="sidebar"><p class="title">Design Engineering</p><p class="progress" id="progress">Урок</p><nav class="lessons" id="desktop-nav" aria-label="Уроки курсу"></nav></aside><main id="content"><details class="mobile"><summary id="mobile-summary">Уроки курсу</summary><nav id="mobile-nav" aria-label="Уроки курсу"></nav></details><article class="empty"><div class="lesson-number" id="lesson-number"></div><h1 id="lesson-title"></h1><p>Матеріал цього уроку ще не додано. Сторінка вже створена, щоб структура курсу залишалася сталою в міру проходження.</p><a class="back" href="../research/research.html">← Повернутися до уроку 1</a></article></main></div>
+<body>
+<a class="skip" href="#content">Перейти до матеріалу</a>
+<div class="layout">
+  <aside class="sidebar">
+    <p class="title">Design Engineering</p>
+    <p class="progress" id="progress">Урок із 12</p>
+    <nav class="lessons" id="desktop-nav" aria-label="Уроки курсу">
+      <a href="../research/research.html" data-lesson="1"><span class="num">01</span><span>Ресерч і бенчмарк<span class="state">Готово</span></span></a>
+      <a href="?lesson=2" data-lesson="2"><span class="num">02</span><span>Персони і JTBD<span class="state">Незабаром</span></span></a>
+      <a href="?lesson=3" data-lesson="3"><span class="num">03</span><span>Інформаційна архітектура<span class="state">Незабаром</span></span></a>
+      <a href="?lesson=4" data-lesson="4"><span class="num">04</span><span>Прототипування і вайрфреймінг<span class="state">Незабаром</span></span></a>
+      <a href="?lesson=5" data-lesson="5"><span class="num">05</span><span>Тон оф войс і мікрокопі<span class="state">Незабаром</span></span></a>
+      <a href="?lesson=6" data-lesson="6"><span class="num">06</span><span>Концепт<span class="state">Незабаром</span></span></a>
+      <a href="?lesson=7" data-lesson="7"><span class="num">07</span><span>Збірка UI<span class="state">Незабаром</span></span></a>
+      <a href="?lesson=8" data-lesson="8"><span class="num">08</span><span>Design Tokens<span class="state">Незабаром</span></span></a>
+      <a href="?lesson=9" data-lesson="9"><span class="num">09</span><span>Дизайн-система<span class="state">Незабаром</span></span></a>
+      <a href="?lesson=10" data-lesson="10"><span class="num">10</span><span>Responsive<span class="state">Незабаром</span></span></a>
+      <a href="?lesson=11" data-lesson="11"><span class="num">11</span><span>Анімація і мікроінтеракції<span class="state">Незабаром</span></span></a>
+      <a href="?lesson=12" data-lesson="12"><span class="num">12</span><span>Хендофф і документація<span class="state">Незабаром</span></span></a>
+    </nav>
+  </aside>
+  <main id="content">
+    <details class="mobile">
+      <summary id="mobile-summary">Уроки курсу</summary>
+      <nav id="mobile-nav" aria-label="Уроки курсу">
+        <a href="../research/research.html" data-lesson="1">01 · Ресерч і бенчмарк</a>
+        <a href="?lesson=2" data-lesson="2">02 · Персони і JTBD</a>
+        <a href="?lesson=3" data-lesson="3">03 · Інформаційна архітектура</a>
+        <a href="?lesson=4" data-lesson="4">04 · Прототипування і вайрфреймінг</a>
+        <a href="?lesson=5" data-lesson="5">05 · Тон оф войс і мікрокопі</a>
+        <a href="?lesson=6" data-lesson="6">06 · Концепт</a>
+        <a href="?lesson=7" data-lesson="7">07 · Збірка UI</a>
+        <a href="?lesson=8" data-lesson="8">08 · Design Tokens</a>
+        <a href="?lesson=9" data-lesson="9">09 · Дизайн-система</a>
+        <a href="?lesson=10" data-lesson="10">10 · Responsive</a>
+        <a href="?lesson=11" data-lesson="11">11 · Анімація і мікроінтеракції</a>
+        <a href="?lesson=12" data-lesson="12">12 · Хендофф і документація</a>
+      </nav>
+    </details>
+    <article class="empty">
+      <div class="lesson-number" id="lesson-number">Урок · незабаром</div>
+      <h1 id="lesson-title">Матеріал ще не додано</h1>
+      <p>Матеріал цього уроку ще не додано. Сторінка вже створена, щоб структура курсу залишалася сталою в міру проходження. Оберіть урок у списку або поверніться до готового уроку 1.</p>
+      <a class="back" href="../research/research.html">← Повернутися до уроку 1</a>
+    </article>
+  </main>
+</div>
 <script>
-const lessons=['Ресерч і бенчмарк','Персони і JTBD','Інформаційна архітектура','Прототипування і вайрфреймінг','Тон оф войс і мікрокопі','Концепт','Збірка UI','Design Tokens','Дизайн-система','Responsive','Анімація і мікроінтеракції','Хендофф і документація'];
-const requested=Number(new URLSearchParams(location.search).get('lesson'));const current=requested>=2&&requested<=12?requested:2;
-document.title=`Урок ${current} — ${lessons[current-1]} · Design Engineering`;document.querySelector('#progress').textContent=`Урок ${current} із 12`;document.querySelector('#mobile-summary').textContent=`Урок ${String(current).padStart(2,'0')} із 12 · ${lessons[current-1]}`;document.querySelector('#lesson-number').textContent=`УРОК ${String(current).padStart(2,'0')} · НЕЗАБАРОМ`;document.querySelector('#lesson-title').textContent=lessons[current-1];
-const link=(title,index)=>{const n=index+1,a=document.createElement('a');a.href=n===1?'../research/research.html':`?lesson=${n}`;a.innerHTML=`<span class="num">${String(n).padStart(2,'0')}</span><span>${title}<span class="state">${n===current?'Поточна сторінка':n===1?'Готово':'Незабаром'}</span></span>`;if(n===current)a.setAttribute('aria-current','page');return a};lessons.forEach((title,index)=>{document.querySelector('#desktop-nav').append(link(title,index));const a=link(title,index);a.textContent=`${String(index+1).padStart(2,'0')} · ${title}`;document.querySelector('#mobile-nav').append(a)});
-</script></body></html>
+(function(){
+  var requested = Number(new URLSearchParams(location.search).get('lesson'));
+  if (requested === 1) { location.replace('../research/research.html'); return; }
+  var current = requested >= 2 && requested <= 12 ? requested : 2;
+  var links = document.querySelectorAll('a[data-lesson]');
+  var title = '';
+  links.forEach(function(a){
+    var n = Number(a.dataset.lesson);
+    if (n !== current) return;
+    a.setAttribute('aria-current', 'page');
+    var state = a.querySelector('.state');
+    if (state) { state.textContent = 'Поточна сторінка'; title = a.querySelector('.num').nextSibling.firstChild.textContent; }
+  });
+  var num = String(current).padStart(2, '0');
+  document.title = 'Урок ' + current + ' — ' + title + ' · Design Engineering';
+  document.getElementById('progress').textContent = 'Урок ' + current + ' із 12';
+  document.getElementById('mobile-summary').textContent = 'Урок ' + num + ' із 12 · ' + title;
+  document.getElementById('lesson-number').textContent = 'Урок ' + num + ' · незабаром';
+  document.getElementById('lesson-title').textContent = title;
+})();
+</script>
+</body>
+</html>

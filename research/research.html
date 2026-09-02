@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Куток — Ресерч</title>
+<title>Урок 1 — Ресерч і бенчмарк · Design Engineering</title>
 <style>
   :root{
     --bg:#faf9f7; --surface:#ffffff; --border:#e4e0da; --border-strong:#d3cdc3;
@@ -39,8 +39,8 @@
   nav.course-nav .lesson-num{font-variant-numeric:tabular-nums;color:var(--accent);}
   nav.course-nav .lesson-state{display:block;font-size:11px;font-weight:500;color:var(--text-muted);margin-top:2px;}
   nav.course-nav .section-links{border-top:1px solid var(--border);margin-top:18px;padding-top:16px;}
-  nav.course-nav .section-links h2{
-    font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin:0 0 8px;
+  nav.course-nav .section-links-title{
+    font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin:0 0 8px;
   }
   nav.course-nav .section-links a{
     display:block;color:var(--text-muted);text-decoration:none;font-size:12px;padding:5px 10px;border-radius:6px;
@@ -49,22 +49,20 @@
   .mobile-lessons{display:none;margin:0 0 28px;border:1px solid var(--border);border-radius:12px;background:var(--surface);}
   .mobile-lessons summary{min-height:48px;padding:13px 16px;font-weight:700;cursor:pointer;}
   .mobile-lessons .mobile-list{display:grid;padding:0 10px 10px;}
-  .mobile-lessons a{padding:10px;color:var(--text-muted);text-decoration:none;border-top:1px solid var(--border);}
+  .mobile-lessons a{display:block;min-height:44px;padding:10px;color:var(--text-muted);text-decoration:none;border-top:1px solid var(--border);}
+  .mobile-lessons a[aria-current="page"]{color:var(--text);font-weight:700;}
   .skip-link{position:fixed;left:12px;top:12px;z-index:10;transform:translateY(-150%);padding:10px 14px;background:var(--text);color:#fff;border-radius:8px;}
   .skip-link:focus{transform:none;}
 
   header.hero{margin-bottom:56px;}
-  header.hero .kicker{
-    font-size:13px; text-transform:uppercase; letter-spacing:.08em;
-    color:var(--accent); font-weight:700; margin-bottom:8px;
-  }
-  header.hero h1{font-size:36px; margin:0 0 12px; letter-spacing:-.01em;}
+  header.hero h1{font-size:42px;line-height:1.08;margin:0 0 14px;letter-spacing:-.025em;max-width:720px;}
   header.hero p{color:var(--text-muted); max-width:640px; margin:0; font-size:16px;}
   header.hero .meta{
     margin-top:20px; display:flex; gap:24px; flex-wrap:wrap;
     font-size:13px; color:var(--text-muted);
   }
   header.hero .meta b{color:var(--text); font-weight:600;}
+  header.hero .meta a{color:var(--text);}
 
   section{margin-bottom:72px; scroll-margin-top:24px;}
   section h2{
@@ -82,9 +80,20 @@
   tbody{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
   tbody tr{display:block;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;min-width:0;}
   td{display:grid;grid-template-columns:minmax(112px,.42fr) minmax(0,1fr);gap:10px;padding:8px 0;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;overflow-wrap:anywhere;}
-  td::before{content:attr(data-label);font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.035em;}
+  td::before{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.035em;}
   td:first-child{display:block;font-size:17px;padding-top:0;}
   td:first-child::before{content:none;}
+  /* Підписи клітинок дублюють thead без залежності від JS */
+  #konkurenty td:nth-child(2)::before{content:"Група";}
+  #konkurenty td:nth-child(3)::before{content:"Аудиторія";}
+  #konkurenty td:nth-child(4)::before{content:"Основа продукту";}
+  #konkurenty td:nth-child(5)::before{content:"Ключовий механізм";}
+  #konkurenty td:nth-child(6)::before{content:"Довіра";}
+  #konkurenty td:nth-child(7)::before{content:"Монетизація";}
+  #benchmark td:nth-child(2)::before{content:"Що перевіряється";}
+  #benchmark td:nth-child(3)::before{content:"Що бачить інша сторона";}
+  #benchmark td:nth-child(4)::before{content:"Межа";}
+  #benchmark td:nth-child(5)::before{content:"Урок для Кутка";}
   td:last-child{border-bottom:0;padding-bottom:0;}
   td.num{text-align:center; font-variant-numeric:tabular-nums; font-weight:600;}
 
@@ -128,9 +137,13 @@
   .screens-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:22px 0 8px;}
   .screens-grid figure{margin:0;min-width:0;}
   .screens-grid a{display:block;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--surface);}
-  .screens-grid img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;height:auto;}
+  .screens-grid img{display:block;width:100%;aspect-ratio:1440/1100;object-fit:cover;object-position:top;height:auto;}
   .screens-grid figcaption{padding:10px 2px 0;font-size:13px;color:var(--text-muted);}
   .screens-grid figcaption b{display:block;color:var(--text);font-size:14px;margin-bottom:3px;}
+  .screens-grid figure:first-child{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(220px,.55fr);align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .screens-grid figure:first-child a{border:0;border-radius:0;}
+  .screens-grid figure:first-child figcaption{padding:24px;font-size:14px;}
+  .screens-grid figure:first-child figcaption b{font-size:18px;margin-bottom:8px;}
 
   @media (max-width: 900px){
     nav.course-nav{display:none;}
@@ -138,6 +151,9 @@
     main{padding:32px 20px 64px;}
     header.hero h1{font-size:32px;}
     tbody,.summary-grid,.screens-grid{grid-template-columns:1fr;}
+    .screens-grid figure:first-child{grid-column:auto;display:block;}
+    .screens-grid figure:first-child figcaption{padding:10px 2px 0;font-size:13px;}
+    .screens-grid figure:first-child figcaption b{font-size:14px;margin-bottom:3px;}
   }
   @media (max-width: 520px){td{grid-template-columns:1fr;gap:3px;}}
 </style>
@@ -163,7 +179,7 @@
       <a href="../lessons/?lesson=12"><span class="lesson-num">12</span><span>Хендофф і документація<span class="lesson-state">Незабаром</span></span></a>
     </div>
     <div class="section-links">
-      <h2>У цьому уроці</h2>
+      <p class="section-links-title">У цьому уроці</p>
       <a href="#overview" data-target="overview">Коротко</a>
       <a href="#screens" data-target="screens">Скріншоти</a>
       <a href="#konkurenty" data-target="konkurenty">Конкуренти</a>
@@ -188,14 +204,15 @@
     </details>
 
     <header class="hero">
-      <h1>Ресерч</h1>
+      <h1>Урок 1. Ресерч і бенчмарк</h1>
       <p>Конкурентний ландшафт, бенчмарк довіри й патерни ринку — перша зовнішня
       перевірка припущень продуктового брифу. Повторно перевірено
       2026-09-02; живі інтерв'ю ще не проведено.</p>
       <div class="meta">
         <span><b>14</b> конкурентів проаналізовано</span>
         <span><b>5</b> продуктів у бенчмарку довіри</span>
-        <span>Джерело брифу: <b>CLAUDE.md</b></span>
+        <span><b>5</b> скріншотів-доказів</span>
+        <span>Джерело брифу: <a href="../CLAUDE.md"><b>CLAUDE.md</b></a></span>
       </div>
     </header>
 
@@ -210,21 +227,22 @@
 
     <section id="screens">
       <h2>П’ять конкурентів зблизька</h2>
-      <p class="section-intro">Реальні публічні екрани, зафіксовані 2 вересня 2026 року. Скрін є доказом конкретного спостереження, а не висновком сам по собі.</p>
+      <p class="section-intro">Реальні публічні екрани, зафіксовані 2 вересня 2026 року в Chromium 1440×1100. Скрін є доказом конкретного спостереження, а не висновком сам по собі. Спроба зафіксувати LUN.ua впала на Cloudflare-перевірку, тому цей скрін як доказ не використовується (<a href="screens/README.md">журнал скріншотів</a>).</p>
       <div class="screens-grid">
-        <figure><a href="screens/roomster.png"><img src="screens/roomster.png" alt="Roomster: каталог профілів співмешканців із картою, фільтрами та бейджами ID, email і телефону"></a><figcaption><b>Roomster · каталог</b>Trust-сигнали видно без відкриття профілю, але повна комунікація платна.</figcaption></figure>
-        <figure><a href="screens/dim-ria.png"><img src="screens/dim-ria.png" alt="DIM.RIA: список оренди квартир у Києві з позначкою перевіреної квартири"></a><figcaption><b>DIM.RIA · пошукова видача</b>Перевірка стосується об’єкта й продавця, а статус видно прямо в картці.</figcaption></figure>
-        <figure><a href="screens/spareroom.png"><img src="screens/spareroom.png" alt="SpareRoom: пошук кімнат із фільтрами, типами оголошень і featured-карткою"></a><figcaption><b>SpareRoom · пошук кімнат</b>Фільтри й модель видимості домінують над профільною верифікацією.</figcaption></figure>
-        <figure><a href="screens/badi.png"><img src="screens/badi.png" alt="Badi: головна сторінка пошуку кімнат із вибором локації, дати заїзду й тривалості"></a><figcaption><b>Badi · старт пошуку</b>Сценарій починається з конкретного наміру: місто, дата й тривалість.</figcaption></figure>
-        <figure><a href="screens/qonys.png"><img src="screens/qonys.png" alt="Google Play: сторінка Qonys із 500+ завантажень і скрінами мобільного застосунку"></a><figcaption><b>Qonys · Google Play</b>Схожий feature set підтверджено, але київську присутність і масштаб ні.</figcaption></figure>
+        <figure><a href="screens/roomster.png"><img src="screens/roomster.png" width="1440" height="1100" loading="lazy" alt="Roomster: каталог профілів співмешканців із картою, фільтрами та бейджами ID, email і телефону"></a><figcaption><b>Roomster · каталог</b>Trust-сигнали видно без відкриття профілю, але повна комунікація платна.</figcaption></figure>
+        <figure><a href="screens/dim-ria.png"><img src="screens/dim-ria.png" width="1440" height="1100" loading="lazy" alt="DIM.RIA: список оренди квартир у Києві з позначкою перевіреної квартири"></a><figcaption><b>DIM.RIA (DOM.RIA) · пошукова видача</b>Перевірка стосується об’єкта й продавця, а статус видно прямо в картці.</figcaption></figure>
+        <figure><a href="screens/spareroom.png"><img src="screens/spareroom.png" width="1440" height="1100" loading="lazy" alt="SpareRoom: пошук кімнат із фільтрами, типами оголошень і featured-карткою"></a><figcaption><b>SpareRoom · пошук кімнат</b>Фільтри й модель видимості (Featured, Boosted, Free to contact) домінують над профільною верифікацією.</figcaption></figure>
+        <figure><a href="screens/badi.png"><img src="screens/badi.png" width="1440" height="1100" loading="lazy" alt="Badi: головна сторінка пошуку кімнат із вибором локації, дати заїзду й тривалості"></a><figcaption><b>Badi · старт пошуку</b>Сценарій починається з конкретного наміру: місто, дата й тривалість.</figcaption></figure>
+        <figure><a href="screens/qonys.png"><img src="screens/qonys.png" width="1440" height="1100" loading="lazy" alt="Google Play: сторінка Qonys із 500+ завантажень і скрінами мобільного застосунку"></a><figcaption><b>Qonys · Google Play</b>Схожий feature set підтверджено, але київську присутність і масштаб ні.</figcaption></figure>
       </div>
     </section>
 
     <section id="konkurenty">
       <h2>Конкуренти</h2>
-      <p class="section-intro">Три групи, по 4–5 у кожній: хард (той самий продукт,
-      той самий Київ), софт (інший продукт, та сама базова задача),
-      аспіраційні (міжнародні еталони категорії).</p>
+      <p class="section-intro">Три групи, разом 14 продуктів: 3 хард (той самий продукт,
+      той самий Київ), 5 софт (інший продукт, та сама базова задача),
+      6 аспіраційних (міжнародні еталони категорії). Клітинки й формулювання
+      синхронізовано з <a href="research.md">research.md</a>, де є джерела.</p>
 
       <div class="table-wrap">
         <table>
@@ -239,14 +257,14 @@
             <tr><td><b>FreeRentAds</b></td><td><span class="badge hard">хард</span></td><td>Не вдалося перевірити (403)</td><td>Ймовірно шаблонна міжнародна класифайд-мережа</td><td>Не вдалося перевірити</td><td>Не вдалося перевірити</td><td>Не вдалося перевірити</td></tr>
             <tr><td><b>Facebook-групи</b></td><td><span class="badge soft">софт</span></td><td>Широка киянська аудиторія без бюджету на рієлтора</td><td>Соцмережевий фід (пости + коментарі)</td><td>Публікація → відгук у коментарях/директі → домовленість поза платформою</td><td>Практично відсутня; задокументовані шахрайства</td><td>Безкоштовно</td></tr>
             <tr><td><b>LUN.ua</b></td><td><span class="badge soft">софт</span></td><td>Орендарі/покупці нерухомості, цілі квартири</td><td>Агрегатор оголошень нерухомості</td><td>Геофільтри (місто/район/метро) + карта</td><td>Мітка «без комісії»; формальної верифікації немає</td><td>Платна реклама/розміщення для девелоперів</td></tr>
-            <tr><td><b>DOM.RIA</b></td><td><span class="badge soft">софт</span></td><td>Орендарі/покупці/продавці, професійні рієлтори</td><td>Верифікований агрегатор оголошень</td><td>Фільтри + інтерактивна карта</td><td>Виїзна перевірка інспекторами, 360° фото, «перевірені рієлтори»</td><td>Платні лістинги/підписки для агентів</td></tr>
+            <tr><td><b>DIM.RIA</b> (DOM.RIA)</td><td><span class="badge soft">софт</span></td><td>Орендарі/покупці/продавці, професійні рієлтори</td><td>Верифікований агрегатор оголошень</td><td>Фільтри + інтерактивна карта</td><td>Виїзна перевірка інспекторами, 360° фото, «перевірені рієлтори»</td><td>Платні лістинги/підписки для агентів</td></tr>
             <tr><td><b>Telegram-бот «Квартирант»</b></td><td><span class="badge soft">софт</span></td><td>Орендарі великих міст України</td><td>Чат-бот з передачею живому агенту</td><td>Фільтри → push нових об'єктів → запис у боті → супровід менеджера</td><td>Рейтинг 4,9/5 (неверифіковано)</td><td>Безкоштовно орендарю; комісія з орендодавця</td></tr>
             <tr><td><b>Coliving ONE</b></td><td><span class="badge soft">софт</span></td><td>Молоді IT/фрілансери Києва</td><td>Оператор коливінгу (сам володіє й здає)</td><td>Пряме бронювання/waitlist у Telegram, співбесіда</td><td>22-пунктові правила проживання, медіа як соцдоказ</td><td>Оренда 9000–17000 грн/міс + депозит</td></tr>
-            <tr><td><b>SpareRoom</b></td><td><span class="badge asp">аспіраційні</span></td><td>Орендарі кімнат/власники/студенти</td><td>Веб + застосунок</td><td>Каталог за геолокацією + «BuddyUps»</td><td>Trustpilot 4.7/5, перевірка профілів, юр. договори</td><td>Платні оголошення для орендодавців; база безкоштовна</td></tr>
+            <tr><td><b>SpareRoom</b></td><td><span class="badge asp">аспіраційні</span></td><td>Шукачі кімнат, власники й потенційні співмешканці</td><td>Веб + застосунок</td><td>Каталог + «Buddy Ups» для спільного пошуку житла</td><td>Модерація оголошень заявлена сервісом; перевірку особи кожного профілю не підтверджено</td><td>База безкоштовна; Early Bird відкриває контакт із новими free ads, Bold Ads підвищує видимість</td></tr>
             <tr><td><b>Badi</b></td><td><span class="badge asp">аспіраційні</span></td><td>Міські орендарі/лістери; масштаб — лише заява компанії</td><td>Веб + застосунок, маркетплейс кімнат</td><td>Пошук, запити, відеодзвінок і бронювання</td><td>«Trusted user» = підтверджений банківський рахунок лістера</td><td>Badi Plus для власників; актуальні умови перевіряти перед презентацією</td></tr>
             <tr><td><b>Diggz</b></td><td><span class="badge asp">аспіраційні</span></td><td>Орендарі великих міст США</td><td>Веб + застосунок</td><td>Compatibility, likes/match та Instant Messages без mutual match</td><td>Verification/references заявлені сервісом</td><td>Core match/chat безкоштовні; Premium додає messages, filters і visibility</td></tr>
             <tr><td><b>HousingAnywhere</b></td><td><span class="badge asp">аспіраційні</span></td><td>Студенти/експати; географічне охоплення — змінна заява компанії</td><td>Платформа безконтактної оренди</td><td>Оголошення, документообіг і платежі в платформі</td><td>Tenant Protection утримує перший платіж до заселення</td><td>Збір з орендаря; формулу перевіряти перед презентацією</td></tr>
-            <tr><td><b>Flatmates.com.au</b></td><td><span class="badge asp">аспіраційні</span></td><td>Орендарі/власники Австралії</td><td>Веб-маркетплейс</td><td>Модеровані оголошення, чат до розкриття контактів</td><td>Mobile-verified акаунти; reference-перевірка необов'язкова</td><td>Ймовірно freemium з платними апгрейдами</td></tr>
+            <tr><td><b>Flatmates.com.au</b></td><td><span class="badge asp">аспіраційні</span></td><td>Орендарі/власники Австралії</td><td>Веб-маркетплейс</td><td>Модеровані оголошення, чат до розкриття контактів</td><td>Mobile verification заявлена сервісом; ефективність незалежно не оцінено</td><td>Не вдалося перевірити</td></tr>
           </tbody>
         </table>
       </div>
@@ -312,8 +330,8 @@
       <h3>Три спільні патерни ринку</h3>
       <div class="card-grid">
         <div class="card">
-          <h4>1. Верифікація — вхідний квиток, не диференціатор</h4>
-          <p>Кожен структурований продукт (Roomster, SpareRoom, Badi, Diggz, HousingAnywhere, DOM.RIA) має верифікацію особи; неструктуровані канали (OLX, FB-групи) — жодної. Верифікація телефону в MVP Кутка — базова гігієна категорії, не перевага.</p>
+          <h4>1. Trust-сигнал — вхідний квиток, не диференціатор</h4>
+          <p>Структуровані продукти (Roomster, SpareRoom, Badi, Diggz, HousingAnywhere, DIM.RIA) показують хоча б один trust-сигнал, але це різні речі: телефон, email, ID, банківський рахунок, житло або модерація оголошення. Неструктуровані канали (OLX, FB-групи) не показують жодного. Підтверджений телефон у MVP Кутка — базовий anti-spam control, не доказ особи й не перевага.</p>
         </div>
         <div class="card">
           <h4>2. Монетизація — paywall на комунікацію/видимість</h4>
@@ -327,7 +345,7 @@
 
       <h3>Три відмінності</h3>
       <div class="card-grid">
-        <div class="card"><h4>Хто платить</h4><p>Орендодавець/агент (DOM.RIA, LUN, HousingAnywhere) — або орендар/шукач (Roomster, Diggz, Badi Plus) — або ніхто (OLX база, FB-групи, Куток зараз).</p></div>
+        <div class="card"><h4>Хто платить</h4><p>Орендодавець/агент (DIM.RIA, LUN, Telegram-бот, HousingAnywhere) — або орендар/шукач (Roomster, Diggz, Badi Plus) — або ніхто (OLX база, FB-групи, Куток зараз).</p></div>
         <div class="card"><h4>Глибина профілю й сумісності</h4><p>Від нуля (OLX, FB-групи) до алгоритмічного lifestyle-matching (Diggz) — величезна різниця в тому, скільки продукт знає про людину до першого контакту.</p></div>
         <div class="card"><h4>Модель продукту</h4><p>Маркетплейс-посередник (більшість) проти оператора нерухомості, що сам володіє й здає житло (Coliving ONE) — фундаментально різна відповідальність за безпеку й якість.</p></div>
       </div>
@@ -343,7 +361,7 @@
         <ol>
           <li>Чи Куток монетизує доступ до спілкування (paywall-модель, як у Roomster/Diggz/Badi), чи лишається повністю безкоштовним, як зараз зафіксовано в брифі — попри те, що це основна модель монетизації майже всієї категорії?</li>
           <li>Наскільки глибоко Куток інвестує в lifestyle-сумісність (рівень Diggz) проти простих фільтрів (рівень більшості конкурентів) — головний потенційний диференціатор, але й головне джерело складності UX/профілю?</li>
-          <li>Чи бере Куток на себе будь-яку відповідальність за період «після заїзду» (рейтинги вже закладені в бриф, але чи є страхування/повернення коштів/перевірка) — ринок цю нішу практично не закриває, а вона напряму стосується головної цінності «довіра»?</li>
+          <li>Чи бере Куток на себе будь-яку відповідальність за період «після заїзду» — рейтинги в брифі тепер лише discovery-кандидат, а страхування/повернення коштів/перевірка співжиття не закладені взагалі; ринок цю нішу майже не закриває, а вона напряму стосується головної цінності «довіра»?</li>
         </ol>
       </div>
 
@@ -357,11 +375,13 @@
       <h3>Статус</h3>
       <p>Конкурентний аналіз і бенчмарк довіри повторно перевірено 2026-09-02,
       без живих інтерв'ю й без прямого тестування частини
-      продуктів. Висновки, підтверджені ресерчем, переносити назад у
-      <a href="../CLAUDE.md">CLAUDE.md</a>, щоб тримати одне джерело правди.
+      продуктів. Висновки, підтверджені ресерчем, вже перенесено в
+      <a href="../CLAUDE.md">CLAUDE.md</a> (report/block/модерація в MVP,
+      рейтинги — discovery), щоб тримати одне джерело правди.
       Повний текст із джерелами — у <a href="research.md">research.md</a>;
       журнал реконструйованих кроків 03–06 — у
-      <a href="prompt-runs.md">prompt-runs.md</a>.</p>
+      <a href="prompt-runs.md">prompt-runs.md</a>;
+      сирі скріншоти — у <a href="screens/README.md">screens/</a>.</p>
     </section>
 
   </main>
@@ -369,10 +389,6 @@
 </div>
 
 <script>
-  document.querySelectorAll('table').forEach(table => {
-    const labels = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
-    table.querySelectorAll('tbody tr').forEach(row => Array.from(row.children).forEach((cell, index) => cell.dataset.label = labels[index] || ''));
-  });
   const links = document.querySelectorAll('nav.course-nav .section-links a');
   const sections = Array.from(links).map(l => document.getElementById(l.dataset.target));
   function onScroll(){
