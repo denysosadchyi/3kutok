@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Куток — Ресерч</title>
+<style>
+  :root{
+    --bg:#faf9f7; --surface:#ffffff; --border:#e4e0da; --border-strong:#d3cdc3;
+    --text:#201e1a; --text-muted:#6b6459; --accent:#b5502f; --accent-soft:#f4e6df;
+    --hard:#7f301b; --soft:#5f522f; --asp:#2f5848;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  ::selection{background:var(--accent-soft); color:var(--text);}
+  a:focus-visible{outline:3px solid var(--accent); outline-offset:3px; border-radius:3px;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:16px; line-height:1.55;
+  }
+  .layout{display:flex; min-height:100vh;}
+  main{flex:1; min-width:0; max-width:1080px; margin:0 auto; padding:48px 56px 96px;}
+  nav.course-nav{
+    width:280px; flex-shrink:0; position:sticky; top:0; align-self:flex-start;
+    padding:32px 20px; height:100vh; overflow-y:auto; background:var(--surface);
+    border-right:1px solid var(--border);
+  }
+  nav.course-nav .course-title{font-size:15px;font-weight:800;margin:0 0 4px;}
+  nav.course-nav .course-progress{font-size:12px;color:var(--text-muted);margin:0 0 22px;}
+  nav.course-nav .lesson-list{display:grid;gap:3px;}
+  nav.course-nav .lesson-list a{
+    display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;
+    min-height:44px;padding:8px 10px;border-radius:8px;color:var(--text-muted);
+    text-decoration:none;font-size:13px;line-height:1.35;
+  }
+  nav.course-nav .lesson-list a:hover{background:var(--bg);color:var(--text);}
+  nav.course-nav .lesson-list a[aria-current="page"]{background:var(--accent-soft);color:var(--text);font-weight:700;}
+  nav.course-nav .lesson-num{font-variant-numeric:tabular-nums;color:var(--accent);}
+  nav.course-nav .lesson-state{display:block;font-size:11px;font-weight:500;color:var(--text-muted);margin-top:2px;}
+  nav.course-nav .section-links{border-top:1px solid var(--border);margin-top:18px;padding-top:16px;}
+  nav.course-nav .section-links h2{
+    font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin:0 0 8px;
+  }
+  nav.course-nav .section-links a{
+    display:block;color:var(--text-muted);text-decoration:none;font-size:12px;padding:5px 10px;border-radius:6px;
+  }
+  nav.course-nav .section-links a:hover,nav.course-nav .section-links a.active{color:var(--text);background:var(--bg);}
+  .mobile-lessons{display:none;margin:0 0 28px;border:1px solid var(--border);border-radius:12px;background:var(--surface);}
+  .mobile-lessons summary{min-height:48px;padding:13px 16px;font-weight:700;cursor:pointer;}
+  .mobile-lessons .mobile-list{display:grid;padding:0 10px 10px;}
+  .mobile-lessons a{padding:10px;color:var(--text-muted);text-decoration:none;border-top:1px solid var(--border);}
+  .skip-link{position:fixed;left:12px;top:12px;z-index:10;transform:translateY(-150%);padding:10px 14px;background:var(--text);color:#fff;border-radius:8px;}
+  .skip-link:focus{transform:none;}
+
+  header.hero{margin-bottom:56px;}
+  header.hero .kicker{
+    font-size:13px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--accent); font-weight:700; margin-bottom:8px;
+  }
+  header.hero h1{font-size:36px; margin:0 0 12px; letter-spacing:-.01em;}
+  header.hero p{color:var(--text-muted); max-width:640px; margin:0; font-size:16px;}
+  header.hero .meta{
+    margin-top:20px; display:flex; gap:24px; flex-wrap:wrap;
+    font-size:13px; color:var(--text-muted);
+  }
+  header.hero .meta b{color:var(--text); font-weight:600;}
+
+  section{margin-bottom:72px; scroll-margin-top:24px;}
+  section h2{
+    font-size:26px; margin:0 0 6px; padding-bottom:14px;
+    border-bottom:1px solid var(--border);
+  }
+  section > .section-intro{color:var(--text-muted); margin:14px 0 28px; max-width:760px;}
+  h3{font-size:18px; margin:36px 0 14px; scroll-margin-top:24px;}
+  h3:first-of-type{margin-top:0;}
+  p{margin:0 0 14px;}
+
+  .table-wrap{overflow:visible;border:0;margin:18px 0 28px;}
+  table{display:block;width:100%;font-size:14px;min-width:0;}
+  thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
+  tbody{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+  tbody tr{display:block;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;min-width:0;}
+  td{display:grid;grid-template-columns:minmax(112px,.42fr) minmax(0,1fr);gap:10px;padding:8px 0;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;overflow-wrap:anywhere;}
+  td::before{content:attr(data-label);font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.035em;}
+  td:first-child{display:block;font-size:17px;padding-top:0;}
+  td:first-child::before{content:none;}
+  td:last-child{border-bottom:0;padding-bottom:0;}
+  td.num{text-align:center; font-variant-numeric:tabular-nums; font-weight:600;}
+
+  .badge{
+    display:inline-block; font-size:11px; font-weight:700; padding:2px 9px;
+    border-radius:999px; text-transform:uppercase; letter-spacing:.03em;
+  }
+  .badge.hard{background:#f6e2da; color:var(--hard);}
+  .badge.soft{background:#efe9d6; color:var(--soft);}
+  .badge.asp{background:#dcebe4; color:var(--asp);}
+
+  .card-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px; margin:20px 0 28px;}
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:18px 20px;
+  }
+  .card h4{margin:0 0 8px; font-size:15px;}
+  .card p{margin:0; font-size:13.5px; color:var(--text-muted);}
+
+  .callout{
+    background:var(--surface); border:1px solid var(--border-strong); border-left-color:var(--accent);
+    border-radius:var(--radius); padding:18px 22px; margin:18px 0 28px;
+  }
+  .callout.good{border-left-color:var(--asp);}
+  .callout.bad{border-left-color:var(--hard);}
+  .callout h4{margin:0 0 8px; font-size:15px;}
+  .callout ol, .callout ul{margin:0; padding-left:20px;}
+  .callout li{margin-bottom:8px;}
+  .callout li:last-child{margin-bottom:0;}
+
+  .footnote{font-size:12.5px; color:var(--text-muted); margin-top:-16px; margin-bottom:28px;}
+  .sources{font-size:12.5px; color:var(--text-muted); line-height:1.8;}
+  .sources a{color:var(--accent);}
+  .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
+  .benchmark-illustration{display:block; width:min(100%, 420px); height:auto; margin:20px auto 30px;}
+  .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0 8px;}
+  .summary-block{padding-top:16px;border-top:2px solid var(--text);}
+  .summary-block h3{margin:0 0 10px;}
+  .summary-block ul{margin:0;padding-left:20px;}
+  .summary-block li{margin:0 0 8px;}
+  .screens-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:22px 0 8px;}
+  .screens-grid figure{margin:0;min-width:0;}
+  .screens-grid a{display:block;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--surface);}
+  .screens-grid img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;height:auto;}
+  .screens-grid figcaption{padding:10px 2px 0;font-size:13px;color:var(--text-muted);}
+  .screens-grid figcaption b{display:block;color:var(--text);font-size:14px;margin-bottom:3px;}
+
+  @media (max-width: 900px){
+    nav.course-nav{display:none;}
+    .mobile-lessons{display:block;}
+    main{padding:32px 20px 64px;}
+    header.hero h1{font-size:32px;}
+    tbody,.summary-grid,.screens-grid{grid-template-columns:1fr;}
+  }
+  @media (max-width: 520px){td{grid-template-columns:1fr;gap:3px;}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#content">Перейти до матеріалу</a>
+<div class="layout">
+  <nav class="course-nav" aria-label="Уроки курсу">
+    <p class="course-title">Design Engineering</p>
+    <p class="course-progress">Урок 1 із 12</p>
+    <div class="lesson-list">
+      <a href="../research/research.html" aria-current="page"><span class="lesson-num">01</span><span>Ресерч і бенчмарк<span class="lesson-state">Поточний урок</span></span></a>
+      <a href="../lessons/?lesson=2"><span class="lesson-num">02</span><span>Персони і JTBD<span class="lesson-state">Незабаром</span></span></a>
+      <a href="../lessons/?lesson=3"><span class="lesson-num">03</span><span>Інформаційна архітектура<span class="lesson-state">Незабаром</span></span></a>
+      <a href="../lessons/?lesson=4"><span class="lesson-num">04</span><span>Прототипування і вайрфреймінг<span class="lesson-state">Незабаром</span></span></a>
+      <a href="../lessons/?lesson=5"><span class="lesson-num">05</span><span>Тон оф войс і мікрокопі<span class="lesson-state">Незабаром</span></span></a>
+      <a href="../lessons/?lesson=6"><span class="lesson-num">06</span><span>Концепт<span class="lesson-state">Незабаром</span></span></a>
+      <a href="../lessons/?lesson=7"><span class="lesson-num">07</span><span>Збірка UI<span class="lesson-state">Незабаром</span></span></a>
+      <a href="../lessons/?lesson=8"><span class="lesson-num">08</span><span>Design Tokens<span class="lesson-state">Незабаром</span></span></a>
+      <a href="../lessons/?lesson=9"><span class="lesson-num">09</span><span>Дизайн-система<span class="lesson-state">Незабаром</span></span></a>
+      <a href="../lessons/?lesson=10"><span class="lesson-num">10</span><span>Responsive<span class="lesson-state">Незабаром</span></span></a>
+      <a href="../lessons/?lesson=11"><span class="lesson-num">11</span><span>Анімація і мікроінтеракції<span class="lesson-state">Незабаром</span></span></a>
+      <a href="../lessons/?lesson=12"><span class="lesson-num">12</span><span>Хендофф і документація<span class="lesson-state">Незабаром</span></span></a>
+    </div>
+    <div class="section-links">
+      <h2>У цьому уроці</h2>
+      <a href="#overview" data-target="overview">Коротко</a>
+      <a href="#screens" data-target="screens">Скріншоти</a>
+      <a href="#konkurenty" data-target="konkurenty">Конкуренти</a>
+      <a href="#benchmark" data-target="benchmark">Бенчмарк</a>
+      <a href="#patterny" data-target="patterny">Патерни</a>
+      <a href="#vysnovky" data-target="vysnovky">Висновки</a>
+    </div>
+  </nav>
+  <main id="content">
+
+    <details class="mobile-lessons">
+      <summary>Урок 01 із 12 · Ресерч і бенчмарк</summary>
+      <div class="mobile-list">
+        <a href="../research/research.html" aria-current="page">01 · Ресерч і бенчмарк</a>
+        <a href="../lessons/?lesson=2">02 · Персони і JTBD</a><a href="../lessons/?lesson=3">03 · Інформаційна архітектура</a>
+        <a href="../lessons/?lesson=4">04 · Прототипування і вайрфреймінг</a><a href="../lessons/?lesson=5">05 · Тон оф войс і мікрокопі</a>
+        <a href="../lessons/?lesson=6">06 · Концепт</a><a href="../lessons/?lesson=7">07 · Збірка UI</a>
+        <a href="../lessons/?lesson=8">08 · Design Tokens</a><a href="../lessons/?lesson=9">09 · Дизайн-система</a>
+        <a href="../lessons/?lesson=10">10 · Responsive</a><a href="../lessons/?lesson=11">11 · Анімація і мікроінтеракції</a>
+        <a href="../lessons/?lesson=12">12 · Хендофф і документація</a>
+      </div>
+    </details>
+
+    <header class="hero">
+      <h1>Ресерч</h1>
+      <p>Конкурентний ландшафт, бенчмарк довіри й патерни ринку — перша зовнішня
+      перевірка припущень продуктового брифу. Повторно перевірено
+      2026-09-02; живі інтерв'ю ще не проведено.</p>
+      <div class="meta">
+        <span><b>14</b> конкурентів проаналізовано</span>
+        <span><b>5</b> продуктів у бенчмарку довіри</span>
+        <span>Джерело брифу: <b>CLAUDE.md</b></span>
+      </div>
+    </header>
+
+    <section id="overview">
+      <h2>Коротко</h2>
+      <p class="section-intro">Що ресерч уже змінив у продуктовому рішенні. Цей блок дає суть уроку за одну хвилину.</p>
+      <div class="summary-grid">
+        <div class="summary-block"><h3>Що побачили</h3><ul><li>Телефонний код підтверджує контроль номера, а не особу.</li><li>Репутація працює лише тоді, коли прив'язана до підтвердженої події.</li><li>Direct chat без safety controls створює ризик спаму й небажаного контакту.</li></ul></div>
+        <div class="summary-block"><h3>Що вирішили</h3><ul><li>Залишити browse → profile → direct chat як робочий core loop.</li><li>Додати report, block і базову модерацію до MVP.</li><li>Selfie/ID та post-stay ratings не запускати без окремого discovery.</li></ul></div>
+      </div>
+    </section>
+
+    <section id="screens">
+      <h2>П’ять конкурентів зблизька</h2>
+      <p class="section-intro">Реальні публічні екрани, зафіксовані 2 вересня 2026 року. Скрін є доказом конкретного спостереження, а не висновком сам по собі.</p>
+      <div class="screens-grid">
+        <figure><a href="screens/roomster.png"><img src="screens/roomster.png" alt="Roomster: каталог профілів співмешканців із картою, фільтрами та бейджами ID, email і телефону"></a><figcaption><b>Roomster · каталог</b>Trust-сигнали видно без відкриття профілю, але повна комунікація платна.</figcaption></figure>
+        <figure><a href="screens/dim-ria.png"><img src="screens/dim-ria.png" alt="DIM.RIA: список оренди квартир у Києві з позначкою перевіреної квартири"></a><figcaption><b>DIM.RIA · пошукова видача</b>Перевірка стосується об’єкта й продавця, а статус видно прямо в картці.</figcaption></figure>
+        <figure><a href="screens/spareroom.png"><img src="screens/spareroom.png" alt="SpareRoom: пошук кімнат із фільтрами, типами оголошень і featured-карткою"></a><figcaption><b>SpareRoom · пошук кімнат</b>Фільтри й модель видимості домінують над профільною верифікацією.</figcaption></figure>
+        <figure><a href="screens/badi.png"><img src="screens/badi.png" alt="Badi: головна сторінка пошуку кімнат із вибором локації, дати заїзду й тривалості"></a><figcaption><b>Badi · старт пошуку</b>Сценарій починається з конкретного наміру: місто, дата й тривалість.</figcaption></figure>
+        <figure><a href="screens/qonys.png"><img src="screens/qonys.png" alt="Google Play: сторінка Qonys із 500+ завантажень і скрінами мобільного застосунку"></a><figcaption><b>Qonys · Google Play</b>Схожий feature set підтверджено, але київську присутність і масштаб ні.</figcaption></figure>
+      </div>
+    </section>
+
+    <section id="konkurenty">
+      <h2>Конкуренти</h2>
+      <p class="section-intro">Три групи, по 4–5 у кожній: хард (той самий продукт,
+      той самий Київ), софт (інший продукт, та сама базова задача),
+      аспіраційні (міжнародні еталони категорії).</p>
+
+      <div class="table-wrap">
+        <table>
+          <caption class="sr-only">Порівняльна матриця конкурентів Кутка</caption>
+          <thead>
+            <tr><th scope="col">Компанія</th><th scope="col">Група</th><th scope="col">Аудиторія</th><th scope="col">Основа продукту</th><th scope="col">Ключовий механізм</th><th scope="col">Довіра</th><th scope="col">Монетизація</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>OLX.ua</b> («Підселення»)</td><td><span class="badge hard">хард</span></td><td>Масовий укр. користувач будь-якого віку, не сегментовано під роуммейтів</td><td>Класифайд-дошка</td><td>Пошук + фільтри (ціна, район, комісія), сортування</td><td>Не вдалося перевірити</td><td>Freemium: безкоштовне розміщення + платні «Топ»/«VIP» пакети</td></tr>
+            <tr><td><b>Qonys</b></td><td><span class="badge asp">аспіраційні</span></td><td>Розробник із Казахстану; 500+ завантажень, присутність у Києві не підтверджено</td><td>Мобільний застосунок</td><td>Карта + фільтри + картки для підбору людей/варіантів</td><td>Не вдалося перевірити</td><td>Не вдалося перевірити</td></tr>
+            <tr><td><b>Roomster</b></td><td><span class="badge hard">хард</span></td><td>Повнолітні шукачі кімнат і співмешканців; точний вік не підтверджено</td><td>Веб + застосунок, профіль-орієнтований</td><td>Фільтри бюджет/дата/локація, детальні профілі звичок</td><td>Телефон та email; ID і proof-of-residence доступні окремо</td><td>Paywall на комунікацію: $11.99/7 днів, $29.99/30 днів у поточних terms</td></tr>
+            <tr><td><b>FreeRentAds</b></td><td><span class="badge hard">хард</span></td><td>Не вдалося перевірити (403)</td><td>Ймовірно шаблонна міжнародна класифайд-мережа</td><td>Не вдалося перевірити</td><td>Не вдалося перевірити</td><td>Не вдалося перевірити</td></tr>
+            <tr><td><b>Facebook-групи</b></td><td><span class="badge soft">софт</span></td><td>Широка киянська аудиторія без бюджету на рієлтора</td><td>Соцмережевий фід (пости + коментарі)</td><td>Публікація → відгук у коментарях/директі → домовленість поза платформою</td><td>Практично відсутня; задокументовані шахрайства</td><td>Безкоштовно</td></tr>
+            <tr><td><b>LUN.ua</b></td><td><span class="badge soft">софт</span></td><td>Орендарі/покупці нерухомості, цілі квартири</td><td>Агрегатор оголошень нерухомості</td><td>Геофільтри (місто/район/метро) + карта</td><td>Мітка «без комісії»; формальної верифікації немає</td><td>Платна реклама/розміщення для девелоперів</td></tr>
+            <tr><td><b>DOM.RIA</b></td><td><span class="badge soft">софт</span></td><td>Орендарі/покупці/продавці, професійні рієлтори</td><td>Верифікований агрегатор оголошень</td><td>Фільтри + інтерактивна карта</td><td>Виїзна перевірка інспекторами, 360° фото, «перевірені рієлтори»</td><td>Платні лістинги/підписки для агентів</td></tr>
+            <tr><td><b>Telegram-бот «Квартирант»</b></td><td><span class="badge soft">софт</span></td><td>Орендарі великих міст України</td><td>Чат-бот з передачею живому агенту</td><td>Фільтри → push нових об'єктів → запис у боті → супровід менеджера</td><td>Рейтинг 4,9/5 (неверифіковано)</td><td>Безкоштовно орендарю; комісія з орендодавця</td></tr>
+            <tr><td><b>Coliving ONE</b></td><td><span class="badge soft">софт</span></td><td>Молоді IT/фрілансери Києва</td><td>Оператор коливінгу (сам володіє й здає)</td><td>Пряме бронювання/waitlist у Telegram, співбесіда</td><td>22-пунктові правила проживання, медіа як соцдоказ</td><td>Оренда 9000–17000 грн/міс + депозит</td></tr>
+            <tr><td><b>SpareRoom</b></td><td><span class="badge asp">аспіраційні</span></td><td>Орендарі кімнат/власники/студенти</td><td>Веб + застосунок</td><td>Каталог за геолокацією + «BuddyUps»</td><td>Trustpilot 4.7/5, перевірка профілів, юр. договори</td><td>Платні оголошення для орендодавців; база безкоштовна</td></tr>
+            <tr><td><b>Badi</b></td><td><span class="badge asp">аспіраційні</span></td><td>Міські орендарі/лістери; масштаб — лише заява компанії</td><td>Веб + застосунок, маркетплейс кімнат</td><td>Пошук, запити, відеодзвінок і бронювання</td><td>«Trusted user» = підтверджений банківський рахунок лістера</td><td>Badi Plus для власників; актуальні умови перевіряти перед презентацією</td></tr>
+            <tr><td><b>Diggz</b></td><td><span class="badge asp">аспіраційні</span></td><td>Орендарі великих міст США</td><td>Веб + застосунок</td><td>Compatibility, likes/match та Instant Messages без mutual match</td><td>Verification/references заявлені сервісом</td><td>Core match/chat безкоштовні; Premium додає messages, filters і visibility</td></tr>
+            <tr><td><b>HousingAnywhere</b></td><td><span class="badge asp">аспіраційні</span></td><td>Студенти/експати; географічне охоплення — змінна заява компанії</td><td>Платформа безконтактної оренди</td><td>Оголошення, документообіг і платежі в платформі</td><td>Tenant Protection утримує перший платіж до заселення</td><td>Збір з орендаря; формулу перевіряти перед презентацією</td></tr>
+            <tr><td><b>Flatmates.com.au</b></td><td><span class="badge asp">аспіраційні</span></td><td>Орендарі/власники Австралії</td><td>Веб-маркетплейс</td><td>Модеровані оголошення, чат до розкриття контактів</td><td>Mobile-verified акаунти; reference-перевірка необов'язкова</td><td>Ймовірно freemium з платними апгрейдами</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="footnote">«Не вдалося перевірити» — сайт заблокував доступ (403/429) або не публікує ці дані; не вигадано замість цього.</p>
+    </section>
+
+    <section id="benchmark">
+      <h2>Бенчмарк довіри</h2>
+      <p class="section-intro">Вузький бенчмарк довіри до профілю <b>до першого контакту</b>
+      на п'яти продуктах-еталонах поза категорією співмешканців — саме той
+      момент прийняття рішення "чи писати цій людині", який спільна матриця
+      конкурентів вище показала слабким по всьому ринку.</p>
+
+      <img class="benchmark-illustration" src="../assets/illustrations/max-1/05-research-benchmark.png" width="627" height="627" alt="Інспекційна рамка порівнює три зразки з єдиним бенчмарком">
+      <h3>Порівняння без хибної точності</h3>
+      <div class="table-wrap">
+        <table>
+          <caption class="sr-only">Механізми довіри у п'яти продуктах-еталонах</caption>
+          <thead>
+            <tr><th scope="col">Продукт</th><th scope="col">Що перевіряється</th><th scope="col">Що бачить інша сторона</th><th scope="col">Межа</th><th scope="col">Урок для Кутка</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Airbnb</b></td><td>Trusted source, ID та інколи selfie</td><td>Точний identity badge</td><td>Не гарантує особу чи безпеку</td><td>Показувати результат, не сирий доказ</td></tr>
+            <tr><td><b>Turo</b></td><td>Eligibility і risk-сигнали перед транзакцією</td><td>Підсумковий статус</td><td>Залежить від транзакції та driver data</td><td>Не копіювати opaque score</td></tr>
+            <tr><td><b>Upwork</b></td><td>Identity та історія контрактів</td><td>Badge і Job Success Score</td><td>Репутацію живлять події платформи</td><td>Review потребує підтвердженої події</td></tr>
+            <tr><td><b>LinkedIn</b></td><td>Опційно identity/workplace/education</td><td>Badge з типом перевірки</td><td>Не доводить характер чи сумісність</td><td>Називати точний сигнал</td></tr>
+            <tr><td><b>Bumble</b></td><td>Photo verification; ID у підтримуваних сценаріях</td><td>Відповідний badge</td><td>Не доводить адресу, намір чи поведінку</td><td>Окремий шар, не заміна report/block</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="footnote">Шкалу 1–5 видалено: без рубрики й ваг середнє створювало хибну точність.</p>
+
+      <h3>Ключові знахідки по продуктах</h3>
+      <div class="card-grid">
+        <div class="card"><h4>Airbnb</h4><p>Badge називає саме identity verification, а сирі ID/selfie не показуються іншим. Сервіс прямо пояснює межі сигналу.</p></div>
+        <div class="card"><h4>Turo</h4><p>Внутрішні risk-сигнали працюють у транзакційному контексті. Куток не має аналогічних подій і driver data.</p></div>
+        <div class="card"><h4>Upwork</h4><p>Репутація має основу в контрактах платформи. Без підтвердженої події rating легко сфальсифікувати.</p></div>
+        <div class="card"><h4>LinkedIn</h4><p>Один badge розкриває конкретний тип перевірки. Це точніше, ніж універсальне слово «верифіковано».</p></div>
+        <div class="card"><h4>Bumble</h4><p>Photo/ID verification знижує окремі невизначеності, але не замінює block, report та модерацію поведінки.</p></div>
+      </div>
+
+      <div class="callout good">
+        <h4>Що перенести в MVP Кутка</h4>
+        <ol>
+          <li><b>Підтверджений телефон із точним label.</b> «Номер підтверджено» не обіцяє перевірку особи чи житла.</li>
+          <li><b>Report, block і мінімальна черга модерації.</b> Це safety floor для прямого чату без match-гейту.</li>
+          <li><b>Показувати підсумок, не сирий доказ.</b> Тип і дата сигналу видимі, чутливі матеріали — ні.</li>
+        </ol>
+      </div>
+      <div class="callout bad">
+        <h4>Не в MVP без окремого discovery</h4>
+        <p><b>Live selfie, ID verification та Turo-подібний risk score.</b>
+        Вартість, точність, privacy-процес, ручна модерація та доступність
+        провайдера в Україні тут не перевірені.</p>
+      </div>
+    </section>
+
+    <section id="patterny">
+      <h2>Патерни</h2>
+      <p class="section-intro">Що повторюється й що відрізняється по всіх 14
+      конкурентах — не по окремому продукту, а по ринку загалом.</p>
+
+      <h3>Три спільні патерни ринку</h3>
+      <div class="card-grid">
+        <div class="card">
+          <h4>1. Верифікація — вхідний квиток, не диференціатор</h4>
+          <p>Кожен структурований продукт (Roomster, SpareRoom, Badi, Diggz, HousingAnywhere, DOM.RIA) має верифікацію особи; неструктуровані канали (OLX, FB-групи) — жодної. Верифікація телефону в MVP Кутка — базова гігієна категорії, не перевага.</p>
+        </div>
+        <div class="card">
+          <h4>2. Монетизація — paywall на комунікацію/видимість</h4>
+          <p>Roomster (чат), Diggz (лайки), Badi Plus, OLX Топ/VIP — платять за доступ, а не комісію з факту заселення. Винятки монетизують бізнес-сторону (агентів, девелоперів), а не самих орендарів.</p>
+        </div>
+        <div class="card">
+          <h4>3. Підтверджена подія важливіша за review UI</h4>
+          <p>Badi та інші платформи вже мають ratings. Відкрите питання Кутка: як підтвердити реальне співжиття без бронювання чи транзакції та не створити фальшиву репутацію.</p>
+        </div>
+      </div>
+
+      <h3>Три відмінності</h3>
+      <div class="card-grid">
+        <div class="card"><h4>Хто платить</h4><p>Орендодавець/агент (DOM.RIA, LUN, HousingAnywhere) — або орендар/шукач (Roomster, Diggz, Badi Plus) — або ніхто (OLX база, FB-групи, Куток зараз).</p></div>
+        <div class="card"><h4>Глибина профілю й сумісності</h4><p>Від нуля (OLX, FB-групи) до алгоритмічного lifestyle-matching (Diggz) — величезна різниця в тому, скільки продукт знає про людину до першого контакту.</p></div>
+        <div class="card"><h4>Модель продукту</h4><p>Маркетплейс-посередник (більшість) проти оператора нерухомості, що сам володіє й здає житло (Coliving ONE) — фундаментально різна відповідальність за безпеку й якість.</p></div>
+      </div>
+    </section>
+
+    <section id="vysnovky">
+      <h2>Висновки</h2>
+      <p class="section-intro">Відкриті питання до PM і статус ресерчу відносно
+      продуктового брифу.</p>
+
+      <h3>Три відкриті питання до PM</h3>
+      <div class="callout">
+        <ol>
+          <li>Чи Куток монетизує доступ до спілкування (paywall-модель, як у Roomster/Diggz/Badi), чи лишається повністю безкоштовним, як зараз зафіксовано в брифі — попри те, що це основна модель монетизації майже всієї категорії?</li>
+          <li>Наскільки глибоко Куток інвестує в lifestyle-сумісність (рівень Diggz) проти простих фільтрів (рівень більшості конкурентів) — головний потенційний диференціатор, але й головне джерело складності UX/профілю?</li>
+          <li>Чи бере Куток на себе будь-яку відповідальність за період «після заїзду» (рейтинги вже закладені в бриф, але чи є страхування/повернення коштів/перевірка) — ринок цю нішу практично не закриває, а вона напряму стосується головної цінності «довіра»?</li>
+        </ol>
+      </div>
+
+      <h3>Що ще перевірити</h3>
+      <div class="card-grid">
+        <div class="card"><h4>Інтерв'ю з ЦА (22–30, переїзд у Київ)</h4><p>Наскільки вірне припущення "довіра — головний біль", чи стать/звички справді топові фільтри, чи станції метро зрозуміліший орієнтир, ніж райони.</p></div>
+        <div class="card"><h4>Верифікація телефону як бар'єр</h4><p>Наскільки реально знижує фейкові акаунти й наскільки відсіює легітимних користувачів (friction vs safety).</p></div>
+        <div class="card"><h4>Живе тестування конкурентів</h4><p>Qonys, FreeRentAds — не вдалося перевірити через доступ; потрібне пряме тестування продукту, а не тільки веб-пошук.</p></div>
+      </div>
+
+      <h3>Статус</h3>
+      <p>Конкурентний аналіз і бенчмарк довіри повторно перевірено 2026-09-02,
+      без живих інтерв'ю й без прямого тестування частини
+      продуктів. Висновки, підтверджені ресерчем, переносити назад у
+      <a href="../CLAUDE.md">CLAUDE.md</a>, щоб тримати одне джерело правди.
+      Повний текст із джерелами — у <a href="research.md">research.md</a>;
+      журнал реконструйованих кроків 03–06 — у
+      <a href="prompt-runs.md">prompt-runs.md</a>.</p>
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+  document.querySelectorAll('table').forEach(table => {
+    const labels = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+    table.querySelectorAll('tbody tr').forEach(row => Array.from(row.children).forEach((cell, index) => cell.dataset.label = labels[index] || ''));
+  });
+  const links = document.querySelectorAll('nav.course-nav .section-links a');
+  const sections = Array.from(links).map(l => document.getElementById(l.dataset.target));
+  function onScroll(){
+    let current = sections[0];
+    const y = window.scrollY + 80;
+    for(const s of sections){ if(s.offsetTop <= y) current = s; }
+    links.forEach(l => {
+      const active = l.dataset.target === current.id;
+      l.classList.toggle('active', active);
+      if(active) l.setAttribute('aria-current', 'location');
+      else l.removeAttribute('aria-current');
+    });
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+</script>
+</body>
+</html>

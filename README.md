@@ -16,7 +16,7 @@
 
 | Папка | Що там | Статус |
 |---|---|---|
-| [research/](./research/research.md) | Ресерч: конкуренти, бенчмарк довіри, інтерв'ю; скріншоти в `research/screens/` | не розпочато |
+| [research/](./research/research.md) | Desk research: конкуренти, бенчмарк довіри, рішення та гіпотези; живі інтерв'ю ще не проведено | desk research завершено; потрібні інтерв'ю |
 | [wireframes/](./wireframes/) | Малодеталізовані макети екранів MVP | не розпочато |
 | [concept/](./concept/) | Візуальний напрям і концепція | не розпочато |
 | [tokens/](./tokens/) | Дизайн-токени (колір, типографіка, spacing) | не розпочато |
@@ -25,3 +25,6 @@
 | [handoff/](./handoff/) | Матеріали для передачі в розробку | не розпочато |
 
 Порядок процесу: research → wireframes → concept → tokens → components → design-system → handoff.
+
+Для Max 1: [журнал прогону кроків 03–06](./research/prompt-runs.md) і
+[оновлена HTML-презентація](./research/research.html).
