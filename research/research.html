@@ -128,7 +128,6 @@
   .sources{font-size:12.5px; color:var(--text-muted); line-height:1.8;}
   .sources a{color:var(--accent);}
   .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
-  .benchmark-illustration{display:block; width:min(100%, 420px); height:auto; margin:20px auto 30px;}
   .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0 8px;}
   .summary-block{padding-top:16px;border-top:2px solid var(--text);}
   .summary-block h3{margin:0 0 10px;}
@@ -181,11 +180,11 @@
     <div class="section-links">
       <p class="section-links-title">У цьому уроці</p>
       <a href="#overview" data-target="overview">Коротко</a>
-      <a href="#screens" data-target="screens">Скріншоти</a>
       <a href="#konkurenty" data-target="konkurenty">Конкуренти</a>
       <a href="#benchmark" data-target="benchmark">Бенчмарк</a>
       <a href="#patterny" data-target="patterny">Патерни</a>
       <a href="#vysnovky" data-target="vysnovky">Висновки</a>
+      <a href="#screens" data-target="screens">Скріншоти</a>
     </div>
   </nav>
   <main id="content">
@@ -222,18 +221,6 @@
       <div class="summary-grid">
         <div class="summary-block"><h3>Що побачили</h3><ul><li>Телефонний код підтверджує контроль номера, а не особу.</li><li>Репутація працює лише тоді, коли прив'язана до підтвердженої події.</li><li>Direct chat без safety controls створює ризик спаму й небажаного контакту.</li></ul></div>
         <div class="summary-block"><h3>Що вирішили</h3><ul><li>Залишити browse → profile → direct chat як робочий core loop.</li><li>Додати report, block і базову модерацію до MVP.</li><li>Selfie/ID та post-stay ratings не запускати без окремого discovery.</li></ul></div>
-      </div>
-    </section>
-
-    <section id="screens">
-      <h2>П’ять конкурентів зблизька</h2>
-      <p class="section-intro">Реальні публічні екрани, зафіксовані 2 вересня 2026 року в Chromium 1440×1100. Скрін є доказом конкретного спостереження, а не висновком сам по собі. Спроба зафіксувати LUN.ua впала на Cloudflare-перевірку, тому цей скрін як доказ не використовується (<a href="screens/README.md">журнал скріншотів</a>).</p>
-      <div class="screens-grid">
-        <figure><a href="screens/roomster.png"><img src="screens/roomster.png" width="1440" height="1100" loading="lazy" alt="Roomster: каталог профілів співмешканців із картою, фільтрами та бейджами ID, email і телефону"></a><figcaption><b>Roomster · каталог</b>Trust-сигнали видно без відкриття профілю, але повна комунікація платна.</figcaption></figure>
-        <figure><a href="screens/dim-ria.png"><img src="screens/dim-ria.png" width="1440" height="1100" loading="lazy" alt="DIM.RIA: список оренди квартир у Києві з позначкою перевіреної квартири"></a><figcaption><b>DIM.RIA (DOM.RIA) · пошукова видача</b>Перевірка стосується об’єкта й продавця, а статус видно прямо в картці.</figcaption></figure>
-        <figure><a href="screens/spareroom.png"><img src="screens/spareroom.png" width="1440" height="1100" loading="lazy" alt="SpareRoom: пошук кімнат із фільтрами, типами оголошень і featured-карткою"></a><figcaption><b>SpareRoom · пошук кімнат</b>Фільтри й модель видимості (Featured, Boosted, Free to contact) домінують над профільною верифікацією.</figcaption></figure>
-        <figure><a href="screens/badi.png"><img src="screens/badi.png" width="1440" height="1100" loading="lazy" alt="Badi: головна сторінка пошуку кімнат із вибором локації, дати заїзду й тривалості"></a><figcaption><b>Badi · старт пошуку</b>Сценарій починається з конкретного наміру: місто, дата й тривалість.</figcaption></figure>
-        <figure><a href="screens/qonys.png"><img src="screens/qonys.png" width="1440" height="1100" loading="lazy" alt="Google Play: сторінка Qonys із 500+ завантажень і скрінами мобільного застосунку"></a><figcaption><b>Qonys · Google Play</b>Схожий feature set підтверджено, але київську присутність і масштаб ні.</figcaption></figure>
       </div>
     </section>
 
@@ -278,7 +265,6 @@
       момент прийняття рішення "чи писати цій людині", який спільна матриця
       конкурентів вище показала слабким по всьому ринку.</p>
 
-      <img class="benchmark-illustration" src="../assets/illustrations/max-1/05-research-benchmark.png" width="627" height="627" alt="Інспекційна рамка порівнює три зразки з єдиним бенчмарком">
       <h3>Порівняння без хибної точності</h3>
       <div class="table-wrap">
         <table>
@@ -382,6 +368,18 @@
       журнал реконструйованих кроків 03–06 — у
       <a href="prompt-runs.md">prompt-runs.md</a>;
       сирі скріншоти — у <a href="screens/README.md">screens/</a>.</p>
+    </section>
+
+    <section id="screens">
+      <h2>П’ять конкурентів зблизька</h2>
+      <p class="section-intro">Реальні публічні екрани, зафіксовані 2 вересня 2026 року в Chromium 1440×1100. Скрін є доказом конкретного спостереження, а не висновком сам по собі. Спроба зафіксувати LUN.ua впала на Cloudflare-перевірку, тому цей скрін як доказ не використовується (<a href="screens/README.md">журнал скріншотів</a>).</p>
+      <div class="screens-grid">
+        <figure><a href="screens/roomster.png"><img src="screens/roomster.png" width="1440" height="1100" loading="lazy" alt="Roomster: каталог профілів співмешканців із картою, фільтрами та бейджами ID, email і телефону"></a><figcaption><b>Roomster · каталог</b>Trust-сигнали видно без відкриття профілю, але повна комунікація платна.</figcaption></figure>
+        <figure><a href="screens/dim-ria.png"><img src="screens/dim-ria.png" width="1440" height="1100" loading="lazy" alt="DIM.RIA: список оренди квартир у Києві з позначкою перевіреної квартири"></a><figcaption><b>DIM.RIA (DOM.RIA) · пошукова видача</b>Перевірка стосується об’єкта й продавця, а статус видно прямо в картці.</figcaption></figure>
+        <figure><a href="screens/spareroom.png"><img src="screens/spareroom.png" width="1440" height="1100" loading="lazy" alt="SpareRoom: пошук кімнат із фільтрами, типами оголошень і featured-карткою"></a><figcaption><b>SpareRoom · пошук кімнат</b>Фільтри й модель видимості (Featured, Boosted, Free to contact) домінують над профільною верифікацією.</figcaption></figure>
+        <figure><a href="screens/badi.png"><img src="screens/badi.png" width="1440" height="1100" loading="lazy" alt="Badi: головна сторінка пошуку кімнат із вибором локації, дати заїзду й тривалості"></a><figcaption><b>Badi · старт пошуку</b>Сценарій починається з конкретного наміру: місто, дата й тривалість.</figcaption></figure>
+        <figure><a href="screens/qonys.png"><img src="screens/qonys.png" width="1440" height="1100" loading="lazy" alt="Google Play: сторінка Qonys із 500+ завантажень і скрінами мобільного застосунку"></a><figcaption><b>Qonys · Google Play</b>Схожий feature set підтверджено, але київську присутність і масштаб ні.</figcaption></figure>
+      </div>
     </section>
 
   </main>
