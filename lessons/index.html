@@ -1,111 +1,2026 @@
 <!doctype html>
 <html lang="uk">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Урок · Design Engineering</title>
-<style>
-:root{--bg:#faf9f7;--surface:#fff;--border:#e4e0da;--text:#201e1a;--muted:#6b6459;--accent:#b5502f;--accent-soft:#f4e6df}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
-.layout{display:flex;min-height:100vh}
-.sidebar{width:280px;flex-shrink:0;position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;padding:32px 20px;background:var(--surface);border-right:1px solid var(--border)}
-.title{font-size:15px;font-weight:800;margin:0 0 4px}
-.progress{font-size:12px;color:var(--muted);margin:0 0 22px}
-.lessons{display:grid;gap:3px}
-.lessons a{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;min-height:44px;padding:8px 10px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:13px;line-height:1.35}
-.lessons a:hover{background:var(--bg);color:var(--text)}
-.lessons a[aria-current=page]{background:var(--accent-soft);color:var(--text);font-weight:700}
-.num{color:var(--accent);font-variant-numeric:tabular-nums}
-.state{display:block;font-size:11px;font-weight:500;color:var(--muted);margin-top:2px}
-main{flex:1;min-width:0;display:grid;place-items:center;padding:48px 24px}
-.empty{width:min(100%,680px);border-top:2px solid var(--text);padding-top:24px}
-.lesson-number{color:var(--accent);font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-.empty h1{font-size:clamp(30px,5vw,58px);line-height:1.05;letter-spacing:-.025em;margin:12px 0 18px;overflow-wrap:anywhere}
-.empty p{color:var(--muted);max-width:58ch}
-.back{display:inline-flex;min-height:44px;align-items:center;margin-top:18px;color:var(--text);font-weight:700;text-underline-offset:4px}
-.mobile{display:none}
-.skip{position:fixed;left:12px;top:12px;transform:translateY(-150%);padding:10px 14px;background:var(--text);color:#fff;border-radius:8px;z-index:10}
-.skip:focus{transform:none}
-a:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:3px}
-@media(max-width:900px){
-  .sidebar{display:none}
-  .mobile{display:block;margin:0 0 28px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
-  .mobile summary{min-height:48px;padding:13px 16px;font-weight:700;cursor:pointer}
-  .mobile nav{display:grid;padding:0 10px 10px}
-  .mobile a{display:block;min-height:44px;padding:10px;color:var(--muted);text-decoration:none;border-top:1px solid var(--border)}
-  .mobile a[aria-current=page]{color:var(--text);font-weight:700}
-  main{display:block;padding:32px 20px 64px}
-}
-</style>
-</head>
-<body>
-<a class="skip" href="#content">Перейти до матеріалу</a>
-<div class="layout">
-  <aside class="sidebar">
-    <p class="title">Design Engineering</p>
-    <p class="progress" id="progress">Урок із 12</p>
-    <nav class="lessons" id="desktop-nav" aria-label="Уроки курсу">
-      <a href="../research/research.html" data-lesson="1"><span class="num">01</span><span>Ресерч і бенчмарк<span class="state">Готово</span></span></a>
-      <a href="?lesson=2" data-lesson="2"><span class="num">02</span><span>Персони і JTBD<span class="state">Незабаром</span></span></a>
-      <a href="?lesson=3" data-lesson="3"><span class="num">03</span><span>Інформаційна архітектура<span class="state">Незабаром</span></span></a>
-      <a href="?lesson=4" data-lesson="4"><span class="num">04</span><span>Прототипування і вайрфреймінг<span class="state">Незабаром</span></span></a>
-      <a href="?lesson=5" data-lesson="5"><span class="num">05</span><span>Тон оф войс і мікрокопі<span class="state">Незабаром</span></span></a>
-      <a href="?lesson=6" data-lesson="6"><span class="num">06</span><span>Концепт<span class="state">Незабаром</span></span></a>
-      <a href="?lesson=7" data-lesson="7"><span class="num">07</span><span>Збірка UI<span class="state">Незабаром</span></span></a>
-      <a href="?lesson=8" data-lesson="8"><span class="num">08</span><span>Design Tokens<span class="state">Незабаром</span></span></a>
-      <a href="?lesson=9" data-lesson="9"><span class="num">09</span><span>Дизайн-система<span class="state">Незабаром</span></span></a>
-      <a href="?lesson=10" data-lesson="10"><span class="num">10</span><span>Responsive<span class="state">Незабаром</span></span></a>
-      <a href="?lesson=11" data-lesson="11"><span class="num">11</span><span>Анімація і мікроінтеракції<span class="state">Незабаром</span></span></a>
-      <a href="?lesson=12" data-lesson="12"><span class="num">12</span><span>Хендофф і документація<span class="state">Незабаром</span></span></a>
-    </nav>
-  </aside>
-  <main id="content">
-    <details class="mobile">
-      <summary id="mobile-summary">Уроки курсу</summary>
-      <nav id="mobile-nav" aria-label="Уроки курсу">
-        <a href="../research/research.html" data-lesson="1">01 · Ресерч і бенчмарк</a>
-        <a href="?lesson=2" data-lesson="2">02 · Персони і JTBD</a>
-        <a href="?lesson=3" data-lesson="3">03 · Інформаційна архітектура</a>
-        <a href="?lesson=4" data-lesson="4">04 · Прототипування і вайрфреймінг</a>
-        <a href="?lesson=5" data-lesson="5">05 · Тон оф войс і мікрокопі</a>
-        <a href="?lesson=6" data-lesson="6">06 · Концепт</a>
-        <a href="?lesson=7" data-lesson="7">07 · Збірка UI</a>
-        <a href="?lesson=8" data-lesson="8">08 · Design Tokens</a>
-        <a href="?lesson=9" data-lesson="9">09 · Дизайн-система</a>
-        <a href="?lesson=10" data-lesson="10">10 · Responsive</a>
-        <a href="?lesson=11" data-lesson="11">11 · Анімація і мікроінтеракції</a>
-        <a href="?lesson=12" data-lesson="12">12 · Хендофф і документація</a>
-      </nav>
-    </details>
-    <article class="empty">
-      <div class="lesson-number" id="lesson-number">Урок · незабаром</div>
-      <h1 id="lesson-title">Матеріал ще не додано</h1>
-      <p>Матеріал цього уроку ще не додано. Сторінка вже створена, щоб структура курсу залишалася сталою в міру проходження. Оберіть урок у списку або поверніться до готового уроку 1.</p>
-      <a class="back" href="../research/research.html">← Повернутися до уроку 1</a>
-    </article>
-  </main>
-</div>
-<script>
-(function(){
-  var requested = Number(new URLSearchParams(location.search).get('lesson'));
-  if (requested === 1) { location.replace('../research/research.html'); return; }
-  var current = requested >= 2 && requested <= 12 ? requested : 2;
-  var links = document.querySelectorAll('a[data-lesson]');
-  var title = '';
-  links.forEach(function(a){
-    var n = Number(a.dataset.lesson);
-    if (n !== current) return;
-    a.setAttribute('aria-current', 'page');
-    var state = a.querySelector('.state');
-    if (state) { state.textContent = 'Поточна сторінка'; title = a.querySelector('.num').nextSibling.firstChild.textContent; }
-  });
-  var num = String(current).padStart(2, '0');
-  document.title = 'Урок ' + current + ' — ' + title + ' · Design Engineering';
-  document.getElementById('progress').textContent = 'Урок ' + current + ' із 12';
-  document.getElementById('mobile-summary').textContent = 'Урок ' + num + ' із 12 · ' + title;
-  document.getElementById('lesson-number').textContent = 'Урок ' + num + ' · незабаром';
-  document.getElementById('lesson-title').textContent = title;
-})();
-</script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>Урок 2 — Персони і JTBD · Design Engineering</title>
+    <style>
+      :root {
+        --paper: #faf9f7;
+        --white: #fff;
+        --wash: #f3efe9;
+        --line: #dfd9d0;
+        --line2: #c9c0b5;
+        --ink: #201e1a;
+        --muted: #696258;
+        --rust: #ad492c;
+        --rust-dark: #78301d;
+        --rust-wash: #f4e4dc;
+        --ochre: #684f12;
+        --ochre-wash: #f5ecca;
+        --green: #295142;
+        --green-wash: #e1ece6;
+        --blue: #36546c;
+        --blue-wash: #e6eef3;
+        --r: 12px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      ::selection {
+        background: var(--rust-wash);
+        color: var(--ink);
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.55;
+      }
+      a {
+        color: var(--rust-dark);
+        text-underline-offset: 3px;
+      }
+      a:hover {
+        text-decoration-thickness: 2px;
+      }
+      a:focus-visible,
+      button:focus-visible,
+      summary:focus-visible,
+      .matrix-wrap:focus-visible {
+        outline: 3px solid var(--rust);
+        outline-offset: 3px;
+        border-radius: 5px;
+      }
+      .skip {
+        position: fixed;
+        left: 12px;
+        top: 12px;
+        z-index: 20;
+        transform: translateY(-150%);
+        padding: 10px 14px;
+        background: var(--ink);
+        color: #fff;
+        border-radius: 8px;
+      }
+      .skip:focus {
+        transform: none;
+      }
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+      .rail {
+        width: 280px;
+        flex: 0 0 280px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow: auto;
+        padding: 32px 20px;
+        background: var(--white);
+        border-right: 1px solid var(--line);
+      }
+      .course {
+        font-size: 15px;
+        font-weight: 800;
+        margin: 0 0 4px;
+      }
+      .progress {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0 0 22px;
+      }
+      .lessons {
+        display: grid;
+        gap: 3px;
+      }
+      .lessons a {
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        gap: 8px;
+        min-height: 44px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        line-height: 1.35;
+      }
+      .lessons a:hover {
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .lessons a[aria-current="page"] {
+        background: var(--rust-wash);
+        color: var(--ink);
+        font-weight: 750;
+      }
+      .num {
+        color: var(--rust);
+        font-variant-numeric: tabular-nums;
+      }
+      .state {
+        display: block;
+        margin-top: 2px;
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .toc {
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+      }
+      .toc p {
+        margin: 0 0 8px;
+        padding: 0 10px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .toc a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        color: var(--muted);
+        font-size: 12px;
+        text-decoration: none;
+      }
+      .toc a:hover,
+      .toc a.active {
+        background: var(--paper);
+        color: var(--ink);
+      }
+      main {
+        flex: 1;
+        min-width: 0;
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 48px 56px 96px;
+      }
+      .mobile-nav,
+      .mobile-toc {
+        display: none;
+      }
+      .hero {
+        max-width: 880px;
+        margin-bottom: 42px;
+      }
+      .hero h1,
+      .section-head h2,
+      .persona h3,
+      .main-job blockquote,
+      .decision h3 {
+        font-family:
+          "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      }
+      .hero h1 {
+        max-width: 820px;
+        margin: 0 0 16px;
+        font-size: clamp(42px, 5vw, 68px);
+        line-height: 1;
+        letter-spacing: -0.035em;
+        text-wrap: balance;
+      }
+      .hero > p {
+        max-width: 65ch;
+        margin: 0;
+        color: var(--muted);
+        font-size: 18px;
+      }
+      .hero-meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+      }
+      .pill,
+      .evidence {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 750;
+      }
+      .pill {
+        background: var(--wash);
+        color: var(--muted);
+      }
+      .evidence.market {
+        background: var(--green-wash);
+        color: var(--green);
+      }
+      .evidence.need {
+        background: var(--ochre-wash);
+        color: var(--ochre);
+      }
+      .evidence.effect {
+        background: var(--blue-wash);
+        color: var(--blue);
+      }
+      .evidence.primary {
+        background: var(--rust);
+        color: #fff;
+      }
+      .outcome {
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        gap: 24px;
+        margin: 0 0 64px;
+        padding: 20px 0;
+        border-top: 2px solid var(--ink);
+        border-bottom: 1px solid var(--line);
+      }
+      .outcome strong {
+        font-size: 13px;
+      }
+      .outcome p {
+        margin: 0;
+        font-size: 17px;
+        max-width: 64ch;
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      .legend-note {
+        width: 100%;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      section {
+        margin: 0 0 78px;
+        scroll-margin-top: 24px;
+      }
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+        gap: 30px;
+        align-items: end;
+        padding-bottom: 15px;
+        margin-bottom: 26px;
+        border-bottom: 1px solid var(--line);
+      }
+      .section-head h2 {
+        margin: 0;
+        font-size: 32px;
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+      }
+      .section-head p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .method {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        overflow: hidden;
+      }
+      .method div {
+        background: var(--white);
+        padding: 18px;
+      }
+      .method b {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+      }
+      .method p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .persona-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        align-items: start;
+      }
+      .persona {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        overflow: hidden;
+      }
+      .persona.primary-card {
+        border-color: var(--rust);
+      }
+      .persona.scenario {
+        grid-column: 1/-1;
+        display: grid;
+        grid-template-columns: 290px 1fr;
+        border-style: dashed;
+      }
+      .persona-head {
+        padding: 20px;
+        background: var(--wash);
+      }
+      .primary-card .persona-head {
+        background: var(--rust-wash);
+      }
+      .scenario .persona-head {
+        background: var(--ochre-wash);
+      }
+      .persona-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .persona h3 {
+        margin: 0 0 5px;
+        font-size: 26px;
+        line-height: 1;
+      }
+      .persona-role {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .persona-summary {
+        margin: 16px 0 0;
+        font-size: 14px;
+      }
+      .persona details {
+        border-top: 1px solid var(--line);
+      }
+      .persona summary {
+        min-height: 48px;
+        padding: 13px 20px;
+        cursor: pointer;
+        color: var(--rust-dark);
+        font-size: 13px;
+        font-weight: 750;
+      }
+      .persona details[open] summary {
+        border-bottom: 1px solid var(--line);
+      }
+      .persona-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 22px;
+        padding: 4px 20px 18px;
+      }
+      .persona-block {
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .persona-block:nth-last-child(-n + 2) {
+        border-bottom: 0;
+      }
+      .persona-block h4 {
+        margin: 0 0 6px;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .persona-block p,
+      .persona-block ul {
+        margin: 0;
+        font-size: 13.5px;
+      }
+      .persona-block ul {
+        padding-left: 18px;
+      }
+      .source {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 12.5px;
+      }
+      .why-primary {
+        margin-top: 18px;
+        padding: 18px 20px;
+        background: var(--ochre-wash);
+        border-radius: var(--r);
+        font-size: 14px;
+      }
+      .why-primary p {
+        margin: 0;
+      }
+      .why-primary p + p {
+        margin-top: 8px;
+      }
+      .main-job {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 25px;
+        padding: 25px 0;
+        margin-bottom: 18px;
+        border-top: 2px solid var(--ink);
+        border-bottom: 1px solid var(--line);
+      }
+      .job-id {
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--rust);
+        letter-spacing: 0.04em;
+      }
+      .main-job blockquote {
+        margin: 0;
+        font-size: clamp(23px, 2.8vw, 34px);
+        line-height: 1.25;
+        font-weight: 700;
+      }
+      .main-job p {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .job-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 28px;
+      }
+      .job {
+        display: grid;
+        grid-template-columns: 48px 1fr;
+        gap: 12px;
+        padding: 22px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .job h3 {
+        margin: 0 0 8px;
+        font-size: 17px;
+      }
+      .statement {
+        margin: 0;
+        font-size: 14px;
+      }
+      .job-meta {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        margin-top: 11px;
+      }
+      .job-note {
+        margin: 9px 0 0;
+        color: var(--muted);
+        font-size: 12.5px;
+      }
+      .hypothesis-jobs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 28px;
+      }
+      .hypothesis-job {
+        padding: 16px 18px;
+        background: var(--ochre-wash);
+        border-radius: var(--r);
+      }
+      .hypothesis-job h3 {
+        margin: 0 0 6px;
+        font-size: 14px;
+      }
+      .hypothesis-job p {
+        margin: 0;
+        font-size: 13px;
+        color: #55400e;
+      }
+      .decision-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .decision {
+        padding: 20px;
+        border-top: 3px solid var(--ink);
+        background: var(--white);
+      }
+      .decision.differentiator {
+        border-color: var(--rust);
+      }
+      .decision.safety {
+        border-color: var(--ochre);
+      }
+      .decision.later {
+        border-color: var(--muted);
+      }
+      .decision h3 {
+        margin: 0 0 9px;
+        font-size: 21px;
+      }
+      .decision ul {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 14px;
+      }
+      .decision li + li {
+        margin-top: 6px;
+      }
+      .decision .source {
+        margin-top: 12px;
+      }
+      .matrix-note {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        margin: -8px 0 16px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .matrix-wrap {
+        overflow: auto;
+        border: 1px solid var(--line2);
+        border-radius: var(--r);
+        background: var(--white);
+        scrollbar-color: var(--rust) var(--wash);
+        scrollbar-width: thin;
+      }
+      .matrix-wrap::-webkit-scrollbar {
+        height: 10px;
+      }
+      .matrix-wrap::-webkit-scrollbar-track {
+        background: var(--wash);
+      }
+      .matrix-wrap::-webkit-scrollbar-thumb {
+        background: var(--rust);
+        border: 2px solid var(--wash);
+        border-radius: 999px;
+      }
+      table {
+        width: 100%;
+        min-width: 980px;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 12.5px;
+        line-height: 1.45;
+      }
+      caption {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      th,
+      td {
+        padding: 13px;
+        text-align: left;
+        vertical-align: top;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+      th:last-child,
+      td:last-child {
+        border-right: 0;
+      }
+      tbody tr:last-child > * {
+        border-bottom: 0;
+      }
+      thead th {
+        background: var(--ink);
+        color: #fff;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      tbody th {
+        width: 210px;
+        background: #f6f3ee;
+        font-weight: 750;
+      }
+      .relevance {
+        font-weight: 750;
+        color: var(--green);
+      }
+      .unknown {
+        font-weight: 800;
+        color: var(--ochre);
+      }
+      .not-core {
+        color: var(--muted);
+      }
+      .cut-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .cut {
+        padding: 18px 0;
+        border-top: 2px solid var(--ink);
+      }
+      .cut h3 {
+        margin: 0 0 6px;
+        font-size: 16px;
+      }
+      .cut p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .research-next {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .question {
+        padding: 19px;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+      }
+      .question h3 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+      .question p {
+        margin: 0;
+        font-size: 13.5px;
+      }
+      .question .changes {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12.5px;
+      }
+      .footer {
+        padding-top: 22px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .placeholder {
+        max-width: 680px;
+        border-top: 2px solid var(--ink);
+        padding-top: 24px;
+      }
+      .hidden {
+        display: none !important;
+      }
+      @media (max-width: 1100px) {
+        .rail {
+          display: none;
+        }
+        main {
+          padding-inline: 34px;
+        }
+        .mobile-nav,
+        .mobile-toc {
+          display: block;
+          margin-bottom: 20px;
+          border: 1px solid var(--line);
+          border-radius: var(--r);
+          background: var(--white);
+        }
+        .mobile-nav summary,
+        .mobile-toc summary {
+          min-height: 48px;
+          padding: 13px 16px;
+          font-weight: 750;
+          cursor: pointer;
+        }
+        .mobile-nav nav,
+        .mobile-toc nav {
+          display: grid;
+          padding: 0 10px 10px;
+        }
+        .mobile-nav a,
+        .mobile-toc a {
+          min-height: 44px;
+          padding: 10px;
+          color: var(--muted);
+          text-decoration: none;
+          border-top: 1px solid var(--line);
+        }
+        .persona-grid {
+          grid-template-columns: 1fr;
+        }
+        .persona.scenario {
+          display: block;
+        }
+        .job-list {
+          grid-template-columns: 1fr;
+        }
+        .research-next {
+          grid-template-columns: 1fr;
+        }
+        .decision-grid {
+          grid-template-columns: 1fr;
+        }
+        .matrix-wrap {
+          overflow: visible;
+          border: 0;
+          background: transparent;
+        }
+        .matrix-wrap table,
+        .matrix-wrap thead,
+        .matrix-wrap tbody {
+          display: block;
+          min-width: 0;
+        }
+        .matrix-wrap thead {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+        }
+        .matrix-wrap tr {
+          display: block;
+          margin-bottom: 14px;
+          background: var(--white);
+          border: 1px solid var(--line2);
+          border-radius: var(--r);
+          overflow: hidden;
+        }
+        .matrix-wrap th,
+        .matrix-wrap td {
+          display: grid;
+          grid-template-columns: 120px 1fr;
+          gap: 12px;
+          width: auto;
+          padding: 12px 14px;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .matrix-wrap tbody th {
+          display: block;
+          background: var(--ink);
+          color: #fff;
+          font-size: 14px;
+        }
+        .matrix-wrap td::before {
+          content: attr(data-label);
+          color: var(--muted);
+          font-size: 10px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+        .matrix-wrap tr > *:last-child {
+          border-bottom: 0;
+        }
+      }
+      @media (max-width: 900px) {
+        .rail {
+          display: none;
+        }
+        main {
+          padding: 26px 20px 70px;
+        }
+        .mobile-nav,
+        .mobile-toc {
+          display: block;
+          margin-bottom: 20px;
+          border: 1px solid var(--line);
+          border-radius: var(--r);
+          background: var(--white);
+        }
+        .mobile-nav summary,
+        .mobile-toc summary {
+          min-height: 48px;
+          padding: 13px 16px;
+          font-weight: 750;
+          cursor: pointer;
+        }
+        .mobile-nav nav,
+        .mobile-toc nav {
+          display: grid;
+          padding: 0 10px 10px;
+        }
+        .mobile-nav a,
+        .mobile-toc a {
+          min-height: 44px;
+          padding: 10px;
+          color: var(--muted);
+          text-decoration: none;
+          border-top: 1px solid var(--line);
+        }
+        .hero {
+          margin-bottom: 32px;
+        }
+        .outcome {
+          grid-template-columns: 1fr;
+          gap: 8px;
+          margin-bottom: 54px;
+        }
+        .section-head {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        .method {
+          grid-template-columns: 1fr;
+        }
+        .persona-body {
+          grid-template-columns: 1fr;
+        }
+        .persona-block:nth-last-child(2) {
+          border-bottom: 1px solid var(--line);
+        }
+        .main-job {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+        .hypothesis-jobs,
+        .cut-list {
+          grid-template-columns: 1fr;
+        }
+        .matrix-wrap {
+          overflow: visible;
+          border: 0;
+          background: transparent;
+        }
+        .matrix-wrap table,
+        .matrix-wrap thead,
+        .matrix-wrap tbody {
+          display: block;
+          min-width: 0;
+        }
+        .matrix-wrap thead {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+        }
+        .matrix-wrap tr {
+          display: block;
+          margin-bottom: 14px;
+          background: var(--white);
+          border: 1px solid var(--line2);
+          border-radius: var(--r);
+          overflow: hidden;
+        }
+        .matrix-wrap th,
+        .matrix-wrap td {
+          display: grid;
+          grid-template-columns: 120px 1fr;
+          gap: 12px;
+          width: auto;
+          padding: 12px 14px;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .matrix-wrap tbody th {
+          display: block;
+          background: var(--ink);
+          color: #fff;
+          font-size: 14px;
+        }
+        .matrix-wrap td::before {
+          content: attr(data-label);
+          color: var(--muted);
+          font-size: 10px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+        .matrix-wrap tr > *:last-child {
+          border-bottom: 0;
+        }
+      }
+      @media (max-width: 520px) {
+        main {
+          padding-inline: 16px;
+        }
+        .hero h1 {
+          font-size: 39px;
+        }
+        .hero > p {
+          font-size: 16px;
+        }
+        .section-head h2 {
+          font-size: 28px;
+        }
+        .persona-body {
+          padding-inline: 16px;
+        }
+        .matrix-wrap th,
+        .matrix-wrap td {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+        .question {
+          padding: 16px;
+        }
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .hero {
+          animation: reveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes reveal {
+          from {
+            opacity: 0.75;
+            clip-path: inset(0 0 14%);
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            clip-path: inset(0);
+            transform: none;
+          }
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Direction: inherit Lesson 1 warm editorial research notebook. Read mode. Evidence status must remain visible at point of claim. -->
+    <a class="skip" href="#content">Перейти до матеріалу</a>
+    <div class="layout">
+      <aside class="rail">
+        <p class="course">Design Engineering</p>
+        <p class="progress" id="progress">Урок 2 із 12</p>
+        <nav class="lessons" aria-label="Уроки курсу">
+          <a href="../research/research.html"
+            ><span class="num">01</span
+            ><span>Ресерч і бенчмарк<span class="state">Готово</span></span></a
+          ><a href="?lesson=2" data-lesson="2"
+            ><span class="num">02</span
+            ><span>Персони і JTBD<span class="state">Готово</span></span></a
+          ><a href="?lesson=3" data-lesson="3"
+            ><span class="num">03</span
+            ><span
+              >Інформаційна архітектура<span class="state"
+                >Незабаром</span
+              ></span
+            ></a
+          ><a href="?lesson=4" data-lesson="4"
+            ><span class="num">04</span
+            ><span
+              >Прототипування і вайрфреймінг<span class="state"
+                >Незабаром</span
+              ></span
+            ></a
+          ><a href="?lesson=5" data-lesson="5"
+            ><span class="num">05</span
+            ><span
+              >Тон оф войс і мікрокопі<span class="state">Незабаром</span></span
+            ></a
+          ><a href="?lesson=6" data-lesson="6"
+            ><span class="num">06</span
+            ><span>Концепт<span class="state">Незабаром</span></span></a
+          ><a href="?lesson=7" data-lesson="7"
+            ><span class="num">07</span
+            ><span>Збірка UI<span class="state">Незабаром</span></span></a
+          ><a href="?lesson=8" data-lesson="8"
+            ><span class="num">08</span
+            ><span>Design Tokens<span class="state">Незабаром</span></span></a
+          ><a href="?lesson=9" data-lesson="9"
+            ><span class="num">09</span
+            ><span>Дизайн-система<span class="state">Незабаром</span></span></a
+          ><a href="?lesson=10" data-lesson="10"
+            ><span class="num">10</span
+            ><span>Responsive<span class="state">Незабаром</span></span></a
+          ><a href="?lesson=11" data-lesson="11"
+            ><span class="num">11</span
+            ><span
+              >Анімація і мікроінтеракції<span class="state"
+                >Незабаром</span
+              ></span
+            ></a
+          ><a href="?lesson=12" data-lesson="12"
+            ><span class="num">12</span
+            ><span
+              >Хендофф і документація<span class="state">Незабаром</span></span
+            ></a
+          >
+        </nav>
+        <nav class="toc" id="desktop-toc" aria-label="Розділи уроку">
+          <p>У цьому уроці</p>
+          <a href="#method">Метод</a><a href="#personas">Персони</a
+          ><a href="#jobs">Jobs</a><a href="#matrix">Матриця</a
+          ><a href="#decisions">Рішення</a><a href="#cut">Не в MVP</a
+          ><a href="#research-next">Що перевіряємо</a>
+        </nav>
+      </aside>
+      <main id="content">
+        <details class="mobile-nav">
+          <summary id="mobile-summary">Урок 02 із 12 · Персони і JTBD</summary>
+          <nav>
+            <a href="../research/research.html">01 · Ресерч і бенчмарк</a
+            ><a href="?lesson=2" data-lesson="2">02 · Персони і JTBD</a
+            ><a href="?lesson=3" data-lesson="3"
+              >03 · Інформаційна архітектура</a
+            ><a href="?lesson=4" data-lesson="4"
+              >04 · Прототипування і вайрфреймінг</a
+            ><a href="?lesson=5" data-lesson="5">05 · Тон оф войс і мікрокопі</a
+            ><a href="?lesson=6" data-lesson="6">06 · Концепт</a
+            ><a href="?lesson=7" data-lesson="7">07 · Збірка UI</a
+            ><a href="?lesson=8" data-lesson="8">08 · Design Tokens</a
+            ><a href="?lesson=9" data-lesson="9">09 · Дизайн-система</a
+            ><a href="?lesson=10" data-lesson="10">10 · Responsive</a
+            ><a href="?lesson=11" data-lesson="11">11 · Анімація</a
+            ><a href="?lesson=12" data-lesson="12">12 · Хендофф</a>
+          </nav>
+        </details>
+        <details class="mobile-toc">
+          <summary>Зміст цього уроку</summary>
+          <nav>
+            <a href="#method">Метод</a><a href="#personas">Персони</a
+            ><a href="#jobs">Jobs</a><a href="#matrix">Матриця</a
+            ><a href="#decisions">Рішення</a><a href="#cut">Не в MVP</a
+            ><a href="#research-next">Що перевіряємо</a>
+          </nav>
+        </details>
+        <article id="lesson-two">
+          <header class="hero">
+            <h1>Від припущень про людей — до перевірюваних jobs</h1>
+            <p>
+              Три ситуації пошуку житла, потреби людей і рішення, які вже можна
+              обговорювати — або ще рано приймати без розмов із людьми.
+            </p>
+            <div class="hero-meta">
+              <span class="pill">2 робочі персони</span
+              ><span class="pill">1 неперевірений сценарій</span
+              ><span class="pill">M1 + R1–R5</span>
+            </div>
+          </header>
+          <div class="outcome">
+            <strong>Після уроку</strong>
+            <div>
+              <p>
+                Ви побачите, як ситуація людини веде до job, а job — до ідеї для
+                продукту. Також буде видно, чого ми ще не знаємо.
+              </p>
+              <div class="legend">
+                <span class="evidence market">Факт про ринок</span
+                ><span class="evidence need">[? потреба]</span
+                ><span class="evidence effect">[? ефект]</span
+                ><span class="legend-note"
+                  >Ми ще не знаємо, які jobs важливіші: для оцінок 1–3 треба
+                  поговорити з людьми або побачити їхні реальні дії.</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <section id="method">
+            <div class="section-head">
+              <h2>Як зібрана модель</h2>
+              <p>
+                Якщо щось є в іншому продукті, це ще не означає, що людям це
+                справді потрібно.
+              </p>
+            </div>
+            <div class="method">
+              <div>
+                <b>Робоча персона</b>
+                <p>
+                  Робочий сценарій для проєктування й рекрутингу. Не
+                  демографічний факт.
+                </p>
+              </div>
+              <div>
+                <b>Job · бажаний прогрес</b>
+                <p>
+                  «Коли [ситуація], хочу [прогрес], щоб [результат]». Без назв
+                  функцій.
+                </p>
+              </div>
+              <div>
+                <b>Наскільки це доведено</b>
+                <p>
+                  Окремо позначаємо факт про ринок, неперевірену потребу й
+                  невідомий ефект рішення.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="personas">
+            <div class="section-head">
+              <h2>Люди й ситуації</h2>
+              <p>
+                Ролі існують на ринку. Імена, вік, причини та важливість jobs
+                залишаються синтетичними.
+              </p>
+            </div>
+            <div class="persona-grid">
+              <article class="persona primary-card">
+                <div class="persona-head">
+                  <div class="persona-title">
+                    <div>
+                      <h3>Марта</h3>
+                      <p class="persona-role">
+                        Шукає кімнату після переїзду до Києва
+                        <b class="unknown">[? потреба]</b>
+                      </p>
+                    </div>
+                    <span class="evidence primary">Основний сценарій [?]</span>
+                  </div>
+                  <p class="persona-summary">
+                    <b class="unknown">[? змодельована потреба]</b> Хоче звузити
+                    вибір, зрозуміти людину до контакту й перейти до
+                    домовленості без невиправданого ризику.
+                  </p>
+                </div>
+                <details>
+                  <summary>Контекст, болі й докази</summary>
+                  <div class="persona-body">
+                    <div class="persona-block">
+                      <h4>Контекст</h4>
+                      <p>
+                        <b class="unknown">[?]</b> 25 років, нова робота, три
+                        тижні до переїзду; ціла квартира задорога.
+                      </p>
+                    </div>
+                    <div class="persona-block">
+                      <h4>Jobs</h4>
+                      <ul>
+                        <li>R1 · звузити пошук</li>
+                        <li>R2 · зрозуміти довіру</li>
+                        <li>R3 · оцінити побут</li>
+                        <li>R4 · перейти до домовленості</li>
+                        <li>R5 · зберегти контроль</li>
+                      </ul>
+                    </div>
+                    <div class="persona-block">
+                      <h4>Болі</h4>
+                      <p>
+                        OLX не сегментований під співмешканців; у Facebook
+                        задокументовані випадки шахрайства. Наслідки для Марти —
+                        <b class="unknown">[? потреба]</b>.
+                      </p>
+                      <span class="source"
+                        ><a href="../research/research.html#konkurenty"
+                          >Конкурентна матриця</a
+                        ></span
+                      >
+                    </div>
+                    <div class="persona-block">
+                      <h4>Довіра</h4>
+                      <p>
+                        <b class="unknown">[? ефект]</b> Повний профіль і точний
+                        тип перевірки можуть впливати на готовність
+                        контактувати.
+                      </p>
+                      <span class="source"
+                        ><a href="../research/research.html#benchmark"
+                          >Бенчмарк довіри</a
+                        ></span
+                      >
+                    </div>
+                  </div>
+                </details>
+              </article>
+              <article class="persona">
+                <div class="persona-head">
+                  <div class="persona-title">
+                    <div>
+                      <h3>Андрій</h3>
+                      <p class="persona-role">
+                        Шукає заміну сусідові <b class="unknown">[? потреба]</b>
+                      </p>
+                    </div>
+                    <span class="pill">Додатковий сценарій [?]</span>
+                  </div>
+                  <p class="persona-summary">
+                    <b class="unknown">[? змодельована потреба]</b> Хоче описати
+                    вільне місце, оцінити кандидатів і домовитися, не втрачаючи
+                    контроль над контактом.
+                  </p>
+                </div>
+                <details>
+                  <summary>Контекст, болі й докази</summary>
+                  <div class="persona-body">
+                    <div class="persona-block">
+                      <h4>Контекст</h4>
+                      <p>
+                        <b class="unknown">[?]</b> 29 років, сусід з’їжджає;
+                        ризикує сам покривати оренду.
+                      </p>
+                    </div>
+                    <div class="persona-block">
+                      <h4>Jobs</h4>
+                      <ul>
+                        <li>R1 · звузити кандидатів</li>
+                        <li>R2 · зрозуміти довіру</li>
+                        <li>R3 · оцінити побут</li>
+                        <li>R4 · перейти до домовленості</li>
+                        <li>R5 · зберегти контроль</li>
+                      </ul>
+                    </div>
+                    <div class="persona-block">
+                      <h4>Болі</h4>
+                      <p>
+                        <b class="unknown">[? потреба]</b> Неструктуровані
+                        профілі можуть створювати ручний відсів і повторні
+                        переписки.
+                      </p>
+                      <span class="source"
+                        ><a href="../research/research.html#konkurenty"
+                          >Глибина профілів на ринку</a
+                        ></span
+                      >
+                    </div>
+                    <div class="persona-block">
+                      <h4>Довіра</h4>
+                      <p>
+                        <b class="unknown">[? ефект]</b> Конкретні відповіді та
+                        чіткий сигнал перевірки можуть впливати на вибір.
+                      </p>
+                      <span class="source"
+                        ><a href="../research/research.html#benchmark"
+                          >Межі trust-сигналів</a
+                        ></span
+                      >
+                    </div>
+                  </div>
+                </details>
+              </article>
+              <article class="persona scenario">
+                <div class="persona-head">
+                  <div class="persona-title">
+                    <div>
+                      <h3>Олена</h3>
+                      <p class="persona-role">
+                        Спершу шукає людину, потім житло
+                        <b class="unknown">[? потреба]</b>
+                      </p>
+                    </div>
+                    <span class="evidence need">Сценарій-кандидат</span>
+                  </div>
+                  <p class="persona-summary">
+                    Buddy-up існує у SpareRoom, але локальний попит у Києві не
+                    досліджено. Поки що це лише сценарій-кандидат.
+                  </p>
+                </div>
+                <details>
+                  <summary>Що відомо і чого не знаємо</summary>
+                  <div class="persona-body">
+                    <div class="persona-block">
+                      <h4>Факт про ринок</h4>
+                      <p>SpareRoom має Buddy Ups для спільного пошуку житла.</p>
+                      <span class="source"
+                        ><a href="../research/screens/spareroom.png"
+                          >Скрін SpareRoom</a
+                        ></span
+                      >
+                    </div>
+                    <div class="persona-block">
+                      <h4>Невідоме</h4>
+                      <p>
+                        Частота сценарію в Києві, потрібна координація, критерії
+                        вибору й готовність користуватися окремим сервісом.
+                      </p>
+                    </div>
+                  </div>
+                </details>
+              </article>
+            </div>
+            <div class="why-primary">
+              <p>
+                <b>Чому починаємо з Марти?</b> Її обрано для прототипування, бо
+                сценарій найповніше проходить поточний базовий шлях Кутка. Це не
+                доказ розміру чи цінності сегмента.
+              </p>
+              <p>
+                <b class="unknown">[? пріоритет]</b> Статуси Марти й Андрія
+                задають фокус наступного тесту. Їх треба переглянути після
+                порівняння частоти, гостроти та успішності сценаріїв.
+              </p>
+            </div>
+          </section>
+
+          <section id="jobs">
+            <div class="section-head">
+              <h2>Ієрархія jobs</h2>
+              <p>
+                ID потрібні для зв’язків між секціями й не означають порядок
+                важливості.
+              </p>
+            </div>
+            <div class="main-job">
+              <span class="job-id">M1 · ГОЛОВНИЙ</span>
+              <div>
+                <blockquote>
+                  Коли мені потрібно організувати спільне проживання, я хочу
+                  знайти взаємно прийнятну людину й умови, щоб обидві сторони
+                  могли перейти до узгодженого наступного кроку.
+                </blockquote>
+                <p>
+                  <b class="unknown">Потреба [?] · важливість [?]</b> Ролі та
+                  шлях до контакту підтверджені лише механіками ринку. Фактичне
+                  заселення і його успішність платформа не підтверджує.
+                  <a href="../research/research.html#patterny">Джерело</a>.
+                </p>
+              </div>
+            </div>
+            <div class="job-list">
+              <article class="job">
+                <span class="job-id">R1</span>
+                <div>
+                  <h3>Звузити вибір</h3>
+                  <p class="statement">
+                    Коли варіантів багато, я хочу відсіяти ті, що не
+                    відповідають базовим умовам, щоб витрачати час лише на
+                    потенційно придатні.
+                  </p>
+                  <div class="job-meta">
+                    <span class="evidence market">Фільтри поширені</span
+                    ><span class="evidence need">[? потреба]</span
+                    ><span class="evidence need">[? важливість]</span>
+                  </div>
+                  <p class="job-note">
+                    Персони: Марта, Андрій. Дані: ціна, дата й локація в OLX,
+                    Roomster, LUN, Badi.
+                    <a href="../research/research.html#konkurenty">Джерело</a>.
+                  </p>
+                </div>
+              </article>
+              <article class="job">
+                <span class="job-id">R2</span>
+                <div>
+                  <h3>Зменшити невизначеність щодо іншої сторони</h3>
+                  <p class="statement">
+                    Коли я розглядаю незнайому людину або оголошення, я хочу
+                    зменшити невизначеність щодо їхньої реальності й намірів,
+                    щоб вирішити, чи варто вкладати час і переходити до
+                    контакту.
+                  </p>
+                  <div class="job-meta">
+                    <span class="evidence market">Trust-сигнали поширені</span
+                    ><span class="evidence need">[? потреба]</span
+                    ><span class="evidence need">[? важливість]</span
+                    ><span class="evidence effect">[? ефект рішення]</span>
+                  </div>
+                  <p class="job-note">
+                    Персони: Марта, Андрій. Дані: телефон, email, ID, рахунок
+                    або перевірка житла — різні, не взаємозамінні сигнали.
+                    <a href="../research/research.html#benchmark">Бенчмарк</a>.
+                  </p>
+                </div>
+              </article>
+              <article class="job">
+                <span class="job-id">R3</span>
+                <div>
+                  <h3>Оцінити спільний побут</h3>
+                  <p class="statement">
+                    Коли базові умови підходять, я хочу зрозуміти спосіб життя й
+                    очікування іншої людини, щоб оцінити, чи зможемо ми
+                    домовлятися про побут.
+                  </p>
+                  <div class="job-meta">
+                    <span class="evidence market">Механіка є</span
+                    ><span class="evidence need">[? потреба]</span
+                    ><span class="evidence need">[? важливість]</span
+                    ><span class="evidence need">[? критерії]</span>
+                  </div>
+                  <p class="job-note">
+                    Персони: Марта, Андрій. Дані: детальні профілі Roomster і
+                    lifestyle-matching Diggz; вплив невідомий.
+                    <a href="../research/research.html#konkurenty">Джерело</a>.
+                  </p>
+                </div>
+              </article>
+              <article class="job">
+                <span class="job-id">R4</span>
+                <div>
+                  <h3>Перейти до домовленості</h3>
+                  <p class="statement">
+                    Коли варіант виглядає придатним, я хочу уточнити умови й
+                    наміри іншої сторони, щоб вирішити, чи переходити до
+                    знайомства або перегляду.
+                  </p>
+                  <div class="job-meta">
+                    <span class="evidence market">Прямий контакт поширений</span
+                    ><span class="evidence need">[? потреба]</span
+                    ><span class="evidence need">[? важливість]</span
+                    ><span class="evidence effect">[? кращий шлях]</span>
+                  </div>
+                  <p class="job-note">
+                    Персони: Марта, Андрій. Локальні конкуренти ведуть до
+                    прямого контакту; перевага над mutual consent не
+                    тестувалась.
+                    <a href="../research/research.html#patterny">Джерело</a>.
+                  </p>
+                </div>
+              </article>
+              <article class="job">
+                <span class="job-id">R5</span>
+                <div>
+                  <h3>Відновити безпеку й контроль</h3>
+                  <p class="statement">
+                    Коли взаємодія стає небажаною або підозрілою, я хочу
+                    повернути контроль над ситуацією, щоб мати змогу припинити
+                    ризиковану взаємодію.
+                  </p>
+                  <div class="job-meta">
+                    <span class="evidence need">[? потреба]</span
+                    ><span class="evidence need">[? важливість]</span
+                    ><span class="evidence need">[? частота]</span
+                    ><span class="evidence effect"
+                      >[? достатність рішення]</span
+                    >
+                  </div>
+                  <p class="job-note">
+                    Персони: Марта, Андрій. Ризик спаму названо гіпотезою;
+                    конкурентне покриття системно не досліджено.
+                    <a href="../research/research.html#patterny">Межа даних</a>.
+                  </p>
+                </div>
+              </article>
+            </div>
+            <div class="hypothesis-jobs">
+              <article class="hypothesis-job">
+                <h3>E1 · Емоційний [?] · Марта, Андрій</h3>
+                <p>
+                  Коли строк пошуку стискається, я хочу відчувати, що ситуація
+                  залишається під контролем, щоб менше тривожитися через
+                  невизначеність житла.
+                </p>
+              </article>
+              <article class="hypothesis-job">
+                <h3>E2 · Емоційний [?] · Марта, Андрій</h3>
+                <p>
+                  Коли я оцінюю незнайому людину, я хочу мати достатню
+                  впевненість у виборі, щоб наступний крок не здавався стрибком
+                  у невідомість.
+                </p>
+              </article>
+              <article class="hypothesis-job">
+                <h3>S1 · Соціальний [?] · усі сценарії</h3>
+                <p>
+                  Коли я представляю себе іншій стороні, я хочу виглядати
+                  надійним кандидатом, щоб мене не відсіяли як незрозумілий
+                  ризик.
+                </p>
+              </article>
+              <article class="hypothesis-job">
+                <h3>S2 · Соціальний [?] · Марта, Олена</h3>
+                <p>
+                  Коли я пояснюю близьким свій вибір, я хочу показати підстави
+                  рішення, щоб не виглядати необачною.
+                </p>
+              </article>
+              <article class="hypothesis-job">
+                <h3>H1 · Практичний [?] · Олена</h3>
+                <p>
+                  Коли ми знайшли одне одного, але ще не маємо житла, я хочу
+                  узгодити спільні критерії та наступні дії, щоб шукати квартиру
+                  без дублювання й суперечливих домовленостей.
+                </p>
+              </article>
+              <article class="hypothesis-job">
+                <h3>F2 · Практичний [?] · усі сценарії</h3>
+                <p>
+                  Коли ми погодилися жити разом, я хочу зафіксувати правила,
+                  платежі й особисті межі, щоб до заселення однаково розуміти
+                  домовленість.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section id="matrix">
+            <div class="section-head">
+              <h2>JTBD-матриця</h2>
+              <p>
+                Матриця показує, для кого job може бути доречним і на чому
+                тримається це припущення. Важливість ми не вигадуємо.
+              </p>
+            </div>
+            <p class="matrix-note">
+              <span class="evidence need">[? потреба]</span
+              ><span class="evidence effect">[? ефект]</span
+              ><span>Оцінок 1–3 немає, доки ми не поговорили з людьми.</span>
+            </p>
+            <div
+              class="matrix-wrap"
+              tabindex="0"
+              role="region"
+              aria-label="JTBD-матриця"
+            >
+              <table>
+                <caption>
+                  Jobs, сценарії, функції-кандидати й механіки конкурентів
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Що людина хоче зробити</th>
+                    <th scope="col">Марта</th>
+                    <th scope="col">Андрій</th>
+                    <th scope="col">Олена</th>
+                    <th scope="col">Функція-кандидат</th>
+                    <th scope="col">Ринок</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">M1 · Організувати спільне проживання</th>
+                    <td data-label="Марта">
+                      <span class="unknown">потреба [?] · важливість [?]</span
+                      ><br />Роль шукача є на ринку
+                    </td>
+                    <td data-label="Андрій">
+                      <span class="unknown">потреба [?] · важливість [?]</span
+                      ><br />Роль автора пропозиції є на ринку
+                    </td>
+                    <td data-label="Олена">
+                      <span class="unknown">сценарій [?] · важливість [?]</span
+                      ><br />Buddy Ups у SpareRoom
+                    </td>
+                    <td data-label="Функція">
+                      Публікація, видача, профіль, контакт
+                    </td>
+                    <td data-label="Ринок">
+                      Базово так; результат співжиття невідомий.
+                      <a href="../research/research.html#konkurenty">Доказ</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">R1 · Звузити вибір</th>
+                    <td data-label="Марта">
+                      <span class="unknown">потреба [?] · важливість [?]</span
+                      ><br />Критерії змодельовані з фільтрів
+                    </td>
+                    <td data-label="Андрій">
+                      <span class="unknown">потреба [?] · важливість [?]</span
+                      ><br />Роль релевантна
+                    </td>
+                    <td data-label="Олена">
+                      <span class="unknown">потреба [?] · важливість [?]</span
+                      ><br />Спільні критерії не досліджено
+                    </td>
+                    <td data-label="Функція">Ціна, дата, локація, умови</td>
+                    <td data-label="Ринок">
+                      Широко закрито фільтрами.
+                      <a href="../research/research.html#konkurenty">Доказ</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">R2 · Зменшити невизначеність</th>
+                    <td data-label="Марта">
+                      <span class="unknown">потреба [?] · важливість [?]</span
+                      ><br />Незнайома сторона в сценарії
+                    </td>
+                    <td data-label="Андрій">
+                      <span class="unknown">потреба [?] · важливість [?]</span
+                      ><br />Незнайомий кандидат у сценарії
+                    </td>
+                    <td data-label="Олена">
+                      <span class="unknown">сценарій [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Функція">
+                      Профіль; точний тип і межа сигналу
+                    </td>
+                    <td data-label="Ринок">
+                      Частково; людський ефект невідомий.
+                      <a href="../research/research.html#benchmark">Доказ</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">R3 · Оцінити спільний побут</th>
+                    <td data-label="Марта">
+                      <span class="unknown"
+                        >потреба [?] · важливість [?] · критерії [?]</span
+                      >
+                    </td>
+                    <td data-label="Андрій">
+                      <span class="unknown"
+                        >потреба [?] · важливість [?] · критерії [?]</span
+                      >
+                    </td>
+                    <td data-label="Олена">
+                      <span class="unknown">сценарій [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Функція">Структуровані очікування</td>
+                    <td data-label="Ринок">
+                      Roomster і Diggz; ефект невідомий.
+                      <a href="../research/research.html#konkurenty">Доказ</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">R4 · Перейти до домовленості</th>
+                    <td data-label="Марта">
+                      <span class="unknown">потреба [?] · важливість [?]</span
+                      ><br />Прямий контакт є на ринку
+                    </td>
+                    <td data-label="Андрій">
+                      <span class="unknown">потреба [?] · важливість [?]</span
+                      ><br />Роль релевантна
+                    </td>
+                    <td data-label="Олена">
+                      <span class="unknown">шлях [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Функція">Контакт, актуальність умов</td>
+                    <td data-label="Ринок">
+                      Здебільшого так; найкращий шлях невідомий.
+                      <a href="../research/research.html#patterny">Доказ</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">R5 · Відновити контроль</th>
+                    <td data-label="Марта">
+                      <span class="unknown"
+                        >потреба [?] · важливість [?] · частота [?]</span
+                      >
+                    </td>
+                    <td data-label="Андрій">
+                      <span class="unknown"
+                        >потреба [?] · важливість [?] · частота [?]</span
+                      >
+                    </td>
+                    <td data-label="Олена">
+                      <span class="unknown">сценарій [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Функція">
+                      Припинення контакту, скарга, розгляд
+                    </td>
+                    <td data-label="Ринок">
+                      <span class="unknown">[?]</span> Покриття системно не
+                      досліджено.
+                      <a href="../research/research.html#patterny">Межа</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">E1 · Відчувати контроль у строках</th>
+                    <td data-label="Марта">
+                      <span class="unknown">job [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Андрій">
+                      <span class="unknown">job [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Олена">
+                      <span class="unknown">даних немає [?]</span>
+                    </td>
+                    <td data-label="Функція">
+                      Актуальність і стан домовленостей — лише кандидат
+                    </td>
+                    <td data-label="Ринок">
+                      <span class="unknown">[? ефект]</span> Сповіщення є,
+                      емоцію не виміряно.
+                      <a href="../research/research.html#konkurenty">Доказ</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">E2 · Відчувати впевненість у виборі</th>
+                    <td data-label="Марта">
+                      <span class="unknown">job [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Андрій">
+                      <span class="unknown">job [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Олена">
+                      <span class="unknown">job [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Функція">
+                      Профіль і точні сигнали — лише кандидати
+                    </td>
+                    <td data-label="Ринок">
+                      <span class="unknown">[? ефект]</span> Механіки є,
+                      впевненість не виміряно.
+                      <a href="../research/research.html#benchmark">Доказ</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">S1 · Виглядати надійним кандидатом</th>
+                    <td data-label="Марта">
+                      <span class="unknown">потреба [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Андрій">
+                      <span class="unknown">потреба [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Олена">
+                      <span class="unknown">потреба [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Функція">
+                      Однаково докладний профіль для обох сторін — лише кандидат
+                    </td>
+                    <td data-label="Ринок">
+                      Профілі є; чи допомагають вони виглядати надійніше —
+                      невідомо.
+                      <a href="../research/research.html#konkurenty">Доказ</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">S2 · Пояснити вибір близьким</th>
+                    <td data-label="Марта">
+                      <span class="unknown">job [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Андрій">
+                      <span class="unknown">даних немає [?]</span>
+                    </td>
+                    <td data-label="Олена">
+                      <span class="unknown">job [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Функція">
+                      <span class="unknown">[?]</span> Рано визначати
+                    </td>
+                    <td data-label="Ринок">
+                      <span class="unknown">[?]</span> Не досліджувався
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">H1 · Координувати спільний пошук</th>
+                    <td data-label="Марта">
+                      <span class="unknown">не базовий сценарій [?]</span>
+                    </td>
+                    <td data-label="Андрій">
+                      <span class="unknown">не базовий сценарій [?]</span>
+                    </td>
+                    <td data-label="Олена">
+                      <span class="unknown">потреба [?] · важливість [?]</span
+                      ><br />Buddy-up існує
+                    </td>
+                    <td data-label="Функція">
+                      Спільні критерії й наступні дії — лише кандидат
+                    </td>
+                    <td data-label="Ринок">
+                      <span class="unknown">[?]</span> Buddy Ups є, координацію
+                      не зафіксовано.
+                      <a href="../research/screens/spareroom.png">Скрін</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">F2 · Зафіксувати правила й платежі</th>
+                    <td data-label="Марта">
+                      <span class="unknown">job [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Андрій">
+                      <span class="unknown">job [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Олена">
+                      <span class="unknown">job [?] · важливість [?]</span>
+                    </td>
+                    <td data-label="Функція">
+                      Збереження домовленостей — лише кандидат
+                    </td>
+                    <td data-label="Ринок">
+                      Coliving ONE має правила; поведінку
+                      marketplace-користувачів не досліджено.
+                      <a href="../research/research.html#konkurenty">Доказ</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <span class="source"
+              >Докази:
+              <a href="../research/research.html#konkurenty">конкуренти</a> ·
+              <a href="../research/research.html#benchmark">бенчмарк</a> ·
+              <a href="../research/research.html#patterny">патерни</a>.</span
+            >
+          </section>
+
+          <section id="decisions">
+            <div class="section-head">
+              <h2>Що беремо в продукт</h2>
+              <p>
+                Біля кожного рішення вказано job. Це пояснює, навіщо воно
+                потрібне, але ще не доводить, що рішення спрацює.
+              </p>
+            </div>
+            <div class="decision-grid">
+              <article class="decision">
+                <h3>Базові речі</h3>
+                <ul>
+                  <li><b>R1</b> → відсіяти невідповідні варіанти.</li>
+                  <li><b>M1/R2</b> → побачити людину й умови.</li>
+                  <li><b>R4</b> → перейти до розмови.</li>
+                </ul>
+                <span class="source"
+                  >Базовий шлях: пошук → профіль → контакт. Потреба й важливість
+                  — [?].</span
+                >
+              </article>
+              <article class="decision differentiator">
+                <h3>Чим можемо відрізнятися [?]</h3>
+                <ul>
+                  <li><b>R2</b> → чесно показувати, що саме перевірено.</li>
+                  <li><b>R3</b> → показувати очікування про спільний побут.</li>
+                </ul>
+                <span class="source"
+                  >Такі механіки є в Roomster, Diggz і Badi. Чи допоможуть вони
+                  людям у Києві — [?].</span
+                >
+              </article>
+              <article class="decision safety">
+                <h3>Безпека контакту</h3>
+                <ul>
+                  <li><b>R5</b> → припинити небажану розмову.</li>
+                  <li><b>R5</b> → поскаржитися й побачити стан розгляду.</li>
+                </ul>
+                <span class="source"
+                  >Це необхідний захист у прямому чаті. Чи цього достатньо —
+                  [?].</span
+                >
+              </article>
+              <article class="decision later">
+                <h3>Відкладаємо</h3>
+                <ul>
+                  <li><b>R2</b> → ID/selfie, risk score і ratings.</li>
+                  <li><b>H1</b> → спільне ведення пошуку.</li>
+                  <li><b>F2</b> → запис правил і платежів.</li>
+                </ul>
+                <span class="source"
+                  >Спершу треба підтвердити потребу. Для ratings також потрібен
+                  доказ, що люди справді жили разом.</span
+                >
+              </article>
+            </div>
+          </section>
+
+          <section id="cut">
+            <div class="section-head">
+              <h2>Що не тягнемо в MVP</h2>
+              <p>
+                Не тому, що ці функції не можуть закривати jobs, а тому, що їхня
+                потреба, вартість або механіка не досліджені.
+              </p>
+            </div>
+            <div class="cut-list">
+              <article class="cut">
+                <h3>Paywall першого контакту</h3>
+                <p>
+                  Не закриває користувацький job і може створити бар’єр.
+                  Готовність платити невідома.
+                </p>
+              </article>
+              <article class="cut">
+                <h3>Обов’язковий mutual match</h3>
+                <p>
+                  Не є окремим job. Його safety-користь і вплив на контакти
+                  треба порівняти, не вгадувати.
+                </p>
+              </article>
+              <article class="cut">
+                <h3>ID, selfie, risk score → R2</h3>
+                <p>
+                  Можуть зменшувати невизначеність для Марти й Андрія, але
+                  privacy, точність, провайдер і операційна модель не
+                  досліджені.
+                </p>
+              </article>
+              <article class="cut">
+                <h3>Ratings після проживання → R2</h3>
+                <p>
+                  Можуть підтримати оцінку іншої сторони для Марти й Андрія, але
+                  потребують підтвердженої події співжиття й захисту від змови
+                  або помсти.
+                </p>
+              </article>
+              <article class="cut">
+                <h3>Buddy-up координація → H1</h3>
+                <p>
+                  Може підтримати сценарій Олени, але локальна потреба й шлях
+                  після знайомства не підтверджені.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section id="research-next">
+            <div class="section-head">
+              <h2>Що перевіряємо далі</h2>
+              <p>
+                Три питання, які найбільше змінять персон, jobs і наступний
+                дизайн-рішення.
+              </p>
+            </div>
+            <div class="research-next">
+              <article class="question">
+                <h3>Що реально визначає вибір?</h3>
+                <p>
+                  Які умови люди перевіряють першими, через що відкидають
+                  варіанти і що змушує написати?
+                </p>
+                <p class="changes">
+                  <b>Змінить:</b> основний сценарій, порядок R1–R3, склад
+                  профілю. Шукати в останніх кейсах OLX/FB та інтерв’ю.
+                </p>
+              </article>
+              <article class="question">
+                <h3>Який контакт прийнятний?</h3>
+                <p>
+                  Які повідомлення ігнорують або блокують та що має бути відомо
+                  про відправника?
+                </p>
+                <p class="changes">
+                  <b>Змінить:</b> R2/R5, direct contact проти mutual consent,
+                  safety-модель.
+                </p>
+              </article>
+              <article class="question">
+                <h3>Який сценарій достатньо болючий?</h3>
+                <p>
+                  Що запускає пошук, скільки є часу і на якому кроці люди
+                  втрачають найбільше?
+                </p>
+                <p class="changes">
+                  <b>Змінить:</b> з кого починати — Марти чи Андрія; чи потрібен
+                  сценарій Олени або відкладений сегмент.
+                </p>
+              </article>
+            </div>
+          </section>
+          <p class="footer">
+            Повні робочі матеріали: <a href="../personas.md">personas.md</a> ·
+            <a href="../jtbd.md">jtbd.md</a> ·
+            <a href="../research/research.html">урок 1 і джерела</a>. Урок 2
+            залишається моделлю для перевірки, а не результатом розмов із
+            людьми.
+          </p>
+        </article>
+        <article id="placeholder" class="placeholder hidden">
+          <p class="num" id="placeholder-num"></p>
+          <h1 id="placeholder-title"></h1>
+          <p>Матеріал цього уроку ще не додано.</p>
+          <a href="?lesson=2">← Повернутися до уроку 2</a>
+        </article>
+      </main>
+    </div>
+    <script>
+      (function () {
+        var requested =
+          Number(new URLSearchParams(location.search).get("lesson")) || 2;
+        if (requested === 1) {
+          location.replace("../research/research.html");
+          return;
+        }
+        var current = requested >= 2 && requested <= 12 ? requested : 2;
+        var titles = [
+          "",
+          "Ресерч і бенчмарк",
+          "Персони і JTBD",
+          "Інформаційна архітектура",
+          "Прототипування і вайрфреймінг",
+          "Тон оф войс і мікрокопі",
+          "Концепт",
+          "Збірка UI",
+          "Design Tokens",
+          "Дизайн-система",
+          "Responsive",
+          "Анімація і мікроінтеракції",
+          "Хендофф і документація",
+        ];
+        document.querySelectorAll("[data-lesson]").forEach(function (a) {
+          if (Number(a.dataset.lesson) === current)
+            a.setAttribute("aria-current", "page");
+        });
+        document.title =
+          "Урок " + current + " — " + titles[current] + " · Design Engineering";
+        document.getElementById("progress").textContent =
+          "Урок " + current + " із 12";
+        document.getElementById("mobile-summary").textContent =
+          "Урок " +
+          String(current).padStart(2, "0") +
+          " із 12 · " +
+          titles[current];
+        if (current !== 2) {
+          document.getElementById("lesson-two").classList.add("hidden");
+          document.getElementById("desktop-toc").classList.add("hidden");
+          document.querySelector(".mobile-toc").classList.add("hidden");
+          document.getElementById("placeholder").classList.remove("hidden");
+          document.getElementById("placeholder-num").textContent =
+            "Урок " + String(current).padStart(2, "0") + " · незабаром";
+          document.getElementById("placeholder-title").textContent =
+            titles[current];
+        }
+        if (current === 2 && "IntersectionObserver" in window) {
+          var links = [].slice.call(document.querySelectorAll(".toc a"));
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (e) {
+                if (e.isIntersecting)
+                  links.forEach(function (a) {
+                    a.classList.toggle("active", a.hash === "#" + e.target.id);
+                  });
+              });
+            },
+            { rootMargin: "-15% 0px -75%" },
+          );
+          document
+            .querySelectorAll("#lesson-two section")
+            .forEach(function (s) {
+              observer.observe(s);
+            });
+        }
+      })();
+    </script>
+  </body>
 </html>

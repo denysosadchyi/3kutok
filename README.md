@@ -19,8 +19,9 @@
 - [index.html](./index.html) — вхід, перенаправляє на урок 1.
 - [research/research.html](./research/research.html) — урок 1 «Ресерч і
   бенчмарк» з сайдбаром на всі 12 уроків.
-- [lessons/index.html](./lessons/index.html) — placeholder для уроків
-  2–12 (`lessons/?lesson=N`); `?lesson=1` веде на урок 1.
+- [lessons/index.html](./lessons/index.html) — готовий урок 2 «Персони і
+  JTBD» та placeholder для уроків 3–12 (`lessons/?lesson=N`); `?lesson=1`
+  веде на урок 1.
 - [research/screens/](./research/screens/README.md) — скріншоти-докази.
 
 ## Структура репо
