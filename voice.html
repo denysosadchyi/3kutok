@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Голос і мікрокопі Кутка: принципи, словник, заборонене, правила для кожного типу тексту та інвентар рядків інтерфейсу.">
+  <link rel="icon" href="data:,">
+  <title>Тон оф войс і мікрокопі · Куток</title>
+  <script>if (new URLSearchParams(location.search).get("embed") === "1") document.documentElement.classList.add("embed");</script>
+  <style>
+    :root {
+      --paper: #faf9f7;
+      --surface: #ffffff;
+      --wash: #f3efe9;
+      --line: #dfd9d0;
+      --line-strong: #c7beb2;
+      --ink: #201e1a;
+      --muted: #696258;
+      --rust: #ad492c;
+      --rust-dark: #78301d;
+      --rust-wash: #f4e4dc;
+      --green: #295142;
+      --green-wash: #e1ece6;
+      --ochre: #684f12;
+      --ochre-wash: #f5ecca;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.58;
+    }
+    ::selection { background: var(--rust-wash); color: var(--ink); }
+    a { color: var(--rust-dark); text-underline-offset: 3px; }
+    code {
+      padding: 1px 6px;
+      border-radius: 5px;
+      background: var(--wash);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .86em;
+    }
+    .skip {
+      position: fixed; z-index: 30; top: 12px; left: 12px;
+      transform: translateY(-160%);
+      padding: 10px 14px; border-radius: 8px;
+      background: var(--ink); color: #fff;
+    }
+    .skip:focus { transform: none; }
+
+    main {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 52px clamp(22px, 4vw, 64px) 110px;
+    }
+    html.embed .skip { display: none; }
+    html.embed main { padding-top: 48px; }
+
+    /* Hero */
+    .hero { margin-bottom: 40px; }
+    .hero h1 { margin: 0 0 14px; }
+    .hero > p { max-width: 64ch; margin: 0; color: var(--muted); font-size: 17px; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 20px; font-size: 13px; color: var(--muted); }
+    .hero-meta b { color: var(--ink); font-weight: 650; }
+
+    section { margin: 0 0 76px; scroll-margin-top: 24px; }
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(240px, 380px);
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 26px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .section-head h2 { margin: 0; font-size: 28px; line-height: 1.15; letter-spacing: -0.02em; }
+    .section-head p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    /* Overview */
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+    }
+    .summary h3 { margin: 0 0 10px; padding-top: 14px; border-top: 2px solid var(--ink); font-size: 16px; }
+    .summary ul { margin: 0; padding-left: 20px; }
+    .summary li + li { margin-top: 8px; }
+    .numbers {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 32px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .numbers div { padding: 16px 18px 16px 0; }
+    .numbers div + div { padding-left: 18px; border-left: 1px solid var(--line); }
+    .numbers b { display: block; font-size: 30px; line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+    .numbers span { color: var(--muted); font-size: 13px; }
+
+    /* Principles */
+    .principle {
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr);
+      gap: 0 20px;
+      padding: 26px 0;
+      border-top: 1px solid var(--line);
+    }
+    .principle:last-of-type { border-bottom: 1px solid var(--line); }
+    .section-head + .principle { border-top: 0; padding-top: 4px; }
+    .principle .n { color: var(--rust); font-size: 30px; font-weight: 750; line-height: 1; font-variant-numeric: tabular-nums; }
+    .principle h3 { margin: 0 0 6px; font-size: 21px; line-height: 1.25; }
+    .principle .rule { max-width: 70ch; margin: 0 0 16px; }
+    .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .say, .dont {
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14.5px;
+    }
+    .say { background: var(--green-wash); }
+    .dont { background: var(--rust-wash); }
+    .say > span, .dont > span {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .say > span { color: var(--green); }
+    .dont > span { color: var(--rust-dark); }
+    .say q, .dont q { display: block; quotes: none; }
+    .say q + q, .dont q + q { margin-top: 4px; }
+    .dont q { text-decoration: line-through; text-decoration-color: rgb(120 48 29 / 45%); }
+    .dont small { color: var(--rust-dark); font-size: 12px; }
+    details.why { margin-top: 12px; font-size: 14px; color: var(--muted); }
+    details.why summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+    details.why ul { margin: 8px 0 0; padding-left: 20px; }
+    details.why li + li { margin-top: 6px; }
+
+    .not-principles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 28px; margin-top: 30px; }
+    .not-principles h4 { margin: 0 0 4px; font-size: 15px; }
+    .not-principles p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    /* Glossary table */
+    .table-wrap { overflow-x: auto; border-top: 2px solid var(--ink); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 11px 12px 11px 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-size: 12px; font-weight: 700; }
+    td:first-child { color: var(--muted); width: 28%; }
+    td strong { font-weight: 650; }
+    td.no { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+    .tag {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 999px;
+      background: var(--wash);
+      color: var(--muted);
+      font-size: 11.5px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+    .two-col h3 { margin: 0 0 10px; font-size: 18px; }
+    .two-col ul { margin: 0; padding-left: 20px; }
+    .two-col li + li { margin-top: 8px; }
+    .words { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 14px; }
+    .words .ok { background: var(--green-wash); color: var(--green); }
+    .words .ban { background: var(--rust-wash); color: var(--rust-dark); text-decoration: line-through; }
+
+    /* Banned */
+    .banned { display: grid; gap: 10px; }
+    .banned .row { display: grid; grid-template-columns: 160px minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: stretch; }
+    .banned .row > b { padding-top: 12px; font-size: 14px; }
+
+    /* Microcopy kinds */
+    .kinds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; }
+    .kind { padding: 20px 0; border-top: 1px solid var(--line); }
+    .kind h3 { margin: 0 0 6px; font-size: 17px; }
+    .kind p { margin: 0 0 12px; font-size: 14.5px; }
+    .kind .pair { grid-template-columns: 1fr; gap: 8px; }
+
+    /* Inventory */
+    .ba { display: grid; gap: 0; border-top: 2px solid var(--ink); }
+    .ba .row { display: grid; grid-template-columns: 70px minmax(0, 1fr) 24px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+    .ba .id { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .ba .was { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+    .ba .arrow { color: var(--muted); }
+    .ba .now { font-weight: 600; }
+    .open-list { margin: 18px 0 0; padding-left: 20px; font-size: 14.5px; }
+    .open-list li + li { margin-top: 8px; }
+    .callout { margin-top: 24px; padding: 14px 16px; border-radius: 10px; background: var(--ochre-wash); font-size: 14.5px; }
+    .callout b { color: var(--ochre); }
+
+    footer { padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+
+    @media (max-width: 860px) {
+      .section-head, .summary, .two-col, .kinds, .not-principles { grid-template-columns: 1fr; }
+      .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .numbers div:nth-child(3) { padding-left: 0; border-left: 0; }
+      .banned .row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .principle { grid-template-columns: 1fr; }
+      .principle .n { margin-bottom: 8px; }
+      .pair { grid-template-columns: 1fr; }
+      .ba .row { grid-template-columns: 1fr; gap: 2px; }
+      .ba .arrow { display: none; }
+    }
+  </style>
+  <link rel="stylesheet" href="assets/styles/lesson-system.css">
+</head>
+<body>
+  <a class="skip" href="#content">Перейти до матеріалу</a>
+  <main id="content">
+    <header class="hero">
+      <h1>Урок 5. Тон оф войс і мікрокопі</h1>
+      <p>Як говорить Куток: чотири принципи, виведені з ресерчу й персон, словник «одне поняття — одне слово», заборонене і правила для кожного типу тексту. Потім — інвентар усіх рядків вайрфреймів і звірка після переписування.</p>
+      <div class="hero-meta">
+        <span><b>4</b> принципи</span>
+        <span><b>29</b> термінів у словнику</span>
+        <span><b>179</b> рядків в інвентарі</span>
+        <span>Джерела: <a href="voice.md">voice.md</a>, <a href="microcopy.md">microcopy.md</a></span>
+      </div>
+    </header>
+
+    <section id="overview">
+      <div class="section-head">
+        <h2>Коротко</h2>
+        <p>Що урок змінив у продукті. Ефект кожного принципу на довіру людей — [?]: інтерв'ю ще не було.</p>
+      </div>
+      <div class="summary">
+        <div>
+          <h3>Що побачили</h3>
+          <ul>
+            <li>У вайрфреймах один предмет мав до шести назв: «оголошення», «кімната», «пропозиція», «варіант».</li>
+            <li>Одну дію називали по-різному: «Повернутися до результатів», «До результатів пошуку», «Повернутися до інших варіантів».</li>
+            <li>Конкуренти підміняють відсутні дані міткою («Договірна», «Адреса: невідома 😔») або обіцяють більше, ніж перевірили («Перевірений користувач»).</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Що вирішили</h3>
+          <ul>
+            <li>Голос стоїть на чотирьох принципах: невідоме — прямо, перевірка — з межею, сторони рівні, наслідок — у тексті.</li>
+            <li>Словник фіксує одне слово на поняття й одну назву на дію на всіх екранах.</li>
+            <li>Звертання — на «ти», кнопки — інфінітивом, без минулого часу про людину.</li>
+            <li>Тексти користувачів (назви, описи, повідомлення) не переписуємо.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="numbers">
+        <div><b>179</b><span>рядків тексту зібрано з 16 вайрфреймів</span></div>
+        <div><b>79</b><span>рядків переписано за voice.md</span></div>
+        <div><b>19</b><span>розбіжностей знайдено: 8 T · 8 D · 3 E</span></div>
+        <div><b>0</b><span>AI-кліше, окликів чи емодзі в нашому тексті</span></div>
+      </div>
+    </section>
+
+    <section id="principles">
+      <div class="section-head">
+        <h2>Принципи</h2>
+        <p>Стосуються тексту, який пише продукт: кнопок, заголовків, підказок, станів і системних повідомлень.</p>
+      </div>
+
+      <article class="principle">
+        <span class="n">1</span>
+        <div>
+          <h3>Чого не знаємо — кажемо прямо</h3>
+          <p class="rule">Коли даних немає, продукт прямо каже, чого саме бракує, і підказує, як це дізнатися. Не лишає поле порожнім і не підставляє мітку замість значення.</p>
+          <div class="pair">
+            <div class="say"><span>Пишемо</span><q>Про куріння й гостей Ірина не написала. Можна запитати в чаті.</q><q>Комунальні: сума не вказана</q></div>
+            <div class="dont"><span>Не пишемо</span><q>Адреса: невідома 😔</q><small>шаблон картки Rooms Київ</small><q>Куріння: —</q></div>
+          </div>
+          <details class="why"><summary>Чому</summary><ul>
+            <li>Конкуренти підміняють значення міткою («Договірна» замість ціни на OLX) або називають прогалину з емоцією й без наступного кроку.</li>
+            <li>Порожній профіль і суперечливі умови можуть відлякувати — [?]. Брак відомостей до першого контакту породжує однакові переписки — [?].</li>
+          </ul></details>
+        </div>
+      </article>
+
+      <article class="principle">
+        <span class="n">2</span>
+        <div>
+          <h3>Перевірку називаємо точно й разом із межею</h3>
+          <p class="rule">Продукт каже, що саме перевірено й коли, і не вживає слів «перевірений», «безпечний», «надійний» про людину чи житло.</p>
+          <div class="pair">
+            <div class="say"><span>Пишемо</span><q>Номер підтверджено 12 вересня</q><q>Це означає лише, що людина має доступ до цього номера.</q></div>
+            <div class="dont"><span>Не пишемо</span><q>Перевірений користувач ✓</q><q>В кінці ви отримаєте безпечну угоду.</q><small>текст сервісу Rooms Київ</small></div>
+          </div>
+          <details class="why"><summary>Чому</summary><ul>
+            <li>SpareRoom ставить «verified user» на 10 з 11 карток, не кажучи, що перевірено.</li>
+            <li>Airbnb прямо застерігає, що верифікація не гарантує особу чи безпеку; LinkedIn радить називати точний сигнал. Рішення MVP — «номер підтверджено».</li>
+            <li>Бейдж, що обіцяє більше, ніж перевірено, відлякує персон.</li>
+          </ul></details>
+        </div>
+      </article>
+
+      <article class="principle">
+        <span class="n">3</span>
+        <div>
+          <h3>Обидві сторони рівні</h3>
+          <p class="rule">Продукт однаково звертається до того, хто має кімнату, і до того, хто шукає. Іншу сторону називає на ім'я й не вживає слів «заявка», «кандидат», «орендодавець».</p>
+          <div class="pair">
+            <div class="say"><span>Пишемо</span><q>Написати Ірині</q><q>Ірина теж може написати тобі першою.</q></div>
+            <div class="dont"><span>Не пишемо</span><q>Подати заявку на кімнату</q><q>Орендодавець розгляне твою кандидатуру</q></div>
+          </div>
+          <details class="why"><summary>Чому</summary><ul>
+            <li>У брифі обидві сторони рівноправні й кожна може написати першою; контакт іде без кроку «подати заявку».</li>
+            <li>Локальні конкуренти заявок не використовують — працює прямий контакт.</li>
+          </ul></details>
+        </div>
+      </article>
+
+      <article class="principle">
+        <span class="n">4</span>
+        <div>
+          <h3>Дія з наслідком — наслідок у тексті</h3>
+          <p class="rule">Кнопки безпеки й незворотні дії простими словами кажуть, що станеться з чатом і людиною, без заспокійливих обіцянок.</p>
+          <div class="pair">
+            <div class="say"><span>Пишемо</span><q>Заблокувати Ірину? Вона більше не зможе тобі написати.</q><q>Скаргу надіслано модераторам. Статус розгляду — тут, у чаті.</q></div>
+            <div class="dont"><span>Не пишемо</span><q>Припинити контакт</q><small>наслідок не названо</small><q>Дякуємо! Ми подбаємо про твою безпеку 💙</q></div>
+          </div>
+          <details class="why"><summary>Чому</summary><ul>
+            <li>Report, block і модерація — обов'язковий захист для прямого чату без match-гейту.</li>
+            <li>Точні наслідки блокування ще не визначені — [?]. Приклад показує форму, не рішення.</li>
+          </ul></details>
+        </div>
+      </article>
+
+      <div class="not-principles">
+        <div><h4>«Факт замість оцінки» — не принцип</h4><p>Оцінки й емодзі є лише в текстах користувачів, а їх ми не переписуємо.</p></div>
+        <div><h4>«Ти» чи «ви» — рішення команди</h4><p>Даних немає; навіть один сервіс пише то так, то так. Обрали «ти», перевіримо на інтерв'ю.</p></div>
+        <div><h4>Гумор — не принцип</h4><p>У мові інтерфейсів ринку його немає; житло, гроші й незнайомі люди роблять його ризикованим.</p></div>
+        <div><h4>Гендерні формулювання — відкладено</h4><p>Бриф прямо відкладає їх до перевірки з користувачами.</p></div>
+      </div>
+    </section>
+
+    <section id="glossary">
+      <div class="section-head">
+        <h2>Словник</h2>
+        <p>Одне поняття — одне слово. Позначки T, D, E — розбіжності, які слово закриває.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Поняття</th><th>Пишемо</th><th>Не пишемо</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Те, що людина публікує про кімнату</td><td><strong>оголошення</strong></td><td class="no">пропозиція, варіант, лістинг</td><td><span class="tag">T1</span></td></tr>
+            <tr><td>Саме приміщення</td><td><strong>кімната</strong> — лише про приміщення</td><td class="no">«кімната» замість «оголошення»</td><td><span class="tag">T1</span></td></tr>
+            <tr><td>Список, який дає пошук</td><td><strong>результати пошуку</strong></td><td class="no">інші варіанти</td><td><span class="tag">D1</span></td></tr>
+            <tr><td>Місце переписки</td><td><strong>чат</strong>; пункт меню — <strong>Чати</strong></td><td class="no">розмова, історія, контакт</td><td><span class="tag">T2</span></td></tr>
+            <tr><td>Почати контакт</td><td><strong>Написати {ім'я}</strong></td><td class="no">Зв'язатися, Запитати в чаті</td><td><span class="tag">D4</span></td></tr>
+            <tr><td>Звернення щодо кімнати</td><td>окремого слова немає — це перше повідомлення</td><td class="no">заявка, запит</td><td></td></tr>
+            <tr><td>Інша сторона</td><td><strong>ім'я</strong>; якщо невідоме — <strong>людина</strong></td><td class="no">авторка, кандидат, шукач</td><td><span class="tag">T3</span></td></tr>
+            <tr><td>Той, хто пропонує кімнату</td><td><strong>ім'я</strong></td><td class="no">господар, орендодавець, власник</td><td></td></tr>
+            <tr><td>Ті, хто вже живе в квартирі</td><td><strong>співмешканці</strong>; блок — <strong>Хто живе в квартирі</strong></td><td class="no">мешканці, сусіди</td><td><span class="tag">T3</span> <span class="tag">T8</span></td></tr>
+            <tr><td>Сторінка людини</td><td><strong>профіль</strong></td><td class="no">анкета</td><td><span class="tag">T3</span></td></tr>
+            <tr><td>Блок звичок</td><td><strong>Спосіб життя</strong></td><td class="no">побутові звички</td><td><span class="tag">T4</span></td></tr>
+            <tr><td>Поля звичок</td><td><strong>Розпорядок дня · Тварини · Куріння · Гості</strong></td><td class="no">Робочий графік, Домашні тварини</td><td><span class="tag">T4</span></td></tr>
+            <tr><td>Результат перевірки номера</td><td><strong>Номер підтверджено</strong> + дата</td><td class="no">перевірений користувач, верифіковано</td><td><span class="tag">T5</span></td></tr>
+            <tr><td>Блок підтверджень</td><td><strong>Що підтверджено</strong></td><td class="no">Сигнали довіри</td><td><span class="tag">T5</span></td></tr>
+            <tr><td>Коли людина заїжджає</td><td><strong>заїзд</strong>; поле — <strong>Дата заїзду</strong></td><td class="no">заселення; «2026 року» в поточному році</td><td><span class="tag">T6</span></td></tr>
+            <tr><td>Гроші за кімнату / готовність платити</td><td><strong>ціна</strong> в оголошенні · <strong>бюджет</strong> у фільтрі</td><td class="no">вартість, оплата</td><td><span class="tag">T7</span></td></tr>
+            <tr><td>Зустріч у квартирі</td><td><strong>перегляд</strong></td><td class="no">огляд, показ</td><td><span class="tag">D3</span></td></tr>
+            <tr><td>Відкрити сторінку</td><td><strong>Відкрити оголошення</strong>, <strong>Відкрити профіль {імені}</strong></td><td class="no">Переглянути кімнату</td><td><span class="tag">D3</span></td></tr>
+            <tr><td>Надіслати повідомлення</td><td><strong>Надіслати</strong></td><td class="no">Відправити</td><td><span class="tag">D5</span></td></tr>
+            <tr><td>Повернутися</td><td><strong>Назад до {місця}</strong></td><td class="no">Повернутися до…, До…</td><td><span class="tag">D1</span> <span class="tag">D2</span></td></tr>
+            <tr><td>Фільтри</td><td><strong>Фільтри · Застосувати фільтри · Змінити фільтри</strong></td><td class="no">Послабити фільтри</td><td><span class="tag">D7</span></td></tr>
+            <tr><td>Повторити після збою</td><td><strong>Спробувати ще</strong></td><td class="no">повторіть спробу</td><td><span class="tag">D6</span></td></tr>
+            <tr><td>Заблокувати · поскаржитися</td><td><strong>Заблокувати · Поскаржитися</strong></td><td class="no">Припинити контакт, репорт</td><td><span class="tag">D8</span></td></tr>
+            <tr><td>Помилка завантаження</td><td><strong>Не вдалося завантажити {що}</strong></td><td class="no">Кімната недоступна через збій</td><td><span class="tag">E1</span></td></tr>
+            <tr><td>Завантаження</td><td><strong>Завантажуємо {що}</strong></td><td class="no">Шукаємо кімнати</td><td><span class="tag">E2</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="address">
+      <div class="section-head">
+        <h2>Звертання й англіцизми</h2>
+        <p>Граматика голосу. «Ти» — рішення команди, а не висновок з даних.</p>
+      </div>
+      <div class="two-col">
+        <div>
+          <h3>Звертання</h3>
+          <ul>
+            <li><b>«Ти»</b> на всіх екранах, з малої літери: ти, тобі, твій.</li>
+            <li><b>Кнопки — інфінітивом:</b> «Надіслати», «Заблокувати».</li>
+            <li><b>У повідомленнях — наказовий спосіб:</b> «Спробуй ще», «Перевір з'єднання».</li>
+            <li><b>Без минулого часу про людину:</b> не «ти надіслала», а «Повідомлення надіслано» — щоб не вгадувати рід.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Англіцизми</h3>
+          <p class="small" style="margin:0;color:var(--muted)">Дозволені — ті, що вже стали звичайними словами:</p>
+          <div class="words"><span class="tag ok">чат</span><span class="tag ok">профіль</span><span class="tag ok">фільтр</span><span class="tag ok">модератор</span></div>
+          <p class="small" style="margin:0;color:var(--muted)">Заборонені — слова ресерчу, а не людей:</p>
+          <div class="words"><span class="tag ban">матч</span><span class="tag ban">лайк</span><span class="tag ban">свайп</span><span class="tag ban">бейдж</span><span class="tag ban">верифікація</span><span class="tag ban">репорт</span><span class="tag ban">лістинг</span><span class="tag ban">руммейт</span><span class="tag ban">флоу</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="banned">
+      <div class="section-head">
+        <h2>Заборонене</h2>
+        <p>Запобіжний список: в інвентарі жодного з цих кліше в нашому тексті не знайдено.</p>
+      </div>
+      <div class="banned">
+        <div class="row"><b>AI-кліше</b><div class="dont"><span>Не пишемо</span><q>Ой, щось пішло не так 😕</q></div><div class="say"><span>Пишемо</span><q>Не вдалося завантажити оголошення. Перевір з'єднання й спробуй ще.</q></div></div>
+        <div class="row"><b>Порожня ввічливість</b><div class="dont"><span>Не пишемо</span><q>Ласкаво просимо до Кутка!</q></div><div class="say"><span>Пишемо</span><q>Без привітання: екран одразу починається з пошуку</q></div></div>
+        <div class="row"><b>Мотиваційний тон</b><div class="dont"><span>Не пишемо</span><q>Не здавайся — твоя кімната вже чекає!</q></div><div class="say"><span>Пишемо</span><q>За цими умовами оголошень немає. Зміни бюджет, район або дату заїзду.</q></div></div>
+        <div class="row"><b>Оклики</b><div class="dont"><span>Не пишемо</span><q>Скаргу прийнято! Дякуємо!</q></div><div class="say"><span>Пишемо</span><q>Скаргу надіслано модераторам.</q></div></div>
+        <div class="row"><b>Емодзі</b><div class="dont"><span>Не пишемо</span><q>Адреса: невідома 😔</q></div><div class="say"><span>Пишемо</span><q>Адреса: не вказана</q></div></div>
+        <div class="row"><b>«Успішно»</b><div class="dont"><span>Не пишемо</span><q>Фільтри успішно застосовано</q></div><div class="say"><span>Пишемо</span><q>Одразу результат: 12 оголошень</q></div></div>
+      </div>
+    </section>
+
+    <section id="microcopy">
+      <div class="section-head">
+        <h2>Мікрокопі</h2>
+        <p>Правила за типами елементів. Приклади — з чотирьох екранів головного шляху.</p>
+      </div>
+      <div class="kinds">
+        <article class="kind"><h3>Кнопка</h3><p>Дієслово дії, з якого видно результат натискання.</p><div class="pair"><div class="say"><span>Так</span><q>Написати Ірині · Надіслати · Застосувати фільтри</q></div><div class="dont"><span>Не так</span><q>Далі · ОК · Надіслати заявку</q></div></div></article>
+        <article class="kind"><h3>Заголовок екрана</h3><p>Каже, що це за місце; якщо місце належить людині — її ім'я.</p><div class="pair"><div class="say"><span>Так</span><q>Результати пошуку · Профіль Ірини · Чат з Іриною</q></div><div class="dont"><span>Не так</span><q>Профіль іншої людини · Чат із людиною</q></div></div></article>
+        <article class="kind"><h3>Поле форми</h3><p>Підпис — що вводити, підказка — як, помилка — що саме виправити.</p><div class="pair"><div class="say"><span>Так</span><q>Бюджет до, грн/місяць · Вкажи бюджет числом, наприклад 12 000</q></div><div class="dont"><span>Не так</span><q>Сума · Некоректне значення</q></div></div></article>
+        <article class="kind"><h3>Порожній стан</h3><p>Чому порожньо і що зробити далі — по реченню, плюс кнопка з цією дією.</p><div class="pair"><div class="say"><span>Так</span><q>За цими умовами оголошень немає. Зміни бюджет, район або дату заїзду. · Змінити фільтри</q></div><div class="dont"><span>Не так</span><q>Тут поки порожньо 🙈</q></div></div></article>
+        <article class="kind"><h3>Помилка</h3><p>Що сталося, що робити далі і що збереглося. Без вибачень і кодів.</p><div class="pair"><div class="say"><span>Так</span><q>Не вдалося надіслати повідомлення. Текст збережено в полі — спробуй ще.</q></div><div class="dont"><span>Не так</span><q>Вибач, сталася помилка 500</q></div></div></article>
+        <article class="kind"><h3>Завантаження</h3><p>Здебільшого мовчить — скелетон. Якщо текст потрібен, він каже, що вантажиться.</p><div class="pair"><div class="say"><span>Так</span><q>Завантажуємо оголошення</q></div><div class="dont"><span>Не так</span><q>Зачекайте… · Магія відбувається ✨</q></div></div></article>
+        <article class="kind"><h3>Успіх</h3><p>Назвати факт і наступний крок. Без святкування й «успішно».</p><div class="pair"><div class="say"><span>Так</span><q>Скаргу надіслано модераторам. Статус розгляду — тут, у чаті.</q></div><div class="dont"><span>Не так</span><q>Вітаємо! Скаргу успішно надіслано 🎉</q></div></div></article>
+        <article class="kind"><h3>Небезпечна дія</h3><p>До натискання — що станеться; заголовок-питання з ім'ям, підтвердження повторює дію.</p><div class="pair"><div class="say"><span>Так</span><q>Заблокувати Ірину? · Заблокувати · Скасувати</q></div><div class="dont"><span>Не так</span><q>Ви впевнені? · Так · Ні</q></div></div></article>
+      </div>
+    </section>
+
+    <section id="inventory">
+      <div class="section-head">
+        <h2>Інвентар і звірка</h2>
+        <p>Усі рядки вайрфреймів зібрано й переписано за словником. Кілька показових змін:</p>
+      </div>
+      <div class="ba">
+        <div class="row"><span class="id">LS-11</span><span class="was">12 кімнат відповідають критеріям</span><span class="arrow">→</span><span class="now">12 оголошень</span></div>
+        <div class="row"><span class="id">LS-25</span><span class="was">Переглянути кімнату</span><span class="arrow">→</span><span class="now">Відкрити оголошення</span></div>
+        <div class="row"><span class="id">LS-32</span><span class="was">Спробуйте збільшити бюджет, обрати інший район або змінити дату заїзду.</span><span class="arrow">→</span><span class="now">Зміни бюджет, район або дату заїзду.</span></div>
+        <div class="row"><span class="id">LS-33</span><span class="was">Послабити фільтри</span><span class="arrow">→</span><span class="now">Змінити фільтри</span></div>
+        <div class="row"><span class="id">L-16</span><span class="was">Авторка й мешканці</span><span class="arrow">→</span><span class="now">Хто живе в квартирі</span></div>
+        <div class="row"><span class="id">L-21</span><span class="was">Сигнали довіри</span><span class="arrow">→</span><span class="now">Що підтверджено</span></div>
+        <div class="row"><span class="id">L-31</span><span class="was">Кімната недоступна через збій</span><span class="arrow">→</span><span class="now">Не вдалося завантажити оголошення</span></div>
+        <div class="row"><span class="id">P-10</span><span class="was">Робочий графік</span><span class="arrow">→</span><span class="now">Розпорядок дня</span></div>
+        <div class="row"><span class="id">P-33</span><span class="was">Запитати в чаті</span><span class="arrow">→</span><span class="now">Написати Ірині</span></div>
+        <div class="row"><span class="id">O-03</span><span class="was">Розмови</span><span class="arrow">→</span><span class="now">Чати</span></div>
+      </div>
+      <div class="callout"><b>Не переписуємо.</b> Назви оголошень, описи, ім'я й вік, повідомлення в чаті — текст користувачів (👤). Відкрите питання: значення анкети побуту й передзаповнене перше повідомлення — наш текст чи їхній.</div>
+      <ul class="open-list">
+        <li><b>Р1.</b> Немає слова для блоку над «Написати Ірині» — у новому вайрфреймі блок прибрано, кнопка закріплена внизу екрана.</li>
+        <li><b>Р7.</b> «Над назвою автора свого заголовка не додаємо» — тепер виконано: на оголошенні верхня панель без заголовка, головний заголовок — назва кімнати.</li>
+        <li><b>Наслідки блокування</b> (що бачить заблокована людина, що буде з чатом) — [?], тому текст попередження не пишемо навмання.</li>
+      </ul>
+    </section>
+
+    <footer>Джерела сторінки: <a href="voice.md">voice.md</a> і <a href="microcopy.md">microcopy.md</a>. Позначка [?] означає непідтверджене припущення.</footer>
+  </main>
+  <script>
+    // Report the visible section to the lesson hub so its tree can highlight it.
+    (function () {
+      if (window.parent === window) return;
+      var sections = [].slice.call(document.querySelectorAll("main > section[id]"));
+      var observer = new IntersectionObserver(function (entries) {
+        var visible = entries.filter(function (e) { return e.isIntersecting; })[0];
+        if (visible) window.parent.postMessage({ type: "lesson-section", id: visible.target.id }, location.origin);
+      }, { rootMargin: "-15% 0px -70% 0px" });
+      sections.forEach(function (s) { observer.observe(s); });
+    })();
+  </script>
+</body>
+</html>

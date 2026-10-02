@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
 <title>Урок 1 — Ресерч і бенчмарк · Design Engineering</title>
 <style>
   :root{
@@ -22,30 +23,20 @@
   .layout{display:flex; min-height:100vh;}
   main{flex:1; min-width:0; max-width:1080px; margin:0 auto; padding:48px 56px 96px;}
   nav.course-nav{
-    width:280px; flex-shrink:0; position:sticky; top:0; align-self:flex-start;
-    padding:32px 20px; height:100vh; overflow-y:auto; background:var(--surface);
+    width:296px; flex-shrink:0; position:sticky; top:0; align-self:flex-start;
+    padding:20px 12px; height:100vh; overflow-y:auto; background:var(--surface);
     border-right:1px solid var(--border);
   }
-  nav.course-nav .course-title{font-size:15px;font-weight:800;margin:0 0 4px;}
-  nav.course-nav .course-progress{font-size:12px;color:var(--text-muted);margin:0 0 22px;}
-  nav.course-nav .lesson-list{display:grid;gap:3px;}
-  nav.course-nav .lesson-list a{
-    display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;
-    min-height:44px;padding:8px 10px;border-radius:8px;color:var(--text-muted);
-    text-decoration:none;font-size:13px;line-height:1.35;
+  .course-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;}
+  .course-nav-toggle{
+    display:grid;place-items:center;width:28px;min-height:28px;margin:0;padding:0;
+    border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);color:var(--text);cursor:pointer;
   }
-  nav.course-nav .lesson-list a:hover{background:var(--bg);color:var(--text);}
-  nav.course-nav .lesson-list a[aria-current="page"]{background:var(--accent-soft);color:var(--text);font-weight:700;}
-  nav.course-nav .lesson-num{font-variant-numeric:tabular-nums;color:var(--accent);}
-  nav.course-nav .lesson-state{display:block;font-size:11px;font-weight:500;color:var(--text-muted);margin-top:2px;}
-  nav.course-nav .section-links{border-top:1px solid var(--border);margin-top:18px;padding-top:16px;}
-  nav.course-nav .section-links-title{
-    font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin:0 0 8px;
-  }
-  nav.course-nav .section-links a{
-    display:block;color:var(--text-muted);text-decoration:none;font-size:12px;padding:5px 10px;border-radius:6px;
-  }
-  nav.course-nav .section-links a:hover,nav.course-nav .section-links a.active{color:var(--text);background:var(--bg);}
+  .course-nav-toggle:hover{border-color:var(--accent);color:var(--accent);}
+  .course-nav-toggle svg{display:block;width:16px;height:16px;transition:transform 160ms ease;}
+  body.course-nav-collapsed nav.course-nav{width:64px;flex-basis:64px;padding-inline:10px;overflow-x:hidden;}
+  body.course-nav-collapsed .course-nav-toggle{margin-inline:auto;}
+  body.course-nav-collapsed .course-nav-toggle svg{transform:rotate(180deg);}
   .mobile-lessons{display:none;margin:0 0 28px;border:1px solid var(--border);border-radius:12px;background:var(--surface);}
   .mobile-lessons summary{min-height:48px;padding:13px 16px;font-weight:700;cursor:pointer;}
   .mobile-lessons .mobile-list{display:grid;padding:0 10px 10px;}
@@ -157,35 +148,126 @@
   }
   @media (max-width: 520px){td{grid-template-columns:1fr;gap:3px;}}
 </style>
+<link rel="stylesheet" href="../assets/styles/lesson-system.css">
 </head>
 <body>
 <a class="skip-link" href="#content">Перейти до матеріалу</a>
 <div class="layout">
   <nav class="course-nav" aria-label="Уроки курсу">
-    <p class="course-title">Design Engineering</p>
+    <div class="course-head"><p class="course-title">Design Engineering</p><button class="course-nav-toggle" id="course-nav-toggle" type="button" aria-expanded="true" aria-controls="lesson-navigation" aria-label="Згорнути меню уроків" title="Згорнути меню уроків"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 5 7.5 12l7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></button></div>
     <p class="course-progress">Урок 1 із 12</p>
-    <div class="lesson-list">
-      <a href="../research/research.html" aria-current="page"><span class="lesson-num">01</span><span>Ресерч і бенчмарк<span class="lesson-state">Поточний урок</span></span></a>
-      <a href="../lessons/?lesson=2"><span class="lesson-num">02</span><span>Персони і JTBD<span class="lesson-state">Готово</span></span></a>
-      <a href="../lessons/?lesson=3"><span class="lesson-num">03</span><span>Інформаційна архітектура<span class="lesson-state">Незабаром</span></span></a>
-      <a href="../lessons/?lesson=4"><span class="lesson-num">04</span><span>Прототипування і вайрфреймінг<span class="lesson-state">Незабаром</span></span></a>
-      <a href="../lessons/?lesson=5"><span class="lesson-num">05</span><span>Тон оф войс і мікрокопі<span class="lesson-state">Незабаром</span></span></a>
-      <a href="../lessons/?lesson=6"><span class="lesson-num">06</span><span>Концепт<span class="lesson-state">Незабаром</span></span></a>
-      <a href="../lessons/?lesson=7"><span class="lesson-num">07</span><span>Збірка UI<span class="lesson-state">Незабаром</span></span></a>
-      <a href="../lessons/?lesson=8"><span class="lesson-num">08</span><span>Design Tokens<span class="lesson-state">Незабаром</span></span></a>
-      <a href="../lessons/?lesson=9"><span class="lesson-num">09</span><span>Дизайн-система<span class="lesson-state">Незабаром</span></span></a>
-      <a href="../lessons/?lesson=10"><span class="lesson-num">10</span><span>Responsive<span class="lesson-state">Незабаром</span></span></a>
-      <a href="../lessons/?lesson=11"><span class="lesson-num">11</span><span>Анімація і мікроінтеракції<span class="lesson-state">Незабаром</span></span></a>
-      <a href="../lessons/?lesson=12"><span class="lesson-num">12</span><span>Хендофф і документація<span class="lesson-state">Незабаром</span></span></a>
-    </div>
-    <div class="section-links">
-      <p class="section-links-title">У цьому уроці</p>
-      <a href="#overview" data-target="overview">Коротко</a>
-      <a href="#konkurenty" data-target="konkurenty">Конкуренти</a>
-      <a href="#benchmark" data-target="benchmark">Бенчмарк</a>
-      <a href="#patterny" data-target="patterny">Патерни</a>
-      <a href="#vysnovky" data-target="vysnovky">Висновки</a>
-      <a href="#screens" data-target="screens">Скріншоти</a>
+    <div class="course-meter" aria-hidden="true"><i data-status="done"></i><i data-status="done"></i><i data-status="done"></i><i data-status="done"></i><i data-status="active"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i></div>
+    <div class="course-tree" id="lesson-navigation">
+      <ol>
+        <li class="ct-lesson" data-status="done">
+          <div class="ct-row">
+            <a class="ct-link" href="../research/research.html" aria-current="page" title="01 · Ресерч і бенчмарк"><span class="ct-glyph" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3 6.3 5.1 8.3 9 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ct-title">Ресерч і бенчмарк</span><span class="ct-state">, готово</span></a>
+            <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-1" aria-label="Розділи: Ресерч і бенчмарк"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <ul class="ct-sub" id="ct-sub-1" data-for="1" hidden>
+            <li><a href="#overview" data-target="overview">Коротко</a></li>
+            <li><a href="#konkurenty" data-target="konkurenty">Конкуренти</a></li>
+            <li><a href="#benchmark" data-target="benchmark">Бенчмарк</a></li>
+            <li><a href="#patterny" data-target="patterny">Патерни</a></li>
+            <li><a href="#vysnovky" data-target="vysnovky">Висновки</a></li>
+            <li><a href="#screens" data-target="screens">Скріншоти</a></li>
+          </ul>
+        </li>
+        <li class="ct-lesson" data-status="done">
+          <div class="ct-row">
+            <a class="ct-link" href="../lessons/?lesson=2" title="02 · Персони і JTBD"><span class="ct-glyph" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3 6.3 5.1 8.3 9 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ct-title">Персони і JTBD</span><span class="ct-state">, готово</span></a>
+            <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-2" aria-label="Розділи: Персони і JTBD"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <ul class="ct-sub" id="ct-sub-2" data-for="2" hidden>
+            <li><a href="../lessons/?lesson=2#method" data-target="method">Метод</a></li>
+            <li><a href="../lessons/?lesson=2#personas" data-target="personas">Персони</a></li>
+            <li><a href="../lessons/?lesson=2#jobs" data-target="jobs">Jobs</a></li>
+            <li><a href="../lessons/?lesson=2#matrix" data-target="matrix">Матриця</a></li>
+            <li><a href="../lessons/?lesson=2#decisions" data-target="decisions">Рішення</a></li>
+            <li><a href="../lessons/?lesson=2#cut" data-target="cut">Не в MVP</a></li>
+            <li><a href="../lessons/?lesson=2#research-next" data-target="research-next">Що перевіряємо</a></li>
+          </ul>
+        </li>
+        <li class="ct-lesson" data-status="done">
+          <div class="ct-row">
+            <a class="ct-link" href="../lessons/?lesson=3" title="03 · Інформаційна архітектура"><span class="ct-glyph" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3 6.3 5.1 8.3 9 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ct-title">Інформаційна архітектура</span><span class="ct-state">, готово</span></a>
+            <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-3" aria-label="Розділи: Інформаційна архітектура"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <ul class="ct-sub" id="ct-sub-3" data-for="3" hidden>
+            <li><a href="../lessons/?lesson=3#entities" data-target="entities">Сутності</a></li>
+            <li><a href="../lessons/?lesson=3#screens" data-target="screens">Екрани</a></li>
+            <li><a href="../lessons/?lesson=3#navigation" data-target="navigation">Навігація</a></li>
+            <li><a href="../lessons/?lesson=3#traceability" data-target="traceability">Трасування</a></li>
+            <li><a href="../lessons/?lesson=3#main-job-flow" data-target="main-job-flow">Main flow</a></li>
+            <li><a href="../lessons/?lesson=3#related-job-1-flow" data-target="related-job-1-flow">Пошук</a></li>
+            <li><a href="../lessons/?lesson=3#related-job-2-flow" data-target="related-job-2-flow">Довіра</a></li>
+            <li><a href="../lessons/?lesson=3#related-job-4-flow" data-target="related-job-4-flow">Домовленість</a></li>
+            <li><a href="../lessons/?lesson=3#related-job-5-flow" data-target="related-job-5-flow">Контроль</a></li>
+          </ul>
+        </li>
+        <li class="ct-lesson" data-status="done">
+          <div class="ct-row">
+            <a class="ct-link" href="../lessons/?lesson=4" title="04 · Прототипування і вайрфреймінг"><span class="ct-glyph" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3 6.3 5.1 8.3 9 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ct-title">Прототипування і вайрфреймінг</span><span class="ct-state">, готово</span></a>
+            <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-4" aria-label="Розділи: Прототипування і вайрфреймінг"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <ul class="ct-sub" id="ct-sub-4" data-for="4" hidden>
+            <li><a href="../lessons/?lesson=4&wireframe=listings" data-wireframe="listings.html">Результати пошуку кімнат</a></li>
+            <li><a href="../lessons/?lesson=4&wireframe=listing" data-wireframe="listing.html">Оголошення про кімнату</a></li>
+            <li><a href="../lessons/?lesson=4&wireframe=profile" data-wireframe="profile.html">Профіль іншої людини</a></li>
+            <li><a href="../lessons/?lesson=4&wireframe=chat" data-wireframe="chat.html">Чат із людиною</a></li>
+          </ul>
+        </li>
+        <li class="ct-lesson" data-status="active">
+          <div class="ct-row">
+            <a class="ct-link" href="../lessons/?lesson=5" title="05 · Тон оф войс і мікрокопі"><span class="ct-glyph" aria-hidden="true">5</span><span class="ct-title">Тон оф войс і мікрокопі</span><span class="ct-state">, у роботі</span></a>
+            <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-5" aria-label="Розділи: Тон оф войс і мікрокопі"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <ul class="ct-sub" id="ct-sub-5" data-for="5" hidden>
+            <li><a href="../lessons/?lesson=5#overview" data-target="overview">Коротко</a></li>
+            <li><a href="../lessons/?lesson=5#principles" data-target="principles">Принципи</a></li>
+            <li><a href="../lessons/?lesson=5#glossary" data-target="glossary">Словник</a></li>
+            <li><a href="../lessons/?lesson=5#address" data-target="address">Звертання</a></li>
+            <li><a href="../lessons/?lesson=5#banned" data-target="banned">Заборонене</a></li>
+            <li><a href="../lessons/?lesson=5#microcopy" data-target="microcopy">Мікрокопі</a></li>
+            <li><a href="../lessons/?lesson=5#inventory" data-target="inventory">Інвентар і звірка</a></li>
+          </ul>
+        </li>
+        <li class="ct-lesson" data-status="upcoming">
+          <div class="ct-row">
+            <a class="ct-link" href="../lessons/?lesson=6" title="06 · Концепт"><span class="ct-glyph" aria-hidden="true">6</span><span class="ct-title">Концепт</span><span class="ct-state">, незабаром</span></a>
+          </div>
+        </li>
+        <li class="ct-lesson" data-status="upcoming">
+          <div class="ct-row">
+            <a class="ct-link" href="../lessons/?lesson=7" title="07 · Збірка UI"><span class="ct-glyph" aria-hidden="true">7</span><span class="ct-title">Збірка UI</span><span class="ct-state">, незабаром</span></a>
+          </div>
+        </li>
+        <li class="ct-lesson" data-status="upcoming">
+          <div class="ct-row">
+            <a class="ct-link" href="../lessons/?lesson=8" title="08 · Design Tokens"><span class="ct-glyph" aria-hidden="true">8</span><span class="ct-title">Design Tokens</span><span class="ct-state">, незабаром</span></a>
+          </div>
+        </li>
+        <li class="ct-lesson" data-status="upcoming">
+          <div class="ct-row">
+            <a class="ct-link" href="../lessons/?lesson=9" title="09 · Дизайн-система"><span class="ct-glyph" aria-hidden="true">9</span><span class="ct-title">Дизайн-система</span><span class="ct-state">, незабаром</span></a>
+          </div>
+        </li>
+        <li class="ct-lesson" data-status="upcoming">
+          <div class="ct-row">
+            <a class="ct-link" href="../lessons/?lesson=10" title="10 · Responsive"><span class="ct-glyph" aria-hidden="true">10</span><span class="ct-title">Responsive</span><span class="ct-state">, незабаром</span></a>
+          </div>
+        </li>
+        <li class="ct-lesson" data-status="upcoming">
+          <div class="ct-row">
+            <a class="ct-link" href="../lessons/?lesson=11" title="11 · Анімація і мікроінтеракції"><span class="ct-glyph" aria-hidden="true">11</span><span class="ct-title">Анімація і мікроінтеракції</span><span class="ct-state">, незабаром</span></a>
+          </div>
+        </li>
+        <li class="ct-lesson" data-status="upcoming">
+          <div class="ct-row">
+            <a class="ct-link" href="../lessons/?lesson=12" title="12 · Хендофф і документація"><span class="ct-glyph" aria-hidden="true">12</span><span class="ct-title">Хендофф і документація</span><span class="ct-state">, незабаром</span></a>
+          </div>
+        </li>
+      </ol>
     </div>
   </nav>
   <main id="content">
@@ -388,7 +470,23 @@
 </div>
 
 <script>
-  const links = document.querySelectorAll('nav.course-nav .section-links a');
+  const courseNavToggle = document.getElementById('course-nav-toggle');
+  let courseNavCollapsed = localStorage.getItem('lesson-rail-collapsed') === 'true';
+  function setCourseNav(collapsed){
+    document.body.classList.toggle('course-nav-collapsed', collapsed);
+    courseNavToggle.setAttribute('aria-expanded', String(!collapsed));
+    const label = collapsed ? 'Розгорнути меню уроків' : 'Згорнути меню уроків';
+    courseNavToggle.setAttribute('aria-label', label);
+    courseNavToggle.setAttribute('title', label);
+  }
+  setCourseNav(courseNavCollapsed);
+  courseNavToggle.addEventListener('click', () => {
+    courseNavCollapsed = !document.body.classList.contains('course-nav-collapsed');
+    localStorage.setItem('lesson-rail-collapsed', String(courseNavCollapsed));
+    setCourseNav(courseNavCollapsed);
+  });
+
+  const links = document.querySelectorAll('.ct-sub[data-for="1"] a');
   const sections = Array.from(links).map(l => document.getElementById(l.dataset.target));
   function onScroll(){
     let current = sections[0];
@@ -404,5 +502,6 @@
   document.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 </script>
+<script src="../assets/scripts/course-tree.js"></script>
 </body>
 </html>

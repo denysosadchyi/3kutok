@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="wireframe-job" content="Related 1 — звузити пошук до прийнятних варіантів">
+<title>Результати пошуку — Куток</title>
+<link rel="stylesheet" href="listings-states.css">
+</head>
+<body class="has-tabbar">
+<header class="appbar-large"><h1>Результати пошуку</h1><p>Київ · кімнати та співмешканці</p></header>
+<main id="content">
+
+<div class="filters"><div class="filter-row">
+  <details class="sheet">
+    <summary class="chip chip-strong"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4.5h7M12 4.5h2M2 11.5h2M7 11.5h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10.5" cy="4.5" r="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="5.5" cy="11.5" r="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Фільтри · 3</summary>
+    <section class="sheet-panel" aria-labelledby="filters-title">
+      <div class="sheet-grabber" aria-hidden="true"></div>
+      <div class="sheet-head"><a class="btn btn-plain" href="listings.html">Скасувати</a><h2 id="filters-title">Фільтри</h2><span></span></div>
+      <form class="sheet-body" action="listings-loading.html" method="get">
+        <fieldset>
+          <legend class="sr-only">Базові умови кімнати</legend>
+          <div class="field"><label for="district">Район Києва</label><select id="district" name="district"><option>Усі райони</option><option selected>Шевченківський</option><option>Подільський</option><option>Голосіївський</option><option>Дніпровський</option></select></div>
+          <div class="field"><label for="budget">Бюджет до, грн/місяць</label><input id="budget" name="budget" type="number" inputmode="numeric" min="1000" step="500" value="12000"></div>
+          <div class="field"><label for="move-in">Дата заїзду</label><input id="move-in" name="move-in" type="text" inputmode="none" readonly value="з 1 жовтня 2026"></div>
+        </fieldset>
+      </form>
+      <div class="sheet-foot"><a class="btn btn-primary btn-block" href="listings-loading.html">Застосувати фільтри</a></div>
+    </section>
+  </details>
+  <span class="chip">Шевченківський</span>
+  <span class="chip">до 12 000 грн</span>
+  <span class="chip">з 1 жовтня</span>
+</div></div>
+<div class="results-meta"><span>12 оголошень</span><button class="sort" type="button">Спершу нові<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+<ul class="card-list">
+  <li class="card">
+    <div class="ph ph-photo" role="img" aria-label="Фото кімнати">Фото кімнати</div>
+    <div class="card-body">
+      <h2><a class="card-link" href="listing-loading.html">Кімната біля Лук’янівської</a></h2>
+      <p class="card-price">10 500 грн/міс</p>
+      <p class="card-meta">Шевченківський · 2 співмешканці · з 1 жовтня</p>
+    </div>
+  </li>
+  <li class="card">
+    <div class="ph ph-photo" role="img" aria-label="Фото кімнати">Фото кімнати</div>
+    <div class="card-body">
+      <h2><a class="card-link" href="listing-loading.html">Світла кімната на Татарці</a></h2>
+      <p class="card-price">9 800 грн/міс</p>
+      <p class="card-meta">Шевченківський · 1 співмешканка · з 5 жовтня</p>
+    </div>
+  </li>
+  <li class="card">
+    <div class="ph ph-photo" role="img" aria-label="Фото кімнати">Фото кімнати</div>
+    <div class="card-body">
+      <h2><a class="card-link" href="listing-loading.html">Кімната поруч із КПІ</a></h2>
+      <p class="card-price">11 500 грн/міс</p>
+      <p class="card-meta">Шевченківський · 2 співмешканки · з 12 жовтня</p>
+    </div>
+  </li>
+</ul>
+</main>
+<nav class="tabbar" aria-label="Головна навігація"><ul><li><a href="listings.html" aria-current="page"><span class="tab-icon" aria-hidden="true"></span><span>Пошук</span></a></li><li><span class="tab"><span class="tab-icon" aria-hidden="true"></span><span>Чати</span></span></li><li><span class="tab"><span class="tab-icon" aria-hidden="true"></span><span>Профіль</span></span></li></ul></nav>
+</body>
+</html>

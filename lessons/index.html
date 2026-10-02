@@ -79,88 +79,57 @@
         min-height: 100vh;
       }
       .rail {
-        width: 280px;
-        flex: 0 0 280px;
+        width: 296px;
+        flex: 0 0 296px;
         position: sticky;
         top: 0;
         height: 100vh;
         overflow: auto;
-        padding: 32px 20px;
+        padding: 20px 12px;
         background: var(--white);
         border-right: 1px solid var(--line);
       }
-      .course {
-        font-size: 15px;
-        font-weight: 800;
-        margin: 0 0 4px;
-      }
-      .progress {
-        font-size: 12px;
-        color: var(--muted);
-        margin: 0 0 22px;
-      }
-      .lessons {
+      .rail-toggle {
         display: grid;
-        gap: 3px;
-      }
-      .lessons a {
-        display: grid;
-        grid-template-columns: 28px 1fr;
-        gap: 8px;
-        min-height: 44px;
-        padding: 8px 10px;
+        place-items: center;
+        width: 28px;
+        min-height: 28px;
+        margin: 0;
+        padding: 0;
+        border: 1px solid var(--line2);
         border-radius: 8px;
-        color: var(--muted);
-        text-decoration: none;
-        font-size: 13px;
-        line-height: 1.35;
-      }
-      .lessons a:hover {
-        background: var(--paper);
+        background: var(--white);
         color: var(--ink);
+        cursor: pointer;
       }
-      .lessons a[aria-current="page"] {
-        background: var(--rust-wash);
-        color: var(--ink);
-        font-weight: 750;
+      .rail-toggle:hover {
+        border-color: var(--rust);
+        color: var(--rust-dark);
       }
-      .num {
-        color: var(--rust);
-        font-variant-numeric: tabular-nums;
+      body.rail-collapsed .rail {
+        width: 64px;
+        flex-basis: 64px;
+        padding-inline: 10px;
+        overflow-x: hidden;
       }
-      .state {
+      body.rail-collapsed .rail-toggle {
+        margin-inline: auto;
+      }
+      .course-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 4px;
+      }
+      .rail-toggle svg {
         display: block;
-        margin-top: 2px;
-        font-size: 11px;
-        color: var(--muted);
-        font-weight: 500;
+        width: 16px;
+        height: 16px;
+        transition: transform 160ms ease;
       }
-      .toc {
-        margin-top: 18px;
-        padding-top: 16px;
-        border-top: 1px solid var(--line);
-      }
-      .toc p {
-        margin: 0 0 8px;
-        padding: 0 10px;
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 750;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-      .toc a {
-        display: block;
-        padding: 5px 10px;
-        border-radius: 6px;
-        color: var(--muted);
-        font-size: 12px;
-        text-decoration: none;
-      }
-      .toc a:hover,
-      .toc a.active {
-        background: var(--paper);
-        color: var(--ink);
+      body.rail-collapsed .rail-toggle svg {
+        transform: rotate(180deg);
       }
       main {
         flex: 1;
@@ -173,6 +142,356 @@
       .mobile-toc {
         display: none;
       }
+      .lesson-embed {
+        display: none;
+      }
+      .lesson-four {
+        display: none;
+      }
+      body.lesson-embed-active main {
+        display: flex;
+        flex-direction: column;
+        max-width: none;
+        height: 100vh;
+        padding: 0;
+        overflow: hidden;
+      }
+      body.lesson-embed-active .lesson-embed:not(.hidden) {
+        display: block;
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+      }
+      .ia-frame {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: var(--paper);
+      }
+      body.lesson-four-active main {
+        display: flex;
+        flex-direction: column;
+        max-width: none;
+        height: 100vh;
+        padding: 0;
+        overflow: hidden;
+      }
+      body.lesson-four-active .lesson-four {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+      }
+      .wireframe-nav {
+        display: none;
+        min-width: 0;
+        padding: 20px 12px;
+        overflow: auto;
+        background: var(--white);
+        border-right: 1px solid var(--line);
+      }
+      .wireframe-nav h1 {
+        margin: 0 8px 2px;
+        font-size: 16px;
+        line-height: 1.25;
+        letter-spacing: -0.01em;
+      }
+      .wireframe-nav > p {
+        margin: 0 8px 16px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .wireframe-nav nav {
+        display: block;
+      }
+      .wireframe-nav a {
+        display: flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 5px 8px;
+        border-radius: 6px;
+        color: var(--ink);
+        font-size: 13px;
+        line-height: 1.3;
+        text-decoration: none;
+      }
+      .wireframe-nav a:hover {
+        background: var(--wash);
+      }
+      .wireframe-nav a[aria-current="page"] {
+        background: var(--line);
+        font-weight: 700;
+      }
+      .wireframe-tree,
+      .wireframe-tree ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .wireframe-tree > li + li {
+        margin-top: 10px;
+      }
+      .wireframe-tree .tree-section {
+        display: block;
+        padding: 0 8px 2px;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 1.4;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+      }
+      @media (max-width: 1100px) {
+        body.lesson-four-active .lesson-four {
+          grid-template-columns: 200px minmax(0, 1fr);
+        }
+        .wireframe-nav {
+          display: block;
+        }
+      }
+      .wireframe-preview {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        min-width: 0;
+        min-height: 0;
+        margin: 0;
+        padding: 16px 24px 20px;
+        overflow: auto;
+        background: var(--paper);
+      }
+      .wireframe-scroll {
+        position: absolute;
+        z-index: 4;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 18px;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+      .wireframe-scroll-track { width: 1px; }
+      .device-switch {
+        display: inline-flex;
+        flex: 0 0 auto;
+        gap: 2px;
+        padding: 3px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: var(--wash);
+      }
+      .device-switch button {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 28px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .device-switch button svg {
+        width: 16px;
+        height: 16px;
+      }
+      .device-switch button[aria-disabled="true"] {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .device-switch button[aria-checked="true"] {
+        color: var(--ink);
+        background: var(--white);
+        box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgb(32 30 26 / 8%);
+      }
+      .preview-state-nav {
+        position: absolute;
+        z-index: 2;
+        top: 16px;
+        left: 24px;
+        max-width: calc(50% - 90px);
+        overflow-x: auto;
+      }
+      .preview-state-nav ul {
+        display: inline-flex;
+        gap: 2px;
+        margin: 0;
+        padding: 3px;
+        list-style: none;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: var(--wash);
+      }
+      .preview-state-nav a {
+        display: flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 4px 12px;
+        border-radius: 7px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+        text-decoration: none;
+      }
+      .preview-state-nav a:hover {
+        color: var(--ink);
+      }
+      .preview-state-nav a[data-na] {
+        text-decoration: line-through;
+        text-decoration-color: var(--line2);
+      }
+      .preview-state-nav a[aria-current="page"] {
+        color: var(--ink);
+        background: var(--white);
+        box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgb(32 30 26 / 8%);
+      }
+      @media (max-width: 900px) {
+        .preview-state-nav {
+          position: static;
+          width: auto;
+          max-width: 100%;
+          overflow-x: auto;
+        }
+        .preview-state-nav ul {
+          display: inline-flex;
+        }
+        .device-switch {
+          display: none;
+        }
+      }
+      .phone-mockup {
+        --bezel: 9px;
+        position: relative;
+        width: min(300px, calc((100vh - 112px) * 9 / 19.5));
+        aspect-ratio: 9 / 19.5;
+        padding: var(--bezel);
+        border-radius: 46px;
+        background: #0e0e10;
+        box-shadow:
+          inset 0 0 0 1.5px #3a3a3e,
+          inset 0 0 0 3px #111113,
+          0 0 0 1.5px #8b8a8f,
+          0 0 0 3px #c9c8cc,
+          0 0 0 4px #77767b,
+          0 24px 48px -16px rgb(32 30 26 / 35%),
+          0 8px 16px -8px rgb(32 30 26 / 25%);
+      }
+      .phone-mockup::before,
+      .phone-mockup::after {
+        content: "";
+        position: absolute;
+        width: 3px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, #6f6e73, #b9b8bd);
+      }
+      .phone-mockup::before {
+        left: -7px;
+        top: 19%;
+        height: 7%;
+      }
+      .phone-mockup::after {
+        right: -7px;
+        top: 24%;
+        height: 11%;
+        background: linear-gradient(270deg, #6f6e73, #b9b8bd);
+      }
+      .phone-buttons {
+        position: absolute;
+        left: -7px;
+        top: 28%;
+        width: 3px;
+        height: 7%;
+        border-radius: 2px;
+        background: linear-gradient(90deg, #6f6e73, #b9b8bd);
+      }
+      .phone-screen {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        border-radius: 37px;
+        background: #fff;
+      }
+      .phone-status {
+        position: relative;
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: space-between;
+        height: 44px;
+        padding: 6px 24px 0 30px;
+        color: #111;
+        background: #fff;
+        font: 600 13px/1 -apple-system, "SF Pro Text", system-ui, sans-serif;
+        font-variant-numeric: tabular-nums;
+      }
+      .phone-island {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        width: 31%;
+        height: 26px;
+        border-radius: 14px;
+        background: #000;
+        transform: translateX(-50%);
+      }
+      .phone-status svg {
+        display: block;
+        height: 11px;
+        width: auto;
+      }
+      .phone-status-icons {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      /* The wireframe always lays out at a real 390px device width and is
+         scaled to fit the mockup, so the frame never changes its layout. */
+      .phone-viewport {
+        --s: 1;
+        position: relative;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .wireframe-frame {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        width: 390px;
+        height: calc(100% / var(--s));
+        border: 0;
+        background: var(--paper);
+        transform: scale(var(--s));
+        transform-origin: 0 0;
+      }
+      .phone-home {
+        position: relative;
+        flex: 0 0 18px;
+        background: #fff;
+      }
+      .phone-home::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 6px;
+        width: 36%;
+        height: 4px;
+        border-radius: 3px;
+        background: #111;
+        transform: translateX(-50%);
+      }
       .hero {
         max-width: 880px;
         margin-bottom: 42px;
@@ -182,22 +501,21 @@
       .persona h3,
       .main-job blockquote,
       .decision h3 {
-        font-family:
-          "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+        font-family: inherit;
       }
       .hero h1 {
-        max-width: 820px;
-        margin: 0 0 16px;
-        font-size: clamp(42px, 5vw, 68px);
-        line-height: 1;
-        letter-spacing: -0.035em;
+        max-width: 720px;
+        margin: 0 0 14px;
+        font-size: 42px;
+        line-height: 1.08;
+        letter-spacing: -0.025em;
         text-wrap: balance;
       }
       .hero > p {
-        max-width: 65ch;
+        max-width: 640px;
         margin: 0;
         color: var(--muted);
-        font-size: 18px;
+        font-size: 16px;
       }
       .hero-meta {
         display: flex;
@@ -278,9 +596,9 @@
       }
       .section-head h2 {
         margin: 0;
-        font-size: 32px;
-        line-height: 1.08;
-        letter-spacing: -0.02em;
+        font-size: 26px;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
       }
       .section-head p {
         margin: 0;
@@ -698,6 +1016,9 @@
           font-weight: 750;
           cursor: pointer;
         }
+        .mobile-toc {
+          display: none;
+        }
         .mobile-nav nav,
         .mobile-toc nav {
           display: grid;
@@ -779,6 +1100,40 @@
         .matrix-wrap tr > *:last-child {
           border-bottom: 0;
         }
+        body.lesson-four-active main {
+          padding: 0;
+        }
+      }
+      @media (max-width: 760px) {
+        body.lesson-four-active main {
+          height: auto;
+          min-height: 100vh;
+          overflow: visible;
+        }
+        body.lesson-four-active .lesson-four {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto minmax(720px, 1fr);
+        }
+        .wireframe-nav {
+          padding: 16px 12px;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .wireframe-nav > p {
+          margin-bottom: 12px;
+        }
+        .wireframe-preview {
+          min-height: 720px;
+          padding: 12px 12px 24px;
+        }
+        .phone-mockup {
+          --bezel: 7px;
+          width: min(300px, calc(100% - 16px));
+          border-radius: 46px;
+        }
+        .phone-screen {
+          border-radius: 39px;
+        }
       }
       @media (max-width: 900px) {
         .rail {
@@ -786,6 +1141,13 @@
         }
         main {
           padding: 26px 20px 70px;
+        }
+        body.lesson-embed-active main {
+          padding: 14px 14px 0;
+        }
+        body.lesson-embed-active .mobile-nav {
+          flex: 0 0 auto;
+          margin-bottom: 14px;
         }
         .mobile-nav,
         .mobile-toc {
@@ -946,75 +1308,134 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="../assets/styles/lesson-system.css" />
   </head>
   <body>
     <!-- Direction: inherit Lesson 1 warm editorial research notebook. Read mode. Evidence status must remain visible at point of claim. -->
     <a class="skip" href="#content">Перейти до матеріалу</a>
     <div class="layout">
       <aside class="rail">
-        <p class="course">Design Engineering</p>
+        <div class="course-head">
+          <p class="course">Design Engineering</p>
+          <button class="rail-toggle" id="rail-toggle" type="button" aria-expanded="true" aria-controls="lesson-navigation" aria-label="Згорнути меню уроків" title="Згорнути меню уроків">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M14.5 5 7.5 12l7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
         <p class="progress" id="progress">Урок 2 із 12</p>
-        <nav class="lessons" aria-label="Уроки курсу">
-          <a href="../research/research.html"
-            ><span class="num">01</span
-            ><span>Ресерч і бенчмарк<span class="state">Готово</span></span></a
-          ><a href="?lesson=2" data-lesson="2"
-            ><span class="num">02</span
-            ><span>Персони і JTBD<span class="state">Готово</span></span></a
-          ><a href="?lesson=3" data-lesson="3"
-            ><span class="num">03</span
-            ><span
-              >Інформаційна архітектура<span class="state"
-                >Незабаром</span
-              ></span
-            ></a
-          ><a href="?lesson=4" data-lesson="4"
-            ><span class="num">04</span
-            ><span
-              >Прототипування і вайрфреймінг<span class="state"
-                >Незабаром</span
-              ></span
-            ></a
-          ><a href="?lesson=5" data-lesson="5"
-            ><span class="num">05</span
-            ><span
-              >Тон оф войс і мікрокопі<span class="state">Незабаром</span></span
-            ></a
-          ><a href="?lesson=6" data-lesson="6"
-            ><span class="num">06</span
-            ><span>Концепт<span class="state">Незабаром</span></span></a
-          ><a href="?lesson=7" data-lesson="7"
-            ><span class="num">07</span
-            ><span>Збірка UI<span class="state">Незабаром</span></span></a
-          ><a href="?lesson=8" data-lesson="8"
-            ><span class="num">08</span
-            ><span>Design Tokens<span class="state">Незабаром</span></span></a
-          ><a href="?lesson=9" data-lesson="9"
-            ><span class="num">09</span
-            ><span>Дизайн-система<span class="state">Незабаром</span></span></a
-          ><a href="?lesson=10" data-lesson="10"
-            ><span class="num">10</span
-            ><span>Responsive<span class="state">Незабаром</span></span></a
-          ><a href="?lesson=11" data-lesson="11"
-            ><span class="num">11</span
-            ><span
-              >Анімація і мікроінтеракції<span class="state"
-                >Незабаром</span
-              ></span
-            ></a
-          ><a href="?lesson=12" data-lesson="12"
-            ><span class="num">12</span
-            ><span
-              >Хендофф і документація<span class="state">Незабаром</span></span
-            ></a
-          >
-        </nav>
-        <nav class="toc" id="desktop-toc" aria-label="Розділи уроку">
-          <p>У цьому уроці</p>
-          <a href="#method">Метод</a><a href="#personas">Персони</a
-          ><a href="#jobs">Jobs</a><a href="#matrix">Матриця</a
-          ><a href="#decisions">Рішення</a><a href="#cut">Не в MVP</a
-          ><a href="#research-next">Що перевіряємо</a>
+        <div class="course-meter" aria-hidden="true"><i data-status="done"></i><i data-status="done"></i><i data-status="done"></i><i data-status="done"></i><i data-status="active"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i></div>
+        <nav class="course-tree" id="lesson-navigation" aria-label="Уроки курсу">
+          <ol>
+            <li class="ct-lesson" data-status="done">
+              <div class="ct-row">
+                <a class="ct-link" href="../research/research.html" title="01 · Ресерч і бенчмарк"><span class="ct-glyph" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3 6.3 5.1 8.3 9 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ct-title">Ресерч і бенчмарк</span><span class="ct-state">, готово</span></a>
+                <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-1" aria-label="Розділи: Ресерч і бенчмарк"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+              <ul class="ct-sub" id="ct-sub-1" data-for="1" hidden>
+                <li><a href="../research/research.html#overview" data-target="overview">Коротко</a></li>
+                <li><a href="../research/research.html#konkurenty" data-target="konkurenty">Конкуренти</a></li>
+                <li><a href="../research/research.html#benchmark" data-target="benchmark">Бенчмарк</a></li>
+                <li><a href="../research/research.html#patterny" data-target="patterny">Патерни</a></li>
+                <li><a href="../research/research.html#vysnovky" data-target="vysnovky">Висновки</a></li>
+                <li><a href="../research/research.html#screens" data-target="screens">Скріншоти</a></li>
+              </ul>
+            </li>
+            <li class="ct-lesson" data-status="done">
+              <div class="ct-row">
+                <a class="ct-link" href="?lesson=2" data-lesson="2" title="02 · Персони і JTBD"><span class="ct-glyph" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3 6.3 5.1 8.3 9 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ct-title">Персони і JTBD</span><span class="ct-state">, готово</span></a>
+                <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-2" aria-label="Розділи: Персони і JTBD"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+              <ul class="ct-sub" id="ct-sub-2" data-for="2" hidden>
+                <li><a href="?lesson=2#method" data-target="method">Метод</a></li>
+                <li><a href="?lesson=2#personas" data-target="personas">Персони</a></li>
+                <li><a href="?lesson=2#jobs" data-target="jobs">Jobs</a></li>
+                <li><a href="?lesson=2#matrix" data-target="matrix">Матриця</a></li>
+                <li><a href="?lesson=2#decisions" data-target="decisions">Рішення</a></li>
+                <li><a href="?lesson=2#cut" data-target="cut">Не в MVP</a></li>
+                <li><a href="?lesson=2#research-next" data-target="research-next">Що перевіряємо</a></li>
+              </ul>
+            </li>
+            <li class="ct-lesson" data-status="done">
+              <div class="ct-row">
+                <a class="ct-link" href="?lesson=3" data-lesson="3" title="03 · Інформаційна архітектура"><span class="ct-glyph" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3 6.3 5.1 8.3 9 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ct-title">Інформаційна архітектура</span><span class="ct-state">, готово</span></a>
+                <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-3" aria-label="Розділи: Інформаційна архітектура"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+              <ul class="ct-sub" id="ct-sub-3" data-for="3" hidden>
+                <li><a href="?lesson=3#entities" data-target="entities">Сутності</a></li>
+                <li><a href="?lesson=3#screens" data-target="screens">Екрани</a></li>
+                <li><a href="?lesson=3#navigation" data-target="navigation">Навігація</a></li>
+                <li><a href="?lesson=3#traceability" data-target="traceability">Трасування</a></li>
+                <li><a href="?lesson=3#main-job-flow" data-target="main-job-flow">Main flow</a></li>
+                <li><a href="?lesson=3#related-job-1-flow" data-target="related-job-1-flow">Пошук</a></li>
+                <li><a href="?lesson=3#related-job-2-flow" data-target="related-job-2-flow">Довіра</a></li>
+                <li><a href="?lesson=3#related-job-4-flow" data-target="related-job-4-flow">Домовленість</a></li>
+                <li><a href="?lesson=3#related-job-5-flow" data-target="related-job-5-flow">Контроль</a></li>
+              </ul>
+            </li>
+            <li class="ct-lesson" data-status="done">
+              <div class="ct-row">
+                <a class="ct-link" href="?lesson=4" data-lesson="4" title="04 · Прототипування і вайрфреймінг"><span class="ct-glyph" aria-hidden="true"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M3 6.3 5.1 8.3 9 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ct-title">Прототипування і вайрфреймінг</span><span class="ct-state">, готово</span></a>
+                <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-4" aria-label="Розділи: Прототипування і вайрфреймінг"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+              <ul class="ct-sub" id="ct-sub-4" data-for="4" hidden>
+                <li><a href="?lesson=4&wireframe=listings" data-wireframe="listings.html">Результати пошуку кімнат</a></li>
+                <li><a href="?lesson=4&wireframe=listing" data-wireframe="listing.html">Оголошення про кімнату</a></li>
+                <li><a href="?lesson=4&wireframe=profile" data-wireframe="profile.html">Профіль іншої людини</a></li>
+                <li><a href="?lesson=4&wireframe=chat" data-wireframe="chat.html">Чат із людиною</a></li>
+              </ul>
+            </li>
+            <li class="ct-lesson" data-status="active">
+              <div class="ct-row">
+                <a class="ct-link" href="?lesson=5" data-lesson="5" title="05 · Тон оф войс і мікрокопі"><span class="ct-glyph" aria-hidden="true">5</span><span class="ct-title">Тон оф войс і мікрокопі</span><span class="ct-state">, у роботі</span></a>
+                <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-5" aria-label="Розділи: Тон оф войс і мікрокопі"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+              <ul class="ct-sub" id="ct-sub-5" data-for="5" hidden>
+                <li><a href="?lesson=5#overview" data-target="overview">Коротко</a></li>
+                <li><a href="?lesson=5#principles" data-target="principles">Принципи</a></li>
+                <li><a href="?lesson=5#glossary" data-target="glossary">Словник</a></li>
+                <li><a href="?lesson=5#address" data-target="address">Звертання</a></li>
+                <li><a href="?lesson=5#banned" data-target="banned">Заборонене</a></li>
+                <li><a href="?lesson=5#microcopy" data-target="microcopy">Мікрокопі</a></li>
+                <li><a href="?lesson=5#inventory" data-target="inventory">Інвентар і звірка</a></li>
+              </ul>
+            </li>
+            <li class="ct-lesson" data-status="upcoming">
+              <div class="ct-row">
+                <a class="ct-link" href="?lesson=6" data-lesson="6" title="06 · Концепт"><span class="ct-glyph" aria-hidden="true">6</span><span class="ct-title">Концепт</span><span class="ct-state">, незабаром</span></a>
+              </div>
+            </li>
+            <li class="ct-lesson" data-status="upcoming">
+              <div class="ct-row">
+                <a class="ct-link" href="?lesson=7" data-lesson="7" title="07 · Збірка UI"><span class="ct-glyph" aria-hidden="true">7</span><span class="ct-title">Збірка UI</span><span class="ct-state">, незабаром</span></a>
+              </div>
+            </li>
+            <li class="ct-lesson" data-status="upcoming">
+              <div class="ct-row">
+                <a class="ct-link" href="?lesson=8" data-lesson="8" title="08 · Design Tokens"><span class="ct-glyph" aria-hidden="true">8</span><span class="ct-title">Design Tokens</span><span class="ct-state">, незабаром</span></a>
+              </div>
+            </li>
+            <li class="ct-lesson" data-status="upcoming">
+              <div class="ct-row">
+                <a class="ct-link" href="?lesson=9" data-lesson="9" title="09 · Дизайн-система"><span class="ct-glyph" aria-hidden="true">9</span><span class="ct-title">Дизайн-система</span><span class="ct-state">, незабаром</span></a>
+              </div>
+            </li>
+            <li class="ct-lesson" data-status="upcoming">
+              <div class="ct-row">
+                <a class="ct-link" href="?lesson=10" data-lesson="10" title="10 · Responsive"><span class="ct-glyph" aria-hidden="true">10</span><span class="ct-title">Responsive</span><span class="ct-state">, незабаром</span></a>
+              </div>
+            </li>
+            <li class="ct-lesson" data-status="upcoming">
+              <div class="ct-row">
+                <a class="ct-link" href="?lesson=11" data-lesson="11" title="11 · Анімація і мікроінтеракції"><span class="ct-glyph" aria-hidden="true">11</span><span class="ct-title">Анімація і мікроінтеракції</span><span class="ct-state">, незабаром</span></a>
+              </div>
+            </li>
+            <li class="ct-lesson" data-status="upcoming">
+              <div class="ct-row">
+                <a class="ct-link" href="?lesson=12" data-lesson="12" title="12 · Хендофф і документація"><span class="ct-glyph" aria-hidden="true">12</span><span class="ct-title">Хендофф і документація</span><span class="ct-state">, незабаром</span></a>
+              </div>
+            </li>
+          </ol>
         </nav>
       </aside>
       <main id="content">
@@ -1048,10 +1469,11 @@
         </details>
         <article id="lesson-two">
           <header class="hero">
-            <h1>Від припущень про людей — до перевірюваних jobs</h1>
+            <h1>Урок 2. Персони і JTBD</h1>
             <p>
-              Три ситуації пошуку житла, потреби людей і рішення, які вже можна
-              обговорювати — або ще рано приймати без розмов із людьми.
+              Від припущень про людей — до перевірюваних jobs: три ситуації
+              пошуку житла, потреби людей і рішення, які вже можна обговорювати
+              — або ще рано приймати без розмов із людьми.
             </p>
             <div class="hero-meta">
               <span class="pill">2 робочі персони</span
@@ -1946,6 +2368,109 @@
             людьми.
           </p>
         </article>
+        <article id="lesson-three" class="lesson-embed" aria-label="Урок 3 — Інформаційна архітектура">
+          <iframe class="ia-frame" data-lesson-frame="3" src="../ia.html?embed=1" title="Інформаційна архітектура Кутка"></iframe>
+        </article>
+        <article id="lesson-five" class="lesson-embed" aria-label="Урок 5 — Тон оф войс і мікрокопі">
+          <iframe class="ia-frame" data-lesson-frame="5" src="about:blank" data-src="../voice.html?embed=1" title="Тон оф войс і мікрокопі Кутка"></iframe>
+        </article>
+        <article id="lesson-four" class="lesson-four" aria-label="Урок 4 — Прототипування і вайрфреймінг">
+          <header class="wireframe-nav">
+            <h1>Вайрфрейми</h1>
+            <p>Головний flow · мобільний веб</p>
+            <nav aria-label="Макети уроку 4">
+              <ul class="wireframe-tree">
+                <li>
+                  <span class="tree-section">Пошук прийнятного варіанта</span>
+                  <ul class="tree-screens"><li>
+                    <a class="tree-screen" href="../wireframes/listings.html" target="wireframe-preview" aria-current="page">Результати пошуку кімнат</a>
+                    <ul class="tree-states" hidden>
+                      <li><a class="tree-state" href="../wireframes/listings.html" target="wireframe-preview" aria-current="page">Успіх</a></li>
+                      <li><a class="tree-state" href="../wireframes/listings-empty.html" target="wireframe-preview">Порожній</a></li>
+                      <li><a class="tree-state" href="../wireframes/listings-error.html" target="wireframe-preview">Помилка</a></li>
+                      <li><a class="tree-state" href="../wireframes/listings-loading.html" target="wireframe-preview">Завантаження</a></li>
+                    </ul>
+                  </li></ul>
+                </li>
+                <li>
+                  <span class="tree-section">Кімната / оголошення</span>
+                  <ul class="tree-screens"><li>
+                    <a class="tree-screen" href="../wireframes/listing.html" target="wireframe-preview">Оголошення про кімнату</a>
+                    <ul class="tree-states" hidden>
+                      <li><a class="tree-state" href="../wireframes/listing.html" target="wireframe-preview">Успіх</a></li>
+                      <li><a class="tree-state" href="../wireframes/listing-empty.html" target="wireframe-preview" title="Порожній стан для цього екрана не передбачений" data-na>Порожній</a></li>
+                      <li><a class="tree-state" href="../wireframes/listing-error.html" target="wireframe-preview">Помилка</a></li>
+                      <li><a class="tree-state" href="../wireframes/listing-loading.html" target="wireframe-preview">Завантаження</a></li>
+                    </ul>
+                  </li></ul>
+                </li>
+                <li>
+                  <span class="tree-section">Людина / профіль</span>
+                  <ul class="tree-screens"><li>
+                    <a class="tree-screen" href="../wireframes/profile.html" target="wireframe-preview">Профіль іншої людини</a>
+                    <ul class="tree-states" hidden>
+                      <li><a class="tree-state" href="../wireframes/profile.html" target="wireframe-preview">Успіх</a></li>
+                      <li><a class="tree-state" href="../wireframes/profile-empty.html" target="wireframe-preview">Порожній</a></li>
+                      <li><a class="tree-state" href="../wireframes/profile-error.html" target="wireframe-preview">Помилка</a></li>
+                      <li><a class="tree-state" href="../wireframes/profile-loading.html" target="wireframe-preview">Завантаження</a></li>
+                    </ul>
+                  </li></ul>
+                </li>
+                <li>
+                  <span class="tree-section">Розмова / домовленість</span>
+                  <ul class="tree-screens"><li>
+                    <a class="tree-screen" href="../wireframes/chat.html" target="wireframe-preview">Чат із людиною</a>
+                    <ul class="tree-states" hidden>
+                      <li><a class="tree-state" href="../wireframes/chat.html" target="wireframe-preview">Успіх</a></li>
+                      <li><a class="tree-state" href="../wireframes/chat-empty.html" target="wireframe-preview">Порожній</a></li>
+                      <li><a class="tree-state" href="../wireframes/chat-error.html" target="wireframe-preview">Помилка</a></li>
+                      <li><a class="tree-state" href="../wireframes/chat-loading.html" target="wireframe-preview">Завантаження</a></li>
+                    </ul>
+                  </li></ul>
+                </li>
+              </ul>
+            </nav>
+          </header>
+          <section class="wireframe-preview" aria-label="Перегляд макета">
+            <div class="device-switch" role="radiogroup" aria-label="Пристрій перегляду">
+              <button type="button" role="radio" aria-checked="true" title="Мобільний" aria-label="Мобільний"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="4.5" y="1.5" width="7" height="13" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7 12.2h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+              <button type="button" role="radio" aria-checked="false" aria-disabled="true" title="Планшет — згодом" aria-label="Планшет, згодом"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="1.5" width="11" height="13" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7 12.2h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+              <button type="button" role="radio" aria-checked="false" aria-disabled="true" title="Десктоп — згодом" aria-label="Десктоп, згодом"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="8.5" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 14h5M8 11v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+            </div>
+            <nav class="preview-state-nav" aria-label="Стани вибраного екрана">
+              <ul id="preview-state-list">
+                <li><a href="../wireframes/listings.html" target="wireframe-preview" aria-current="page">Успіх</a></li>
+                <li><a href="../wireframes/listings-empty.html" target="wireframe-preview">Порожній</a></li>
+                <li><a href="../wireframes/listings-error.html" target="wireframe-preview">Помилка</a></li>
+                <li><a href="../wireframes/listings-loading.html" target="wireframe-preview">Завантаження</a></li>
+              </ul>
+            </nav>
+            <div class="phone-mockup" aria-label="Мокап телефона">
+              <span class="phone-buttons" aria-hidden="true"></span>
+              <div class="phone-screen">
+              <div class="phone-status" aria-hidden="true">
+                <span>9:41</span>
+                <span class="phone-island"></span>
+                <span class="phone-status-icons">
+                  <svg viewBox="0 0 18 11"><rect x="0" y="7" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="6" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="8.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="11" rx="1" fill="currentColor"/></svg>
+                  <svg viewBox="0 0 16 11"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8 .5 10.2 10.2 0 0 0 .8 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4Zm0 3.3c1.4 0 2.6.5 3.6 1.4l1.2-1.2A6.8 6.8 0 0 0 8 3.8 6.8 6.8 0 0 0 3.2 5.7l1.2 1.2c1-.9 2.2-1.4 3.6-1.4Zm0 3.3c-.5 0-1 .2-1.3.5L8 10.6l1.3-1.3c-.3-.3-.8-.5-1.3-.5Z" fill="currentColor"/></svg>
+                  <svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="20" height="8" rx="2" fill="currentColor"/><path d="M25 4v4c.8-.3 1.3-1.1 1.3-2S25.8 4.3 25 4Z" fill="currentColor" opacity=".45"/></svg>
+                </span>
+              </div>
+              <div class="phone-viewport" id="phone-viewport">
+              <iframe
+                class="wireframe-frame"
+                name="wireframe-preview"
+                src="../wireframes/listings.html"
+                title="Макет екрана Результати пошуку кімнат — успішний стан"
+              ></iframe>
+              </div>
+              <span class="phone-home" aria-hidden="true"></span>
+              </div>
+            </div>
+            <div class="wireframe-scroll" id="wireframe-scroll" aria-label="Прокрутка вайрфрейму" tabindex="0"><div class="wireframe-scroll-track"></div></div>
+          </section>
+        </article>
         <article id="placeholder" class="placeholder hidden">
           <p class="num" id="placeholder-num"></p>
           <h1 id="placeholder-title"></h1>
@@ -1991,9 +2516,16 @@
           String(current).padStart(2, "0") +
           " із 12 · " +
           titles[current];
-        if (current !== 2) {
+        if (current === 3 || current === 4 || current === 5) {
+          document.body.classList.add(
+            current === 4 ? "lesson-four-active" : "lesson-embed-active",
+          );
+          document.getElementById("lesson-three").classList.toggle("hidden", current !== 3);
+          document.getElementById("lesson-five").classList.toggle("hidden", current !== 5);
           document.getElementById("lesson-two").classList.add("hidden");
-          document.getElementById("desktop-toc").classList.add("hidden");
+          document.querySelector(".mobile-toc").classList.add("hidden");
+        } else if (current !== 2) {
+          document.getElementById("lesson-two").classList.add("hidden");
           document.querySelector(".mobile-toc").classList.add("hidden");
           document.getElementById("placeholder").classList.remove("hidden");
           document.getElementById("placeholder-num").textContent =
@@ -2002,7 +2534,7 @@
             titles[current];
         }
         if (current === 2 && "IntersectionObserver" in window) {
-          var links = [].slice.call(document.querySelectorAll(".toc a"));
+          var links = [].slice.call(document.querySelectorAll('.ct-sub[data-for="2"] a'));
           var observer = new IntersectionObserver(
             function (entries) {
               entries.forEach(function (e) {
@@ -2020,7 +2552,218 @@
               observer.observe(s);
             });
         }
+        var wireframeFrame = document.querySelector(".wireframe-frame");
+        var wireframePending = false;
+        var wireframeScroll = document.getElementById("wireframe-scroll");
+        var previewStateList = document.getElementById("preview-state-list");
+        var treeStateLinks = [].slice.call(
+          document.querySelectorAll(".wireframe-tree .tree-state"),
+        );
+        var railScreenLinks = [].slice.call(
+          document.querySelectorAll('.ct-sub[data-for="4"] a'),
+        );
+        if (current === 4) {
+          railScreenLinks.forEach(function (link) {
+            link.addEventListener("click", function (event) {
+              if (!wireframeFrame) return;
+              event.preventDefault();
+              wireframeFrame.src = "../wireframes/" + link.dataset.wireframe;
+            });
+          });
+        }
+        // Lessons 3 and 5 live in embedded pages; the rail tree scrolls them
+        // and highlights the section the embedded page reports as visible.
+        var lessonFrame = document.querySelector(
+          '[data-lesson-frame="' + current + '"]',
+        );
+        var embedLinks = [].slice.call(
+          document.querySelectorAll('.ct-sub[data-for="' + current + '"] a'),
+        );
+        function markEmbedSection(id) {
+          embedLinks.forEach(function (link) {
+            var active = link.dataset.target === id;
+            link.classList.toggle("active", active);
+            if (active) link.setAttribute("aria-current", "location");
+            else link.removeAttribute("aria-current");
+          });
+        }
+        if ((current === 3 || current === 5) && lessonFrame) {
+          var frameBase =
+            lessonFrame.dataset.src || lessonFrame.getAttribute("src");
+          if (location.hash || lessonFrame.dataset.src)
+            lessonFrame.src = frameBase + location.hash;
+          embedLinks.forEach(function (link) {
+            link.addEventListener("click", function (event) {
+              event.preventDefault();
+              try {
+                lessonFrame.contentWindow.location.hash = link.dataset.target;
+              } catch (error) {
+                lessonFrame.src = frameBase + "#" + link.dataset.target;
+              }
+              history.replaceState(null, "", "#" + link.dataset.target);
+              markEmbedSection(link.dataset.target);
+            });
+          });
+          window.addEventListener("message", function (event) {
+            if (event.source !== lessonFrame.contentWindow) return;
+            var type = event.data && event.data.type;
+            if (type === "ia-section" || type === "lesson-section")
+              markEmbedSection(event.data.id);
+          });
+        }
+        var treeScreenLinks = [].slice.call(
+          document.querySelectorAll(".wireframe-tree .tree-screen"),
+        );
+        function fileName(url) {
+          return new URL(url, location.href).pathname.split("/").pop();
+        }
+        function wireframeLink(file) {
+          return treeStateLinks.find(function (link) {
+            return fileName(link.href) === file;
+          });
+        }
+        function syncWireframeUrl(file) {
+          if (current !== 4) return;
+          var url = new URL(location.href);
+          var name = file.replace(/\.html$/, "");
+          if (url.searchParams.get("wireframe") === name) return;
+          url.searchParams.set("wireframe", name);
+          history.replaceState(null, "", url);
+        }
+        function syncWireframeNavigation() {
+          if (!wireframeFrame || !previewStateList) return;
+          var currentFile;
+          try {
+            currentFile = wireframeFrame.contentWindow.location.pathname
+              .split("/")
+              .pop();
+          } catch (error) {
+            return;
+          }
+          var currentLink = wireframeLink(currentFile);
+          if (currentLink) syncWireframeUrl(currentFile);
+          treeStateLinks.forEach(function (link) {
+            if (link === currentLink) link.setAttribute("aria-current", "page");
+            else link.removeAttribute("aria-current");
+          });
+          var currentScreen = null;
+          treeScreenLinks.forEach(function (link) {
+            var owns = currentLink && link.parentElement.contains(currentLink);
+            if (owns) {
+              link.setAttribute("aria-current", "page");
+              currentScreen = fileName(link.href);
+            } else link.removeAttribute("aria-current");
+          });
+          railScreenLinks.forEach(function (link) {
+            if (current === 4 && link.dataset.wireframe === currentScreen)
+              link.setAttribute("aria-current", "page");
+            else link.removeAttribute("aria-current");
+          });
+          if (!currentLink) return;
+          var stateLinks = currentLink
+            .closest(".tree-states")
+            .querySelectorAll(".tree-state");
+          previewStateList.replaceChildren();
+          stateLinks.forEach(function (source) {
+            var item = document.createElement("li");
+            var link = source.cloneNode(true);
+            if (fileName(link.href) === currentFile)
+              link.setAttribute("aria-current", "page");
+            else link.removeAttribute("aria-current");
+            item.appendChild(link);
+            previewStateList.appendChild(item);
+          });
+        }
+        var syncingWireframeScroll = false;
+        function wireframeDocument() {
+          try {
+            return wireframeFrame && wireframeFrame.contentDocument;
+          } catch (error) {
+            return null;
+          }
+        }
+        var phoneViewport = document.getElementById("phone-viewport");
+        function scalePhoneViewport() {
+          if (!phoneViewport) return;
+          phoneViewport.style.setProperty(
+            "--s",
+            String(phoneViewport.clientWidth / 390),
+          );
+        }
+        scalePhoneViewport();
+        if (phoneViewport && "ResizeObserver" in window)
+          new ResizeObserver(scalePhoneViewport).observe(phoneViewport);
+        window.addEventListener("resize", scalePhoneViewport, { passive: true });
+        window.addEventListener("load", scalePhoneViewport);
+        function sizeWireframeScroll() {
+          var doc = wireframeDocument();
+          if (!doc || !wireframeScroll) return;
+          doc.documentElement.classList.add("external-scrollbar");
+          var root = doc.scrollingElement || doc.documentElement;
+          var track = wireframeScroll.firstElementChild;
+          var scrollRange = Math.max(0, root.scrollHeight - root.clientHeight);
+          track.style.height = wireframeScroll.clientHeight + scrollRange + "px";
+          wireframeScroll.scrollTop = root.scrollTop;
+        }
+        function connectWireframeScroll() {
+          var doc = wireframeDocument();
+          if (!doc || !wireframeScroll) return;
+          var root = doc.scrollingElement || doc.documentElement;
+          sizeWireframeScroll();
+          doc.defaultView.addEventListener("scroll", function () {
+            if (syncingWireframeScroll) return;
+            syncingWireframeScroll = true;
+            wireframeScroll.scrollTop = root.scrollTop;
+            syncingWireframeScroll = false;
+          }, { passive: true });
+        }
+        if (wireframeFrame && current === 4) {
+          var requestedWireframe = new URLSearchParams(location.search).get(
+            "wireframe",
+          );
+          var requestedLink =
+            requestedWireframe && wireframeLink(requestedWireframe + ".html");
+          wireframePending =
+            requestedLink && requestedLink.href !== wireframeFrame.src;
+          if (wireframePending) wireframeFrame.src = requestedLink.href;
+        }
+        if (wireframeFrame) {
+          wireframeFrame.addEventListener("load", function () {
+            syncWireframeNavigation();
+            connectWireframeScroll();
+          });
+          if (!wireframePending) syncWireframeNavigation();
+        }
+        if (wireframeScroll) {
+          wireframeScroll.addEventListener("scroll", function () {
+            if (syncingWireframeScroll) return;
+            var doc = wireframeDocument();
+            if (!doc) return;
+            syncingWireframeScroll = true;
+            (doc.scrollingElement || doc.documentElement).scrollTop = wireframeScroll.scrollTop;
+            syncingWireframeScroll = false;
+          }, { passive: true });
+          window.addEventListener("resize", sizeWireframeScroll, { passive: true });
+        }
+        var railToggle = document.getElementById("rail-toggle");
+        var collapsed = localStorage.getItem("lesson-rail-collapsed") === "true";
+        function setRail(collapsedState) {
+          document.body.classList.toggle("rail-collapsed", collapsedState);
+          railToggle.setAttribute("aria-expanded", String(!collapsedState));
+          var label = collapsedState
+            ? "Розгорнути меню уроків"
+            : "Згорнути меню уроків";
+          railToggle.setAttribute("aria-label", label);
+          railToggle.setAttribute("title", label);
+        }
+        setRail(collapsed);
+        railToggle.addEventListener("click", function () {
+          collapsed = !document.body.classList.contains("rail-collapsed");
+          localStorage.setItem("lesson-rail-collapsed", String(collapsed));
+          setRail(collapsed);
+        });
       })();
     </script>
+    <script src="../assets/scripts/course-tree.js"></script>
   </body>
 </html>

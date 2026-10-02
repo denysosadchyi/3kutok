@@ -1,0 +1,1918 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Інформаційна архітектура Кутка: сутності, sitemap, навігація, трасування jobs та user flows.">
+  <link rel="icon" href="data:,">
+  <title>Інформаційна архітектура · Куток</title>
+  <script>if (new URLSearchParams(location.search).get("embed") === "1") document.documentElement.classList.add("embed");</script>
+  <style>
+    :root {
+      --paper: #faf9f7;
+      --surface: #ffffff;
+      --wash: #f3efe9;
+      --line: #dfd9d0;
+      --line-strong: #c7beb2;
+      --ink: #201e1a;
+      --muted: #696258;
+      --rust: #ad492c;
+      --rust-dark: #78301d;
+      --rust-wash: #f4e4dc;
+      --green: #295142;
+      --green-wash: #e1ece6;
+      --ochre: #684f12;
+      --ochre-wash: #f5ecca;
+      --blue: #36546c;
+      --blue-wash: #e6eef3;
+      --radius: 14px;
+      --rail: 286px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.58;
+    }
+    ::selection { background: var(--rust-wash); color: var(--ink); }
+    a { color: var(--rust-dark); text-underline-offset: 3px; }
+    a:hover { text-decoration-thickness: 2px; }
+    a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid var(--rust);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+    button { font: inherit; }
+
+    .skip {
+      position: fixed;
+      z-index: 30;
+      top: 12px;
+      left: 12px;
+      transform: translateY(-160%);
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--ink);
+      color: white;
+    }
+    .skip:focus { transform: none; }
+
+    .layout { display: flex; min-height: 100vh; }
+    .rail {
+      position: sticky;
+      top: 0;
+      width: var(--rail);
+      height: 100vh;
+      flex: 0 0 var(--rail);
+      overflow-y: auto;
+      padding: 30px 20px;
+      border-right: 1px solid var(--line);
+      background: var(--surface);
+      scrollbar-color: var(--line-strong) transparent;
+    }
+    .brand {
+      margin: 0 10px 4px;
+      font-weight: 820;
+      letter-spacing: -0.01em;
+    }
+    .rail-note {
+      margin: 0 10px 24px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .rail-group {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+    .rail-label {
+      margin: 0 10px 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .rail a {
+      display: block;
+      min-height: 36px;
+      padding: 7px 10px;
+      border-radius: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      text-decoration: none;
+    }
+    .rail a:hover, .rail a.active { background: var(--wash); color: var(--ink); }
+    .rail a.active { font-weight: 740; }
+    .rail .primary-link {
+      min-height: 44px;
+      padding-top: 11px;
+      color: var(--ink);
+      font-weight: 750;
+    }
+
+    main {
+      min-width: 0;
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 52px clamp(22px, 4vw, 64px) 110px;
+    }
+    .lesson-toc {
+      display: flex;
+      gap: 4px;
+      width: 100%;
+      margin: 0 0 34px;
+      padding: 0 0 12px;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--line);
+      scrollbar-width: thin;
+      scrollbar-color: var(--line-strong) transparent;
+    }
+    .lesson-toc a {
+      flex: 0 0 auto;
+      min-height: 36px;
+      padding: 8px 11px;
+      border-radius: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .lesson-toc a:hover,
+    .lesson-toc a.active {
+      background: var(--wash);
+      color: var(--ink);
+    }
+    .lesson-toc a.active { font-weight: 750; }
+    .mobile-nav { display: none; }
+    .hero {
+      max-width: 880px;
+      margin-bottom: 56px;
+    }
+    .hero h1 {
+      max-width: 720px;
+      margin: 0 0 14px;
+      font-family: inherit;
+      font-size: 42px;
+      line-height: 1.08;
+      letter-spacing: -.025em;
+      text-wrap: balance;
+    }
+    .hero > p {
+      max-width: 640px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 20px;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 0;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .tag.strong { background: transparent; color: var(--ink); }
+
+    .overview {
+      display: grid;
+      grid-template-columns: minmax(180px, .42fr) minmax(0, 1fr);
+      gap: 26px;
+      align-items: start;
+      margin-bottom: 78px;
+      padding: 22px 0;
+      border-top: 2px solid var(--ink);
+      border-bottom: 1px solid var(--line);
+    }
+    .overview strong { font-size: 13px; }
+    .overview p { max-width: 70ch; margin: 0; font-size: 17px; }
+
+    .document {
+      scroll-margin-top: 24px;
+      margin-bottom: 90px;
+    }
+    .document > h1 {
+      margin: 0 0 14px;
+      font-family: inherit;
+      font-size: 32px;
+      line-height: 1.15;
+      letter-spacing: -.015em;
+    }
+    .document h2 {
+      margin: 72px 0 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+      font-family: inherit;
+      font-size: 26px;
+      line-height: 1.2;
+      letter-spacing: -.01em;
+      scroll-margin-top: 22px;
+    }
+    .document h3 {
+      margin: 42px 0 15px;
+      font-size: 21px;
+      line-height: 1.25;
+      scroll-margin-top: 22px;
+    }
+    .document h4 {
+      margin: 28px 0 11px;
+      font-size: 16px;
+      scroll-margin-top: 22px;
+    }
+    .document p, .document > ul, .document > ol, .document blockquote {
+      max-width: 76ch;
+    }
+    .document p { margin: 0 0 15px; }
+    .document ul, .document ol { padding-left: 23px; }
+    .document li { margin-bottom: 8px; }
+    .document li::marker { color: var(--rust); }
+    .document strong { font-weight: 760; }
+    .document code:not(.language-mermaid) {
+      padding: 2px 5px;
+      border-radius: 5px;
+      background: var(--wash);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .88em;
+    }
+    .document blockquote {
+      margin: 22px 0;
+      padding: 18px 22px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: var(--surface);
+      font-family: inherit;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+    .document blockquote p { margin: 0; }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 22px 0 34px;
+    }
+    .content-card,
+    .section-card,
+    .object-grid > li,
+    .flow-block {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+    .content-card,
+    .section-card {
+      padding: 18px 20px;
+    }
+    .content-card > :first-child,
+    .section-card > :first-child {
+      margin-top: 0;
+    }
+    .content-card > :last-child,
+    .section-card > :last-child {
+      margin-bottom: 0;
+    }
+    .content-card h4,
+    .section-card h3 {
+      margin-bottom: 10px;
+    }
+    .content-card p,
+    .content-card li,
+    .section-card p,
+    .section-card li {
+      font-size: 13.5px;
+    }
+    .content-card p,
+    .content-card ul,
+    .content-card ol,
+    .section-card p,
+    .section-card ul,
+    .section-card ol,
+    .object-grid p,
+    .object-grid ul,
+    .object-grid ol {
+      max-width: none;
+    }
+    .object-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 22px 0 34px;
+      padding: 0 !important;
+      list-style: none;
+    }
+    .object-grid > li {
+      margin: 0;
+      padding: 18px 20px;
+    }
+    .object-grid > li::marker { content: ""; }
+    .object-grid > li > strong:first-child {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .object-grid > li > ul {
+      margin-top: 12px;
+      padding-left: 19px;
+    }
+    .object-grid > li li { font-size: 13.5px; }
+    .flow-block {
+      margin: 28px 0 54px;
+      padding: 22px;
+    }
+    .flow-block > h2 {
+      margin-top: 0;
+    }
+    .flow-switch {
+      display: inline-flex;
+      gap: 4px;
+      margin: 18px 0 8px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--wash);
+    }
+    .flow-switch button {
+      min-height: 36px;
+      padding: 7px 12px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 720;
+    }
+    .flow-switch button:hover { color: var(--ink); }
+    .flow-switch button[aria-selected="true"] {
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 1px 3px rgba(32, 30, 26, .12);
+    }
+    .flow-switch button:focus-visible {
+      outline: 2px solid var(--rust);
+      outline-offset: 2px;
+    }
+    .flow-variant[hidden] { display: none; }
+    .flow-variant.is-happy-flow .nodeLabel,
+    .flow-variant.is-happy-flow .edgeLabel,
+    .flow-variant.is-happy-flow .label {
+      font-size: 12px !important;
+    }
+
+    #screens + p, #navigation + p, #traceability + p {
+      max-width: 72ch;
+      color: var(--muted);
+    }
+    #screens ~ ul li strong {
+      color: var(--ink);
+    }
+
+    .document table {
+      width: 100%;
+      min-width: 900px;
+      border-collapse: collapse;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .document .table-scroll {
+      width: 100%;
+      margin: 22px 0 32px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      scrollbar-color: var(--line-strong) var(--wash);
+    }
+    th, td {
+      padding: 12px 13px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--wash);
+      font-size: 12px;
+      font-weight: 780;
+    }
+    tr:last-child td { border-bottom: 0; }
+    th:last-child, td:last-child { border-right: 0; }
+    td:not(:first-child) { text-align: center; font-weight: 720; }
+    td:first-child { min-width: 330px; }
+
+    .flow-figure {
+      margin: 24px 0 30px;
+      border-radius: var(--radius);
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .flow-tools {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 48px;
+      padding: 8px 10px 8px 15px;
+      border: 1px solid var(--line);
+      border-bottom: 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--wash);
+    }
+    .flow-tools strong {
+      margin-right: auto;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .flow-tools button {
+      min-height: 34px;
+      padding: 6px 10px;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 720;
+    }
+    .flow-tools button:hover { border-color: var(--rust); color: var(--rust-dark); }
+    .flow-tools .expand-flow {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: #fff;
+    }
+    .flow-tools .expand-flow:hover {
+      border-color: var(--rust-dark);
+      background: var(--rust-dark);
+      color: #fff;
+    }
+    .flow-viewport {
+      width: 100%;
+      max-height: 76vh;
+      overflow: auto;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 0 0 var(--radius) var(--radius);
+      background: #fff;
+      scrollbar-color: var(--line-strong) var(--wash);
+    }
+    .flow-viewport .mermaid {
+      width: max-content;
+      min-width: 100%;
+      text-align: center;
+    }
+    .flow-viewport svg {
+      display: block;
+      height: auto;
+      margin: 0 auto;
+      max-width: none !important;
+    }
+    .flow-figure.is-expanded {
+      position: fixed;
+      inset: 12px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      border: 1px solid var(--line-strong);
+      box-shadow: 0 18px 60px rgba(32, 30, 26, .22);
+    }
+    .flow-figure.is-expanded .flow-tools {
+      flex: 0 0 auto;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .flow-figure.is-expanded .flow-viewport {
+      flex: 1 1 auto;
+      max-height: none;
+    }
+    body.diagram-open { overflow: hidden; }
+    .diagram-fallback {
+      margin: 0;
+      white-space: pre-wrap;
+      font: 12px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+
+    .loading-card, .error-card {
+      padding: 24px;
+      border-radius: var(--radius);
+      background: var(--wash);
+      color: var(--muted);
+    }
+    .error-card { background: var(--rust-wash); color: var(--rust-dark); }
+    footer {
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .rail { display: none; }
+      main { padding: 28px 20px 72px; }
+      .lesson-toc { margin-bottom: 28px; }
+      .mobile-nav {
+        display: block;
+        margin-bottom: 34px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--surface);
+      }
+      .mobile-nav summary {
+        min-height: 48px;
+        padding: 13px 15px;
+        cursor: pointer;
+        font-weight: 750;
+      }
+      .mobile-links {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        padding: 0 10px 10px;
+      }
+      .mobile-links a {
+        min-height: 42px;
+        padding: 10px;
+        border-radius: 7px;
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .mobile-links a:hover { background: var(--wash); color: var(--ink); }
+      .overview { grid-template-columns: 1fr; gap: 8px; }
+      .card-grid,
+      .object-grid { grid-template-columns: 1fr; }
+      .flow-block { padding: 14px; }
+      .flow-viewport { padding: 14px; max-height: 70vh; }
+      .flow-tools { flex-wrap: wrap; }
+    }
+    @media (max-width: 560px) {
+      .hero h1 { font-size: 42px; }
+      .mobile-links { grid-template-columns: 1fr; }
+      .document h2 { margin-top: 58px; }
+      .flow-tools strong { width: 100%; }
+      .flow-tools button { flex: 1; }
+    }
+    @media print {
+      .rail, .mobile-nav, .skip, .flow-tools { display: none !important; }
+      main { max-width: none; padding: 0; }
+      .flow-viewport { max-height: none; overflow: visible; border: 0; }
+      .flow-viewport svg { max-width: 100% !important; width: 100% !important; }
+      a { color: inherit; text-decoration: none; }
+    }
+    html.embed .rail,
+    html.embed .lesson-toc,
+    html.embed .mobile-nav,
+    html.embed .skip {
+      display: none !important;
+    }
+    html.embed main {
+      max-width: 1080px;
+      padding-top: 48px;
+    }
+  </style>
+  <link rel="stylesheet" href="assets/styles/lesson-system.css">
+</head>
+<body>
+  <a class="skip" href="#content">Перейти до матеріалу</a>
+  <div class="layout">
+    <aside class="rail" aria-label="Навігація сторінкою">
+      <p class="brand">Куток · Design Engineering</p>
+      <p class="rail-note">Інформаційна архітектура</p>
+      <a class="primary-link" href="lessons/?lesson=3">← До уроку 3</a>
+      <div class="rail-group">
+        <p class="rail-label">Sitemap</p>
+        <a href="#entities">Сутності</a>
+        <a href="#screens">Екрани</a>
+        <a href="#navigation">Навігація</a>
+        <a href="#traceability">Трасування</a>
+      </div>
+      <div class="rail-group">
+        <p class="rail-label">User flows</p>
+        <a href="#main-job-flow">Main job</a>
+        <a href="#related-job-1-flow">Related 1 · Пошук</a>
+        <a href="#related-job-2-flow">Related 2 · Довіра</a>
+        <a href="#related-job-4-flow">Related 4 · Домовленість</a>
+        <a href="#related-job-5-flow">Related 5 · Контроль</a>
+      </div>
+    </aside>
+
+    <main id="content">
+      <nav class="lesson-toc" aria-label="Розділи уроку 3">
+        <a href="#entities">Сутності</a>
+        <a href="#screens">Екрани</a>
+        <a href="#navigation">Навігація</a>
+        <a href="#traceability">Трасування</a>
+        <a href="#main-job-flow">Main flow</a>
+        <a href="#related-job-1-flow">Пошук</a>
+        <a href="#related-job-2-flow">Довіра</a>
+        <a href="#related-job-4-flow">Домовленість</a>
+        <a href="#related-job-5-flow">Контроль</a>
+      </nav>
+      <details class="mobile-nav">
+        <summary>Зміст сторінки</summary>
+        <nav class="mobile-links" aria-label="Мобільна навігація">
+          <a href="#entities">Сутності</a>
+          <a href="#screens">Екрани</a>
+          <a href="#navigation">Навігація</a>
+          <a href="#traceability">Трасування</a>
+          <a href="#main-job-flow">Main job</a>
+          <a href="#related-job-1-flow">Related 1</a>
+          <a href="#related-job-2-flow">Related 2</a>
+          <a href="#related-job-4-flow">Related 4</a>
+          <a href="#related-job-5-flow">Related 5</a>
+        </nav>
+      </details>
+
+      <header class="hero">
+        <h1>Урок 3. Інформаційна архітектура</h1>
+        <p>Як Куток зводить кімнату, людину й домовленість: сутності продукту, дерево екранів із jobs, навігаційна модель, трасування та перевірені user flows.</p>
+        <div class="hero-meta" aria-label="Обсяг документа">
+          <span class="tag strong">8 екранів</span>
+          <span class="tag">5 flows</span>
+          <span class="tag">12 jobs у трасуванні</span>
+          <span class="tag">Primary: Марта</span>
+          <span class="tag">Secondary: Андрій</span>
+        </div>
+      </header>
+
+      <div class="overview">
+        <strong>Логіка артефакту</strong>
+        <p>Екрани виведені з jobs і згруповані навколо об’єктів, а не шаблонних розділів сайту. Діаграми показують не лише happy path: технічні стани, очікування, негативні результати, добровільні виходи та відновлення залишаються видимими.</p>
+      </div>
+
+      <section id="sitemap-document" class="document" aria-label="Sitemap">
+        <div class="loading-card">Готуємо карту інформаційної архітектури…</div>
+      </section>
+
+      <section id="flows-document" class="document" aria-label="User flows">
+        <div class="loading-card">Готуємо user flows…</div>
+      </section>
+
+      <footer>
+        Джерела сторінки: <a href="sitemap.md">sitemap.md</a> і <a href="flows.md">flows.md</a>. Позначка [?] означає непідтверджене припущення.
+      </footer>
+    </main>
+  </div>
+
+  <script id="sitemap-source" type="text/plain">
+# Карта продукту — Куток
+
+## Сутності
+
+Чернетка інвентаризації об'єктів до проєктування екранів. Вона спирається на
+[`personas.md`](personas.md), [`jtbd.md`](jtbd.md) і
+[`research/research.md`](research/research.md). Позначка **[?]** означає, що
+об'єкт або конкретне поле лише припускається: наявні джерела підтверджують
+ринкову механіку чи сценарій, але не потребу користувачів саме в такій моделі.
+
+### Основні сутності
+
+#### 1. Оголошення (кімната)
+
+Пропозиція вільної кімнати й умов спільного проживання, яку публікує автор.
+
+**Поля й частини:**
+
+- автор — посилання на профіль людини;
+- тип пропозиції: вільна кімната; **[?]** пропозиція спільно шукати житло;
+- ціна / бюджет;
+- дата доступності або заселення;
+- локація: місто, район, **[?]** метро;
+- умови пропозиції; конкретний склад умов ще не визначений **[?]**;
+- опис кімнати й житла **[?]**;
+- фото **[?]**;
+- люди, які вже живуть у квартирі, — посилання на їхні профілі **[?]**;
+- актуальність / статус пропозиції **[?]**;
+- точні сигнали довіри автора або оголошення, якщо вони є.
+
+**JOB, що породжує:** [Main job — знайти взаємно прийнятний варіант і
+домовитися](jtbd.md#main-job-продукту); [Related job 1 — звузити пошук до
+прийнятних варіантів](jtbd.md#1-звузити-пошук-до-прийнятних-варіантів).
+Конкретний набір полів оголошення лишається **[?]**: у джерелах підтверджені
+ринкові параметри ціни, дати, локації та умов, але не їхня важливість для
+користувачів Кутка.
+
+**Пов'язана з:** профілем автора; профілями наявних мешканців **[?]**;
+пошуком і фільтрами; чатами, розпочатими щодо неї; заявкою **[?]**; сигналами
+довіри; скаргою на оголошення або автора.
+
+#### 2. Профіль людини
+
+Структуроване представлення людини як потенційного співмешканця або автора
+пропозиції, доступне до першого контакту.
+
+**Поля й частини:**
+
+- ім'я або публічне ім'я **[?]**;
+- фото **[?]**;
+- роль у поточному сценарії: шукає кімнату, пропонує кімнату або **[?]** шукає
+  людину для спільного пошуку;
+- опис про себе **[?]**;
+- бюджет, бажана дата й прийнятні локації — коли людина шукає;
+- структуровані відповіді про спосіб життя, звички та очікування від
+  спільного побуту; конкретні питання й варіанти відповідей — **[?]**;
+- точні trust-сигнали: тип підтвердження, результат і дата; для MVP —
+  «номер підтверджено», а не загальне «користувач перевірений»;
+- пов'язані активні оголошення;
+- можливість поскаржитися на людину або припинити контакт із нею.
+
+**JOB, що породжує:** [Related job 2 — зменшити невизначеність щодо іншої
+сторони](jtbd.md#2-зменшити-невизначеність-щодо-іншої-сторони) і
+[Related job 3 — оцінити придатність до спільного
+побуту](jtbd.md#3-оцінити-придатність-до-спільного-побуту). Профіль також
+підтримує [Main job](jtbd.md#main-job-продукту).
+
+**Пов'язаний з:** людиною-власником профілю; її оголошеннями; пошуковими
+результатами; чатами та їх учасниками; trust-сигналами; скаргами й
+блокуваннями; заявкою **[?]**; відгуками **[?]**.
+
+#### 3. Чат
+
+Пряма розмова двох людей про конкретну кімнату або можливе спільне
+проживання без обов'язкового mutual match.
+
+**Поля й частини:**
+
+- учасники розмови — два профілі;
+- контекст: оголошення або профіль, з якого почався контакт;
+- повідомлення: автор, текст **[?]**, час надсилання;
+- порядок / історія повідомлень;
+- статус доставки або прочитання **[?]**;
+- стан розмови: активна або контакт припинено / заблоковано;
+- дія і запис блокування: хто кого заблокував, час **[?]**;
+- скарга: категорія, user/listing/message ID, статус розгляду; конкретний
+  перелік категорій — **[?]**.
+
+**JOB, що породжує:** [Related job 4 — перевести придатний варіант у взаємну
+домовленість](jtbd.md#4-перевести-придатний-варіант-у-взаємну-домовленість).
+Припинення контакту, блокування й скарга походять із
+[Related job 5 — не втратити контроль](jtbd.md#5-не-втратити-контроль-під-час-взаємодії-з-незнайомою-людиною).
+
+**Пов'язаний з:** профілями обох учасників; оголошенням **[?]** або профілем,
+що став контекстом першого контакту; окремими повідомленнями; блокуванням;
+скаргою; заявкою **[?]**, якщо згодом буде доведено потребу в окремому запиті.
+
+#### 4. Пошук і фільтри
+
+Набір критеріїв, якими людина відсіює неприйнятні оголошення або профілі, та
+результат їх застосування. Це не збережений об'єкт за замовчуванням: потреба
+зберігати пошук чи отримувати сповіщення не підтверджена **[?]**.
+
+**Поля й частини:**
+
+- що шукають: кімнату, людину або **[?]** партнера для спільного пошуку;
+- ціновий діапазон / бюджет;
+- дата;
+- місто / локація, район, **[?]** метро;
+- сумісні умови **[?]**;
+- критерії способу життя **[?]**;
+- сортування актуальних варіантів **[?]**;
+- результати: пов'язані оголошення та/або профілі, що відповідають критеріям.
+
+**JOB, що породжує:** [Related job 1 — звузити пошук до прийнятних
+варіантів](jtbd.md#1-звузити-пошук-до-прийнятних-варіантів). Відбір також є
+частиною [Main job](jtbd.md#main-job-продукту).
+
+**Пов'язаний з:** людиною, яка задає критерії; оголошеннями й профілями у
+результатах; полями оголошення та профілю, за якими виконується відбір.
+
+#### 5. Сигнал довіри
+
+Точний, обмежений за змістом результат конкретної перевірки. Це не загальний
+рейтинг без пояснення і не доказ характеру, сумісності чи безпеки людини.
+
+**Поля й частини:**
+
+- суб'єкт сигналу: профіль, оголошення **[?]** або окремий атрибут;
+- тип перевірки;
+- результат / статус;
+- дата підтвердження;
+- коротке пояснення, що саме сигнал означає і чого не гарантує;
+- джерело або спосіб перевірки **[?]**;
+- для підтвердження телефону: номер як приватний атрибут і публічний результат
+  «номер підтверджено»; сам номер іншій стороні не показується **[?]**;
+- ID, selfie та сирі чутливі докази не є публічними й не входять до
+  підтвердженого MVP.
+
+**JOB, що породжує:** [Related job 2 — зменшити невизначеність щодо іншої
+сторони](jtbd.md#2-зменшити-невизначеність-щодо-іншої-сторони).
+
+**Пов'язаний з:** профілем людини; оголошенням **[?]**; конкретною перевіркою
+або атрибутом, який підтверджено. Відгук **[?]** може стати іншим типом
+репутаційного сигналу лише після підтвердження відповідного job і події.
+
+### Під питанням
+
+#### Заявка **[?]**
+
+Окремий формальний запит на кімнату або контакт поки не має власного job.
+[Related job 4](jtbd.md#4-перевести-придатний-варіант-у-взаємну-домовленість)
+вимагає прямого уточнення умов і намірів, але це вже закриває чат; локальний
+патерн також веде до прямого контакту, а не обов'язкової заявки. Badi має
+запити, однак наявність конкурентної механіки не доводить потребу Кутка.
+
+Якщо окрему заявку підтвердить дослідження, її ймовірні поля — заявник,
+одержувач, оголошення або профіль, перше повідомлення **[?]**, час і статус
+**[?]**; зв'язки — з обома профілями, оголошенням і створеним чатом. До такого
+підтвердження це не частина основної моделі.
+
+#### Відгук **[?]**
+
+Відгук після співжиття не породжується жодним job з основного списку
+`jtbd.md`. Платформа без власної транзакції не знає, чи двоє людей справді
+жили разом; eligibility gate через двостороннє підтвердження періоду
+співжиття — окрема неперевірена гіпотеза. Тому відгук не слід змішувати з уже
+обґрунтованими trust-сигналами.
+
+Ймовірні поля лише для майбутньої перевірки: автор і отримувач відгуку,
+підтверджена подія або період співжиття **[?]**, оцінка **[?]**, текст **[?]**,
+дата, статус модерації **[?]**. Ймовірні зв'язки — з двома профілями,
+підтвердженою домовленістю / співжиттям **[?]** і сигналами довіри.
+
+## Екрани
+
+Чернетка мінімальної ієрархії, виведена з jobs та інвентаря сутностей, а не зі
+структури конкурентів. Позначення ролей: **[P]** — primary-персона Марта,
+**[S]** — secondary-персона Андрій, **[P/S]** — потрібен обом. Це пріоритети
+для прототипування, а не доведена важливість сегментів.
+
+- **Пошук прийнятного варіанта**
+  - **Результати пошуку кімнат [P]**
+    ([Related job 1 — звузити пошук](jtbd.md#1-звузити-пошук-до-прийнятних-варіантів))
+    - секція критеріїв: бюджет, дата, локація та **[?]** сумісні умови;
+    - секція знайдених оголошень із базовими параметрами для відсіву;
+    - **[?]** результати пошуку людей для спільного пошуку не входять у
+      primary/secondary-сценарій і потребують окремої перевірки.
+
+- **Кімната / оголошення**
+  - **Оголошення про кімнату [P]**
+    ([Related job 1 — звузити пошук](jtbd.md#1-звузити-пошук-до-прийнятних-варіантів),
+    [Related job 2 — зменшити невизначеність](jtbd.md#2-зменшити-невизначеність-щодо-іншої-сторони),
+    [Related job 3 — оцінити придатність до спільного побуту](jtbd.md#3-оцінити-придатність-до-спільного-побуту),
+    [Related job 4 — перевести варіант у домовленість](jtbd.md#4-перевести-придатний-варіант-у-взаємну-домовленість))
+    - секція кімнати: ціна, дата, локація, умови, **[?]** опис і фото;
+    - секція автора й **[?]** наявних мешканців із переходом до профілю;
+    - секція точних сигналів довіри та меж кожного сигналу;
+    - ручний відсів за базовими умовами: повернення до результатів, якщо
+      ціна, дата або умови не підходять;
+    - дія «написати» відкриває **Чат із людиною** щодо цієї кімнати;
+      контакт починається після успішного надсилання повідомлення.
+  - **Створення / редагування оголошення [S]**
+    ([Main job — знайти взаємно прийнятний варіант і домовитися](jtbd.md#main-job-продукту),
+    [Related job 1 — звузити пошук](jtbd.md#1-звузити-пошук-до-прийнятних-варіантів))
+    - секція базових параметрів кімнати й умов;
+    - секція **[?]** опису та фото;
+    - секція автора й **[?]** інших мешканців;
+    - актуальність пропозиції **[?]**.
+
+- **Людина / профіль**
+  - **Профіль іншої людини [P/S]**
+    ([Related job 1 — звузити пошук](jtbd.md#1-звузити-пошук-до-прийнятних-варіантів),
+    [Related job 2 — зменшити невизначеність](jtbd.md#2-зменшити-невизначеність-щодо-іншої-сторони),
+    [Related job 3 — оцінити придатність до спільного побуту](jtbd.md#3-оцінити-придатність-до-спільного-побуту),
+    [Related job 4 — перевести варіант у домовленість](jtbd.md#4-перевести-придатний-варіант-у-взаємну-домовленість))
+    - секція ролі, параметрів пошуку або пов'язаного оголошення;
+    - секція способу життя, звичок та очікувань від побуту;
+    - секція точних trust-сигналів із датою та поясненням меж;
+    - ручний відсів за параметрами людини: якщо бюджет, дата чи умови не
+      підходять, повернення до результатів [P] або переліку розмов [S];
+      це рішення про конкретний варіант, без нової функції приховування;
+    - дія «написати» відкриває **Чат із людиною** для прямого контакту;
+      контакт починається після успішного надсилання повідомлення.
+  - **Заповнення / редагування власного профілю [P/S]**
+    ([Related job 2 — зменшити невизначеність](jtbd.md#2-зменшити-невизначеність-щодо-іншої-сторони),
+    [Related job 3 — оцінити придатність до спільного побуту](jtbd.md#3-оцінити-придатність-до-спільного-побуту))
+    - секція ролі й базових критеріїв;
+    - секція структурованої анкети способу життя **[?]**;
+    - секція публічних даних про себе **[?]**.
+  - **Підтвердження номера телефону [P/S]**
+    ([Related job 2 — зменшити невизначеність](jtbd.md#2-зменшити-невизначеність-щодо-іншої-сторони),
+    [Main job — дані для взаємного рішення іншої сторони](jtbd.md#main-job-продукту))
+    - секція приватного номера й перевірки;
+    - секція результату «номер підтверджено» та пояснення, чого він не
+      гарантує;
+    - обов'язковий крок реєстрації за [брифом](CLAUDE.md#довіра-mvp);
+      повторний гейт перед відкриттям чату не додається.
+
+- **Розмова / домовленість**
+  - **Перелік розмов [P/S]**
+    ([Related job 4 — перевести варіант у домовленість](jtbd.md#4-перевести-придатний-варіант-у-взаємну-домовленість))
+    - секція поточних розмов у контексті кімнати або профілю;
+    - ознаки останнього повідомлення й **[?]** непрочитаного стану.
+  - **Чат із людиною [P/S]**
+    ([Related job 4 — перевести варіант у домовленість](jtbd.md#4-перевести-придатний-варіант-у-взаємну-домовленість),
+    [Related job 5 — не втратити контроль](jtbd.md#5-не-втратити-контроль-під-час-взаємодії-з-незнайомою-людиною))
+    - секція контексту: кімната або профіль, щодо якого почалася розмова;
+    - секція історії повідомлень і надсилання нового;
+    - припинення контакту / блокування;
+    - повідомлення про порушення з категорією й прив'язкою до людини,
+      оголошення або повідомлення; вихід, блокування й скарга незалежні;
+      прийняття скарги не означає покарання іншої людини. Поведінку описує
+      [Related job 5 у flows.md](flows.md#related-job-5-не-втратити-контроль-під-час-взаємодії-з-незнайомою-людиною).
+
+`Loading`, `empty`, `error` описують конкретну операцію на відповідному
+екрані: завантаження, надсилання або збереження. `Empty` можливий лише після
+успішного отримання даних; збій отримання — `error`, що має повторну спробу
+й вихід. Для кожної асинхронної операції потрібні loading, success/error та
+відновлення; empty — там, де порожній результат має зміст. Очікування
+відповіді (`awaiting`), відмова й заблокований контакт — окремі стани
+взаємодії, а не технічна помилка чи нескінченний loading. Свідома зупинка
+може завершити сценарій зі збереженим доступом до глобальної навігації.
+Тупик — дефект переходів без доступного виходу, а не назва UI-стану.
+Усі ці стани й результати належать восьми екранам вище; окремих вузлів
+sitemap вони не утворюють. Переходи й відновлення деталізовані у
+[`flows.md`](flows.md).
+
+Екранів-сиріт у цій чернетці немає. Окремі екрани заявки, відгуку, рейтингу,
+збережених пошуків, сповіщень, mutual match і координації спільного пошуку не
+додані: для них немає підтвердженого job в основному списку.
+
+## Навігація
+
+Навігаційна модель використовує лише екрани з розділу «Екрани». Перший екран
+для primary-персони — **Результати пошуку кімнат**: він одразу ставить Марту в
+активний пошук, а не додає проміжний екран без окремого job.
+
+### Глобальна навігація
+
+Для primary постійно доступні три пункти; для secondary додається четвертий
+рольовий пункт. Це одна рольово-адаптивна модель, а не два нових дерева.
+
+1. **Пошук** → **Результати пошуку кімнат** **[P]**. Вхід у кластер відбору
+   варіантів: [Related job 1 — звузити
+   пошук](jtbd.md#1-звузити-пошук-до-прийнятних-варіантів), який запускає
+   [Main job](jtbd.md#main-job-продукту).
+2. **Розмови** → **Перелік розмов** **[P/S]**. Вхід у кластер переходу від
+   придатного варіанта до узгодження:
+   [Related job 4 — перевести варіант у
+   домовленість](jtbd.md#4-перевести-придатний-варіант-у-взаємну-домовленість).
+3. **Профіль** → **Заповнення / редагування власного профілю** **[P/S]**.
+   Вхід у кластер структурованого контексту про людину:
+   [Related job 2 — зменшити
+   невизначеність](jtbd.md#2-зменшити-невизначеність-щодо-іншої-сторони) та
+   [Related job 3 — оцінити придатність до спільного
+   побуту](jtbd.md#3-оцінити-придатність-до-спільного-побуту). Власник
+   заповнює дані, щоб інша сторона могла виконати ці jobs.
+4. **Моя кімната** → **Створення / редагування оголошення** **[S]**. Видимий
+   постійно лише в ролі людини, яка пропонує кімнату. Вхід у кластер створення
+   пропозиції для [Main job](jtbd.md#main-job-продукту) і
+   [Related job 1 — звузити
+   пошук](jtbd.md#1-звузити-пошук-до-прийнятних-варіантів): структуровані
+   параметри дають іншій стороні змогу відсіяти неприйнятний варіант.
+
+Окремого глобального пункту «Довіра» немає: сигнал довіри має сенс поруч із
+конкретною людиною чи оголошенням. Окремого пункту «Кімнати» теж немає:
+оголошення є результатом пошуку або власною пропозицією, а не паралельним
+job-кластером.
+
+### Навігаційна глибина до відкриття чату для primary
+
+Передумова маршруту — Марта вже зареєстрована й підтвердила номер телефону.
+Обов'язковість перевірки під час реєстрації встановлює
+[бриф](CLAUDE.md#довіра-mvp). Реєстрація передує цьому сценарію; її кроки
+не включені в наведені 2/3 тапи й не переносяться до чату. Це не оцінка
+шляху нової людини від першого візиту.
+
+Кінцева точка підрахунку — **відкритий Чат із людиною**. Початок контакту
+настає лише після успішного надсилання першого повідомлення. Успіх
+[Related job 4](jtbd.md#4-перевести-придатний-варіант-у-взаємну-домовленість)
+— взаємно узгоджений наступний крок; для нього потрібна змінна кількість
+повідомлень і взаємодій. Бажаний результат
+[Main job](jtbd.md#main-job-продукту) — домовленість про спільне проживання
+на погоджених умовах. Фактичне заселення платформа без власної транзакції
+не підтверджує. Відкриття чату не означає закриття жодної з цих домовленостей.
+
+**Основний маршрут — 2 тапи від першого екрана:**
+
+1. **Результати пошуку кімнат** — старт, **0 тапів**
+   ([Related job 1](jtbd.md#1-звузити-пошук-до-прийнятних-варіантів)).
+2. Тап по варіанту → **Оголошення про кімнату** — **1 тап**
+   ([Related job 2](jtbd.md#2-зменшити-невизначеність-щодо-іншої-сторони),
+   [Related job 3](jtbd.md#3-оцінити-придатність-до-спільного-побуту),
+   [Related job 4](jtbd.md#4-перевести-придатний-варіант-у-взаємну-домовленість)).
+3. Тап «написати» → **Чат із людиною** — **2 тапи**
+   ([Related job 4](jtbd.md#4-перевести-придатний-варіант-у-взаємну-домовленість),
+   що підтримує [Main job](jtbd.md#main-job-продукту)).
+
+**Маршрут із поглибленою оцінкою — 3 тапи:** результати → оголошення
+(1) → профіль автора (2) → чат (3). Він дає більше контексту для
+[Related job 2](jtbd.md#2-зменшити-невизначеність-щодо-іншої-сторони) і
+[Related job 3](jtbd.md#3-оцінити-придатність-до-спільного-побуту),
+але не є обов'язковим гейтом.
+
+Глибина відкриття чату не перевищує трьох тапів, тому переструктуризація не
+потрібна. Підрахунок стосується переходів між екранами для одного варіанта;
+введення критеріїв, перегляд контенту, пояснення сигналів і повідомлення
+додають взаємодії, але не рівні навігації. Related 1 доступний уже на
+результатах (0 тапів), Related 2/3 — на оголошенні (1) або профілі (2),
+Related 4 — у чаті (2/3). Наявна розмова відкривається через глобальні
+«Розмови» та вибір розмови (2 тапи від іншого екрана).
+
+Компроміс: відкриття чату доступне з оголошення за 2 тапи, а людина, якій
+важливіші trust-сигнали й побутова сумісність, добровільно витрачає третій тап
+на повний профіль. Це зберігає перевірку іншої сторони, не повертаючи
+непідтверджений mutual-match або формальну заявку.
+
+### Рівні доступності
+
+**Глобальне — видиме в постійній навігації:**
+
+- **Результати пошуку кімнат** через «Пошук» **[P]**;
+- **Перелік розмов** через «Розмови» **[P/S]**;
+- **Заповнення / редагування власного профілю** через «Профіль» **[P/S]**;
+- **Створення / редагування оголошення** через «Моя кімната» **[S]**, лише
+  коли людина діє в ролі того, хто пропонує кімнату.
+
+**Контекстне — з'являється всередині потоку:**
+
+- **Оголошення про кімнату** — після вибору результату пошуку;
+- **Профіль іншої людини** — з оголошення, результату або контексту розмови;
+- **Чат із людиною** — після дії «написати» в оголошенні чи профілі або після
+  вибору наявної розмови;
+- критерії пошуку — на екрані результатів;
+- дія «написати» — в контексті конкретного оголошення або профілю;
+- припинення контакту, блокування і повідомлення про порушення — доступні
+  в конкретному **Чаті із людиною**, без обов'язкового переходу в інший екран;
+- пояснення меж trust-сигналу — поруч із сигналом у тому самому оголошенні
+  або профілі; це секція чи розкриття, без нового екрана;
+- **Підтвердження номера телефону** — обов'язковий контекст реєстрації,
+  до маршруту зареєстрованої primary-персони.
+
+**Глибоке — рідкісні дії без постійного пункту:**
+
+- перегляд результату підтвердження номера — з власного профілю, на наявному
+  екрані **Підтвердження номера телефону**; це не повторна вимога перевірки.
+
+Редагування оголошення залишається глобально доступним через **«Мою
+кімнату»** для [S], як і визначено вище. Захисні дії й пояснення довіри
+контекстні: їхня доступність не залежить від частоти використання.
+
+`Empty`, `loading`, `error`, відсутність результатів і заблокований чат
+залишаються станами названих екранів і не отримують навігаційних пунктів.
+
+## Трасування
+
+Матриця охоплює всі jobs із `jtbd.md`, включно з гіпотезами. Галочка означає,
+що на цьому екрані людина справді виконує частину job або створює необхідні
+дані для виконання job іншою стороною. Схожість теми без реальної дії не є
+підставою для галочки.
+
+Скорочення екранів у колонках:
+
+- **Результати** — Результати пошуку кімнат;
+- **Оголошення** — Оголошення про кімнату;
+- **Ред. огол.** — Створення / редагування оголошення;
+- **Чужий профіль** — Профіль іншої людини;
+- **Свій профіль** — Заповнення / редагування власного профілю;
+- **Телефон** — Підтвердження номера телефону;
+- **Розмови** — Перелік розмов;
+- **Чат** — Чат із людиною.
+
+| Job | Результати | Оголошення | Ред. огол. | Чужий профіль | Свій профіль | Телефон | Розмови | Чат |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| [Main — знайти взаємно прийнятний варіант і домовитися](jtbd.md#main-job-продукту) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| [Related 1 — звузити пошук](jtbd.md#1-звузити-пошук-до-прийнятних-варіантів) | ✓ | ✓ | ✓ | ✓ |  |  |  |  |
+| [Related 2 — зменшити невизначеність](jtbd.md#2-зменшити-невизначеність-щодо-іншої-сторони) |  | ✓ |  | ✓ | ✓ | ✓ |  |  |
+| [Related 3 — оцінити придатність до спільного побуту](jtbd.md#3-оцінити-придатність-до-спільного-побуту) |  | ✓ |  | ✓ | ✓ |  |  |  |
+| [Related 4 — перевести варіант у домовленість](jtbd.md#4-перевести-придатний-варіант-у-взаємну-домовленість) |  | ✓ |  | ✓ |  |  | ✓ | ✓ |
+| [Related 5 — не втратити контроль](jtbd.md#5-не-втратити-контроль-під-час-взаємодії-з-незнайомою-людиною) |  |  |  |  |  |  |  | ✓ |
+| Emotional [?] — відчувати контроль, коли наближається переїзд | ✓ |  |  |  |  |  | ✓ | ✓ |
+| Emotional [?] — відчувати впевненість у виборі людини |  | ✓ |  | ✓ |  |  |  |  |
+| Social [?] — виглядати надійним і рівноправним кандидатом |  |  |  |  | ✓ | ✓ |  |  |
+| Social [?] — пояснити близьким, чому вибір безпечний |  |  |  |  |  |  |  |  |
+| Functional [?] — координувати спільний пошук після знайомства |  |  |  |  |  |  |  |  |
+| Functional [?] — зафіксувати правила, платежі й межі перед заселенням |  |  |  |  |  |  |  |  |
+
+Галочки в рядку Main не означають, що primary мусить пройти всі вісім
+екранів. Це сукупне покриття двостороннього marketplace-job: наприклад,
+secondary створює оголошення, а primary його знаходить; власний профіль і
+підтвердження телефону дають іншій стороні дані для взаємного рішення.
+Зокрема, **Main × Телефон** лишається двостороннім внеском і передумовою
+реєстрації, а не зайвим кроком primary-маршруту. Власне підтвердження
+телефону не додає впевненості у виборі іншої людини, тому в цьому emotional
+job галочки немає; сама емоційна дія лишається гіпотезою.
+
+**Related 1 × Чужий профіль** означає ручний відсів за бюджетом, датою чи
+умовами з поверненням до інших варіантів, описаний у складі екрана, а не
+автоматичний фільтр профілів. **Related 4 × Оголошення / Чужий профіль** —
+дія «написати» до конкретної людини; сам контакт починається після
+надсилання в чаті. **Related 5 × Чат** — незалежні вихід, block і report з
+відновленням після збою, деталізовані у відповідному flow в
+[`flows.md`](flows.md#related-job-5-не-втратити-контроль-під-час-взаємодії-з-незнайомою-людиною).
+
+### Екрани-сироти
+
+**Не виявлено:** кожна колонка має хоча б одну ✓ і простежується до job.
+Отже, видаляти або штучно переприв'язувати наявний екран за результатом цього
+аудиту не потрібно. Це результат перевірки, а не припущення, що сироти
+допустимі.
+
+### Jobs-сироти
+
+1. **Social [?] — пояснити близьким, чому вибір безпечний.** Жоден наявний
+   екран не підтримує дію пояснення або передачі близьким обґрунтованого
+   вибору; сам job у `jtbd.md` позначений непідтвердженим.
+   **Рішення: відкласти до discovery** як непідтверджений job без покриття,
+   до перевірки впливу близьких. Це запис у backlog дослідження, не
+   зобов'язання реалізувати функцію. Якщо job
+   підтвердиться, окремо вирішити, чи достатньо прив'язати його до наявних
+   **Оголошення про кімнату** та **Профіль іншої людини**, чи потрібен новий
+   спосіб безпечно поділитися підсумком. Не ставити ✓ до цього рішення.
+2. **Functional [?] — координувати спільний пошук після знайомства.** Наявний
+   **Чат із людиною** дозволяє листування, але не дає спільних критеріїв,
+   добірки варіантів або стану наступних дій, яких вимагає формулювання job.
+   **Рішення: відкласти до discovery** як непідтверджений job без покриття,
+   до перевірки buddy-up сценарію для локальної аудиторії. Це backlog
+   дослідження; після підтвердження — обрати реальне покриття наявним чатом
+   або новим екраном, не переписувати job під наявну функцію.
+3. **Functional [?] — зафіксувати правила, платежі й межі перед заселенням.**
+   У чаті умови можна обговорити, але жоден екран не фіксує узгоджений набір
+   правил і не підтверджує його обома сторонами.
+   **Рішення: відкласти до discovery** як непідтверджений job без покриття.
+   Це backlog дослідження; якщо job підтвердиться, перевірити, чи потрібен
+   окремий екран зафіксованої домовленості, чи достатньо розширення чату.
+   Зараз рішення про додавання екрана не прийняте.
+
+**У повній матриці залишаються 3 jobs-сироти й 0 екранів-сиріт.** Це відкриті
+дефекти покриття трьох непідтверджених jobs, відкладених до discovery.
+Відкладання не заповнює порожні рядки й не означає досягнення мети «жодної
+сироти». Після перевірки потрібно або додати реальне покриття підтвердженому
+job, або аргументовано переглянути непідтверджену гіпотезу в `jtbd.md` та
+синхронізувати матрицю. Зараз `jtbd.md` не змінюється, нові екрани не додані.
+
+  </script>
+  <script id="flows-source" type="text/plain">
+# User flows — Куток
+
+## Межі, ролі й позначення
+
+Це проєктна поведінка для прототипу на основі [jobs](jtbd.md), а не результат
+поведінкового тестування. Main описує Марту — робочу primary-персону.
+Андрій — secondary: може сам ініціювати контакт або відкрити наявну розмову;
+Related 4 і 5 працюють для обох сторін з однаковими правами. Пріоритети
+[персон](personas.md) залишаються гіпотезами.
+
+Передумова цих flows — людина вже зареєструвалася й підтвердила телефон
+відповідно до [продуктового брифу](CLAUDE.md#довіра-mvp). Реєстрація поза
+межами цих діаграм. Додаткового gate перед чатом немає. «Звернення» — перше
+повідомлення, а не формальна заявка.
+
+- Прямокутник `A["..."]` — екран із дослівною назвою з
+  [sitemap.md](sitemap.md#екрани). Повторні вузли з тією самою назвою —
+  той самий екран у різних місцях flow, а не нові екрани.
+- Ромб `D{"...?"}` — рішення з гілками `так` / `ні`. Оцінка умов,
+  сумісності й готовності контактувати не створює додаткових кроків
+  інтерфейсу: людина може прийняти ці рішення перед одним тапом «Написати».
+- Заокруглений вузол `L("...")` — стан, дія всередині екрана або результат.
+  `loading` — виконується конкретна операція; `error` — технічний збій;
+  `empty` — запит успішний, але даних немає або профіль неповний.
+  Для надсилання, block і report `empty` не потрібен.
+- Очікування відповіді, несумісність, відмова й пауза — стани взаємодії.
+  Очікування людини показуємо без нескінченного spinner. Негативний
+  результат щодо кандидата не є технічним `error`.
+- Тупик — дефект переходів, а не UI-стан. Добровільна пауза чи відмова можуть
+  завершити поточну спробу; глобальна навігація й повернення до інших
+  варіантів доступні. Відсутність відповіді, кімнат або доступу до сервісу —
+  реальні перешкоди job, для яких є виходи; продукт не гарантує відповіді
+  чи появи пропозицій.
+
+Спільне відновлення: критерії й позицію видачі зберігаємо в поточній сесії;
+це не нова сутність «збережений пошук». Ненадіслану чернетку лишаємо в чаті.
+Повторне надсилання — лише за явною дією; якщо результат попередньої спроби
+невідомий, спочатку звіряємо статус, щоб не створити дубль. Так само
+перевіряємо невідомий результат block/report перед повтором. Глобальна
+навігація доступна також під час loading/error: можна вийти, не чекаючи
+запиту. Повернення з паузи — добровільна дія, не автоматичний перезапуск.
+
+Кінцеві події: Related 1 — відібрано потенційно придатний варіант; Related 2 —
+прийнято обґрунтоване рішення контактувати або не контактувати; Related 4 —
+узгоджено наступний крок. Main — сторони погодили спільне проживання на
+узгоджених умовах. Це результат для людей: без транзакції платформа не
+підтверджує фактичне заселення. Перегляд може відбутися поза платформою;
+flow не додає бронювання чи підтвердження угоди.
+
+Вузли «Продовження» явно передають керування до іншої діаграми нижче.
+Так повторно використовуються стани пошуку (Related 1), переліку розмов і
+чату (Related 4), захисних дій (Related 5). Це не нові екрани й не кінці job.
+
+## Main job — знайти взаємно прийнятний варіант і домовитися
+
+[Формулювання job у jtbd.md](jtbd.md#main-job-продукту).
+Від старту до відкриття чату — 2 навігаційні тапи, або 3 через повний
+профіль. Повідомлення й домовленість потребують змінної кількості дій.
+
+### Скорочений варіант — happy path
+
+Це огляд основного успішного маршруту без технічних станів, відмов і
+відновлення. Повна специфікація лишається в наступній діаграмі.
+
+```mermaid
+flowchart TD
+    A["Результати пошуку кімнат"] --> B("Встановити критерії пошуку")
+    B --> C{"Є прийнятні результати?"}
+    C -->|так| D["Оголошення про кімнату"]
+    D --> E{"Кімната доступна й базові умови підходять?"}
+    E -->|так| F{"Потрібен повний профіль?"}
+    F -->|так| G["Профіль іншої людини"]
+    F -->|ні| H{"Сигнали довіри зрозумілі?"}
+    G --> I{"Даних достатньо для оцінки?"}
+    I -->|так| H
+    H -->|так| J{"Довіри достатньо для контакту?"}
+    J -->|так| K{"Побутові очікування прийнятні?"}
+    K -->|так| L["Чат із людиною"]
+    L --> M("Написати й надіслати повідомлення")
+    M --> N{"Інша сторона відповіла?"}
+    N -->|так| O{"Умови залишаються сумісними?"}
+    O -->|так| P("Узгодити розмову або перегляд")
+    P --> Q("Уточнити умови після перегляду")
+    Q --> R{"Спільне проживання погоджено?"}
+    R -->|так| S("Успіх Main: погоджено проживання на узгоджених умовах")
+```
+
+### Повний варіант — стани, відмови та відновлення
+
+```mermaid
+flowchart TD
+    A["Результати пошуку кімнат"] --> LS("Стан loading: завантажуємо результати")
+    LS --> QS{"Пошук завантажився?"}
+    QS -->|ні| ES("Стан error: пошук недоступний, критерії збережені")
+    ES --> RS{"Повторити пошук?"}
+    RS -->|так| LS
+    RS -->|ні| PAUSE("Пауза: спробу відкладено, навігація доступна")
+    QS -->|так| HS{"Є результати?"}
+    HS -->|ні| NS("Стан empty: нічого не знайдено")
+    NS --> CS{"Змінити критерії?"}
+    CS -->|так| A
+    CS -->|ні| PAUSE
+    HS -->|так| B["Оголошення про кімнату"]
+    B --> LB("Стан loading: завантажуємо оголошення")
+    LB --> QB{"Оголошення завантажилося?"}
+    QB -->|ні| EB("Стан error: оголошення не завантажилося")
+    EB --> RB{"Повторити завантаження?"}
+    RB -->|так| LB
+    RB -->|ні| A
+    QB -->|так| AB{"Кімната ще доступна?"}
+    AB -->|ні| NB("Негативний результат: оголошення зняте або кімната зайнята")
+    NB --> A
+    AB -->|так| TERMS{"Базові умови підходять?"}
+    TERMS -->|ні| A
+    TERMS -->|так| FULL{"Потрібен повний профіль?"}
+    FULL -->|так| P["Профіль іншої людини"]
+    FULL -->|ні| SIGNAL{"Значення сигналів довіри зрозуміле?"}
+    P --> LP("Стан loading: завантажуємо профіль")
+    LP --> QP{"Профіль завантажився?"}
+    QP -->|ні| EP("Стан error: профіль не завантажився")
+    EP --> RP{"Повторити завантаження профілю?"}
+    RP -->|так| LP
+    RP -->|ні| A
+    QP -->|так| HP{"Даних профілю достатньо для оцінки?"}
+    HP -->|ні| NP("Стан empty: профіль неповний, невідоме позначено")
+    NP --> CLARIFY{"Готові уточнити невідоме в чаті?"}
+    CLARIFY -->|ні| A
+    CLARIFY -->|так| SIGNAL
+    HP -->|так| SIGNAL
+    SIGNAL -->|ні| EXPLAIN("Дія в поточному екрані: прочитати пояснення меж перевірки")
+    EXPLAIN --> TRUST
+    SIGNAL -->|так| TRUST{"Рівень довіри достатній для контакту?"}
+    TRUST -->|ні| A
+    TRUST -->|так| LIFE{"Відомі побутові очікування прийнятні?"}
+    LIFE -->|ні| A
+    LIFE -->|так| CONTACT{"Хочете контактувати?"}
+    CONTACT -->|ні| A
+    CONTACT -->|так| C["Чат із людиною"]
+    C --> LC("Стан loading: завантажуємо історію чату")
+    LC --> QC{"Історія завантажилася?"}
+    QC -->|ні| EC("Стан error: історія недоступна, чернетка збережена")
+    EC --> RC{"Повторити завантаження чату?"}
+    RC -->|так| LC
+    RC -->|ні| A
+    QC -->|так| HC{"Є попередні повідомлення?"}
+    HC -->|ні| NC("Стан empty: нова розмова, можна написати першими")
+    NC --> COMPOSE("Дія в чаті: написати або відредагувати повідомлення")
+    HC -->|так| COMPOSE
+    COMPOSE --> SEND{"Надіслати повідомлення?"}
+    SEND -->|ні| EXIT{"Перейти до інших розмов?"}
+    SEND -->|так| LD("Стан loading: звіряємо статус і надсилаємо за потреби")
+    LD --> QD{"Надсилання підтверджено?"}
+    QD -->|ні| ED("Стан error: надсилання не підтверджене, чернетка збережена")
+    ED --> RD{"Перевірити статус і повторити за потреби?"}
+    RD -->|так| LD
+    RD -->|ні| EXIT
+    QD -->|так| WAIT("Очікування: повідомлення надіслано, залишаємося в чаті")
+    WAIT --> STAY{"Продовжувати цю розмову зараз?"}
+    STAY -->|ні| EXIT
+    STAY -->|так| SYNC("Стан loading: оновлюємо повідомлення")
+    SYNC --> SYNCOK{"Оновлення вдалося?"}
+    SYNCOK -->|ні| SYNCERR("Стан error: нові повідомлення недоступні, історія лишається")
+    SYNCERR --> RETRY{"Повторити оновлення?"}
+    RETRY -->|так| SYNC
+    RETRY -->|ні| EXIT
+    SYNCOK -->|так| ANSWER{"Є відповідь іншої сторони?"}
+    ANSWER -->|ні| WAIT
+    ANSWER -->|так| SAFE{"Взаємодія бажана й не викликає підозри?"}
+    SAFE -->|ні| SAFETY("Продовження: Related 5 у цьому чаті")
+    SAFE -->|так| AGREE{"Є явна відмова або несумісні умови?"}
+    AGREE -->|так| NO("Негативний результат: відмова або умови не зійшлися")
+    NO --> A
+    AGREE -->|ні| NEXT{"Наступний крок узгоджено?"}
+    NEXT -->|ні| COMPOSE
+    NEXT -->|так| STEP("Проміжний результат: домовилися про розмову або перегляд")
+    STEP --> LIVING{"Після уточнень і перегляду погодили спільне проживання?"}
+    LIVING -->|так| DONE("Успіх Main: люди погодили проживання на узгоджених умовах")
+    LIVING -->|ні| CONTINUE{"Продовжувати узгодження з цією людиною?"}
+    CONTINUE -->|так| COMPOSE
+    CONTINUE -->|ні| A
+    EXIT -->|так| CONV["Перелік розмов"]
+    EXIT -->|ні| A
+    PAUSE --> A
+    CONV --> HANDOFF("Продовження: стани переліку й вибір розмови в Related 4")
+```
+
+**Рішення:** чи завантажилися пошук, оголошення, профіль та історія; чи
+повторювати невдалу операцію; чи є результати й чи змінювати критерії;
+чи актуальна кімната й прийнятні базові умови; чи потрібен повний профіль;
+чи вистачає даних або чи готова людина уточнити невідоме; чи зрозумілі
+сигнали, достатня довіра й прийнятні побутові очікування; чи контактувати;
+чи надсилати й чи підтверджено надсилання; чи чекати в чаті або перейти до
+інших розмов; чи вдалося оновити повідомлення й чи відповіли; чи бажана
+взаємодія; чи прийнятні умови, погоджено наступний крок і спільне проживання.
+
+**Стани:** `loading/error` пошуку, оголошення, профілю, історії, надсилання
+й оновлення; `empty` видачі, неповного профілю й нового чату. Неактуальне
+оголошення й відмова — негативні результати. Очікування має виходи у пошук
+або розмови; оновлення не означає повторне звернення. Недостатня довіра
+й несумісність повертають до інших варіантів. Пауза залишає критерії
+й навігацію. Успіх — домовленість людей про проживання, без заяви про
+доведене заселення. Невідомі побутові умови позначені як невідомі:
+готовність уточнити їх не є підтвердженням сумісності.
+
+## Related job 1 — звузити пошук до прийнятних варіантів
+
+[Формулювання job у jtbd.md](jtbd.md#1-звузити-пошук-до-прийнятних-варіантів).
+Primary — Марта. Job завершується на відборі результату; завантаження
+оголошення й подальша оцінка описані в Main.
+
+```mermaid
+flowchart TD
+    A["Результати пошуку кімнат"] --> EDIT("Дія у видачі: встановити або змінити критерії")
+    EDIT --> L("Стан loading: застосовуємо критерії")
+    L --> Q{"Пошук виконався без збою?"}
+    Q -->|ні| ER("Стан error: результати недоступні, критерії збережені")
+    ER --> RETRY{"Повторити пошук?"}
+    RETRY -->|так| L
+    RETRY -->|ні| PAUSE("Пауза: лишитися з поточними критеріями, навігація доступна")
+    Q -->|так| HAS{"Є результати?"}
+    HAS -->|ні| EMPTY("Стан empty: нічого не знайдено")
+    EMPTY --> CHANGE{"Змінити критерії?"}
+    CHANGE -->|так| EDIT
+    CHANGE -->|ні| PAUSE
+    HAS -->|так| FIT{"Є потенційно придатний варіант?"}
+    FIT -->|ні| CHANGE
+    FIT -->|так| DONE("Успіх: відібрано потенційно придатний варіант у результатах")
+    PAUSE --> A
+```
+
+**Рішення:** чи виконався пошук; чи повторити запит; чи є результати;
+чи є придатний варіант; чи змінити критерії. Відмова послаблювати умови
+допустима — продукт не примушує приймати неприйнятний варіант.
+
+**Стани:** `loading` застосування критеріїв; `error` невдалого запиту;
+`empty` лише після успішного запиту без результатів; пауза зі збереженими
+критеріями та можливістю повернутися пізніше або вийти через глобальну
+навігацію; успіх — відсіяно неприйнятне й обрано потенційно придатне.
+
+## Related job 2 — зменшити невизначеність щодо іншої сторони
+
+[Формулювання job у jtbd.md](jtbd.md#2-зменшити-невизначеність-щодо-іншої-сторони).
+Марта починає з оголошення; Андрій може почати з профілю кандидата у вже
+наявній розмові. Межі сигналу показуємо в тому самому екрані: підтверджений
+номер не гарантує особу, житло, наміри чи сумісність.
+
+```mermaid
+flowchart TD
+    A["Оголошення про кімнату"] --> L1("Стан loading: завантажуємо оголошення")
+    L1 --> Q1{"Дані завантажилися?"}
+    Q1 -->|ні| E1("Стан error: оголошення недоступне через збій")
+    E1 --> R1{"Повторити завантаження?"}
+    R1 -->|так| L1
+    R1 -->|ні| DEFER("Пауза: оцінку відкладено через недоступні дані")
+    Q1 -->|так| ACTIVE{"Оголошення ще актуальне?"}
+    ACTIVE -->|ні| GONE("Негативний результат: варіант більше недоступний")
+    GONE --> BACK
+    ACTIVE -->|так| ENOUGH{"Даних про автора достатньо для рішення?"}
+    ENOUGH -->|ні| P["Профіль іншої людини"]
+    ENOUGH -->|так| CLEAR{"Значення сигналів довіри зрозуміле?"}
+    P --> L2("Стан loading: завантажуємо профіль")
+    L2 --> Q2{"Профіль завантажився?"}
+    Q2 -->|ні| E2("Стан error: профіль не завантажився")
+    E2 --> R2{"Повторити завантаження профілю?"}
+    R2 -->|так| L2
+    R2 -->|ні| DEFER
+    Q2 -->|так| DATA{"Є достатньо даних і контексту?"}
+    DATA -->|ні| EMPTY("Стан empty: профіль неповний, невідоме позначено")
+    EMPTY --> WILL{"Готові контактувати для уточнення невідомого?"}
+    WILL -->|ні| NO("Успіх оцінки: вирішено не контактувати через недостатній контекст")
+    WILL -->|так| CLEAR
+    DATA -->|так| CLEAR
+    CLEAR -->|ні| HELP("Дія в поточному екрані: прочитати точне пояснення меж сигналу")
+    HELP --> TRUST
+    CLEAR -->|так| TRUST{"Наявного рівня довіри достатньо для контакту?"}
+    TRUST -->|ні| NO2("Успіх оцінки: обґрунтовано вирішено не контактувати")
+    TRUST -->|так| CONTACT{"Хочете переходити до контакту?"}
+    CONTACT -->|ні| NO2
+    CONTACT -->|так| YES("Успіх оцінки: обґрунтовано вирішено контактувати")
+    NO --> BACK{"Повертаєтесь до наявної розмови?"}
+    NO2 --> BACK
+    DEFER --> BACK
+    BACK -->|так| C["Чат із людиною"]
+    BACK -->|ні| RESULTS["Результати пошуку кімнат"]
+    YES --> C
+    C --> HANDOFF("Продовження: стани відкриття чату в Related 4")
+    RESULTS --> SEARCH("Продовження: стани пошуку в Related 1")
+```
+
+**Рішення:** чи завантажилися оголошення й профіль; чи повторити спробу;
+чи актуальний варіант; чи достатньо контексту; чи готова людина уточнювати
+невідоме; чи зрозумілі межі сигналів і достатня довіра; чи контактувати;
+до якого наявного контексту повернутися.
+
+**Стани:** `loading/error` оголошення й профілю; `empty` неповного профілю
+після успішного завантаження; пояснення сигналу в поточному екрані;
+негативний результат неактуального варіанта; пауза через технічну
+недоступність не оголошується успіхом оцінки. Усвідомлені рішення
+контактувати й не контактувати — обидва валідні результати job. Повернення
+в чат після відмови контактувати не надсилає повідомлення автоматично.
+
+## Related job 4 — перевести придатний варіант у взаємну домовленість
+
+[Формулювання job у jtbd.md](jtbd.md#4-перевести-придатний-варіант-у-взаємну-домовленість).
+Марта може ввійти напряму з оголошення/профілю. Обидві сторони можуть
+повернутися через «Перелік розмов»; для Андрія це типовий вхід у вже
+розпочату розмову, без обмеження його права написати першим.
+
+```mermaid
+flowchart TD
+    LIST["Перелік розмов"] --> LL("Стан loading: завантажуємо перелік розмов")
+    LL --> QL{"Перелік завантажився?"}
+    QL -->|ні| EL("Стан error: перелік розмов недоступний")
+    EL --> RL{"Повторити завантаження переліку?"}
+    RL -->|так| LL
+    RL -->|ні| OUT{"Хочете перейти до пошуку?"}
+    QL -->|так| HL{"Є розмови?"}
+    HL -->|ні| NL("Стан empty: розмов ще немає")
+    NL --> OUT
+    HL -->|так| CHOOSE{"Відкрити наявну розмову?"}
+    CHOOSE -->|ні| OUT
+    CHOOSE -->|так| C["Чат із людиною"]
+    C --> LC("Стан loading: завантажуємо історію чату")
+    LC --> QC{"Історія завантажилася?"}
+    QC -->|ні| EC("Стан error: історія недоступна, чернетка збережена")
+    EC --> RC{"Повторити завантаження історії?"}
+    RC -->|так| LC
+    RC -->|ні| LIST
+    QC -->|так| HC{"Є повідомлення?"}
+    HC -->|ні| NC("Стан empty: нова розмова, можна написати першими")
+    NC --> COMPOSE("Дія в чаті: написати або відредагувати повідомлення")
+    HC -->|так| READ("Дія в чаті: прочитати наявну історію")
+    READ --> RECEIVED{"Є відповідь, яку потрібно оцінити?"}
+    RECEIVED -->|так| SAFE{"Взаємодія бажана й не викликає підозри?"}
+    RECEIVED -->|ні| WRITE{"Хочете написати зараз?"}
+    WRITE -->|так| COMPOSE
+    WRITE -->|ні| WAIT("Очікування: залишаємося в чаті без spinner")
+    SAFE -->|ні| SAFETY("Продовження: Related 5 у цьому чаті")
+    SAFE -->|так| NEXT{"Наступний крок уже узгоджено?"}
+    NEXT -->|так| DONE("Успіх Related 4: узгоджено наступний крок")
+    NEXT -->|ні| REJECT{"Інша сторона відмовила або умови несумісні?"}
+    REJECT -->|так| NEG("Негативний результат: відмова або несумісні умови")
+    NEG --> LIST
+    REJECT -->|ні| COMPOSE
+    COMPOSE --> SEND{"Надіслати повідомлення?"}
+    SEND -->|ні| LIST
+    SEND -->|так| LS("Стан loading: звіряємо статус і надсилаємо за потреби")
+    LS --> QS{"Надсилання підтверджено?"}
+    QS -->|ні| ES("Стан error: надсилання не підтверджене, чернетка збережена")
+    ES --> RS{"Перевірити статус і повторити за потреби?"}
+    RS -->|так| LS
+    RS -->|ні| LIST
+    QS -->|так| SENT("Результат: повідомлення надіслано, лишаємося в чаті")
+    SENT --> WAIT
+    WAIT --> STAY{"Продовжувати чекати в цьому чаті?"}
+    STAY -->|ні| LIST
+    STAY -->|так| LU("Стан loading: оновлюємо повідомлення")
+    LU --> QU{"Оновлення вдалося?"}
+    QU -->|ні| EU("Стан error: оновлення не вдалося, історія лишається")
+    EU --> RU{"Повторити оновлення?"}
+    RU -->|так| LU
+    RU -->|ні| LIST
+    QU -->|так| ANSWER{"Є відповідь іншої сторони?"}
+    ANSWER -->|ні| WAIT
+    ANSWER -->|так| SAFE
+    OUT -->|так| RESULTS["Результати пошуку кімнат"]
+    OUT -->|ні| PAUSE("Пауза: лишитися у переліку, навігація доступна")
+    PAUSE --> LIST
+    RESULTS --> SEARCH("Продовження: стани пошуку в Related 1")
+```
+
+**Рішення:** чи завантажився перелік і чи є розмови; чи вибрати розмову
+або перейти до пошуку; чи завантажилась історія й чи є повідомлення;
+чи є відповідь для оцінки або бажання написати; чи бажана взаємодія;
+чи узгоджено наступний крок, чи є явна відмова/несумісність; чи надсилати;
+чи підтверджено надсилання й чи повторити; чи чекати в чаті; чи вдалося
+оновлення і чи надійшла відповідь.
+
+**Стани:** `loading/error` переліку, історії, надсилання й оновлення;
+`empty` нового чату або порожнього переліку; очікування без spinner;
+негативний результат відмови/несумісності; пауза з навігацією;
+успіх — узгоджений наступний крок, наприклад розмова чи перегляд.
+Після надсилання людина лишається в чаті. Перехід до переліку добровільний;
+неотримана відповідь не є ні відмовою, ні технічною помилкою.
+Відновлення не стирає чернетку й не надсилає повідомлення автоматично.
+
+## Related job 5 — не втратити контроль під час взаємодії з незнайомою людиною
+
+[Формулювання job у jtbd.md](jtbd.md#5-не-втратити-контроль-під-час-взаємодії-з-незнайомою-людиною).
+Однакова поведінка для Марти й Андрія. Вхід — відкритий чат, зокрема з
+Main або Related 4; його завантаження описане вище. Вихід, блокування
+й скарга — незалежні дії. Блокування не потребує скарги, скарга не блокує
+автоматично, простий вихід не припиняє майбутні повідомлення.
+Контекстні дії доступні й за збою історії, коли відомий співрозмовник.
+
+```mermaid
+flowchart TD
+    C["Чат із людиною"] --> LEAVE{"Хочете просто вийти з чату?"}
+    LEAVE -->|так| EXIT("Результат: чат закрито, наявний стан блокування збережено")
+    LEAVE -->|ні| BLOCK{"Хочете заблокувати людину?"}
+    BLOCK -->|так| CONFIRM{"Підтвердити блокування?"}
+    CONFIRM -->|ні| CANCELB("Дія скасована: блокування не виконане")
+    CANCELB --> REPORT
+    CONFIRM -->|так| LB("Стан loading: перевіряємо та виконуємо блокування")
+    LB --> QB{"Блокування підтверджене?"}
+    QB -->|ні| EB("Стан error: блокування не підтверджене, захист не гарантований")
+    EB --> RB{"Перевірити статус і повторити блокування за потреби?"}
+    RB -->|так| LB
+    RB -->|ні| REPORT
+    QB -->|так| SB("Успіх: людину заблоковано, новий контакт від неї припинено")
+    SB --> REPORT
+    BLOCK -->|ні| REPORT{"Хочете повідомити про порушення?"}
+    REPORT -->|ні| FINISH{"Завершити роботу з цим чатом?"}
+    REPORT -->|так| FORM("Дія в чаті: обрати категорію й додати контекст скарги")
+    FORM --> SUBMIT{"Надіслати скаргу?"}
+    SUBMIT -->|ні| CANCELR("Дія скасована: скарга не надіслана, стан блокування не змінено")
+    CANCELR --> FINISH
+    SUBMIT -->|так| LR("Стан loading: звіряємо статус і надсилаємо скаргу за потреби")
+    LR --> QR{"Прийняття скарги підтверджено?"}
+    QR -->|ні| ER("Стан error: прийняття не підтверджене, введені дані збережені")
+    ER --> RR{"Перевірити статус і повторити скаргу за потреби?"}
+    RR -->|так| LR
+    RR -->|ні| FINISH
+    QR -->|так| SR("Результат: скаргу прийнято, рішення модерації ще немає")
+    SR --> WATCH{"Перевірити поточний статус розгляду?"}
+    WATCH -->|ні| FINISH
+    WATCH -->|так| LM("Стан loading: завантажуємо статус скарги в цьому чаті")
+    LM --> QM{"Статус завантажився?"}
+    QM -->|ні| EM("Стан error: статус недоступний, скарга залишається прийнятою")
+    EM --> RM{"Повторити перевірку статусу?"}
+    RM -->|так| LM
+    RM -->|ні| FINISH
+    QM -->|так| HAS{"Є оновлення після прийняття?"}
+    HAS -->|ні| NM("Стан empty: нового статусу ще немає, скарга очікує розгляду")
+    NM --> FINISH
+    HAS -->|так| RESOLVED{"Розгляд завершено?"}
+    RESOLVED -->|ні| PENDING("Очікування: скарга розглядається, строк не обіцяємо")
+    PENDING --> FINISH
+    RESOLVED -->|так| RESULT("Результат: показати фактичне рішення модерації без обіцянки покарання")
+    RESULT --> FINISH
+    FINISH -->|так| EXIT
+    FINISH -->|ні| C
+    EXIT --> LIST["Перелік розмов"]
+    LIST --> HANDOFF("Продовження: стани переліку та вихід у пошук у Related 4")
+```
+
+**Рішення:** чи просто вийти; чи блокувати й підтвердити блокування;
+чи виконалося блокування і чи повторити після перевірки статусу;
+чи подавати й надсилати скаргу; чи підтверджено прийняття і чи повторити;
+чи перевіряти статус; чи завантажився він, чи є оновлення й чи завершено
+розгляд; чи завершити роботу з чатом. Повернення в заблокований чат не
+розблоковує людину: історія, report і статус залишаються доступними.
+
+**Стани:** скасування block/report без виконання відповідної дії;
+`loading/error` блокування, надсилання скарги й отримання її статусу;
+`empty` відсутності нового статусу; підтверджене блокування; прийнята
+скарга; очікування розгляду; фактичний результат модерації. Збій report
+не скасовує успішне блокування. Збій block не маскується повідомленням
+про захист. Вихід доступний до, під час і після будь-якої операції через
+глобальну навігацію. Прийняття скарги не означає покарання користувача.
+Показ статусу — контекстна частина існуючого чату, без нового екрана;
+деталі видимого рішення **[?]** потребують уточнення політики модерації.
+
+  </script>
+
+  <script src="assets/vendor/marked.min.js"></script>
+  <script type="module">
+    const sitemapTarget = document.querySelector("#sitemap-document");
+    const flowsTarget = document.querySelector("#flows-document");
+    const source = (id) => document.querySelector(id).textContent.trim();
+
+    const slugMap = new Map([
+      ["Сутності", "entities"],
+      ["Екрани", "screens"],
+      ["Навігація", "navigation"],
+      ["Трасування", "traceability"],
+      ["Main job — знайти взаємно прийнятний варіант і домовитися", "main-job-flow"],
+      ["Related job 1 — звузити пошук до прийнятних варіантів", "related-job-1-flow"],
+      ["Related job 2 — зменшити невизначеність щодо іншої сторони", "related-job-2-flow"],
+      ["Related job 4 — перевести придатний варіант у взаємну домовленість", "related-job-4-flow"],
+      ["Related job 5 — не втратити контроль під час взаємодії з незнайомою людиною", "related-job-5-flow"]
+    ]);
+
+    function fallback(target, markdown, message) {
+      target.innerHTML = "";
+      const warning = document.createElement("p");
+      warning.className = "error-card";
+      warning.textContent = message;
+      const pre = document.createElement("pre");
+      pre.className = "diagram-fallback";
+      pre.textContent = markdown;
+      target.append(warning, pre);
+    }
+
+    try {
+      const { marked } = window;
+      const mermaid = (await import("./assets/vendor/mermaid.esm.min.mjs")).default;
+      if (!marked || !mermaid) throw new Error("Локальні рендерери не завантажилися");
+
+      marked.use({ gfm: true, breaks: false });
+      sitemapTarget.innerHTML = marked.parse(source("#sitemap-source"));
+      flowsTarget.innerHTML = marked.parse(source("#flows-source"));
+
+      document.querySelectorAll(".document h1, .document h2, .document h3").forEach((heading) => {
+        const fixed = slugMap.get(heading.textContent.trim());
+        if (fixed) heading.id = fixed;
+      });
+
+      function wrapRuns(headings, className, stopLevel) {
+        headings.forEach((heading) => {
+          if (!heading.isConnected || heading.parentElement.classList.contains(className)) return;
+          const wrapper = document.createElement("article");
+          wrapper.className = className;
+          heading.parentNode.insertBefore(wrapper, heading);
+          let node = heading;
+          while (node) {
+            const next = node.nextSibling;
+            if (node !== heading && node.nodeType === 1 && /^H[1-6]$/.test(node.tagName) && Number(node.tagName[1]) <= stopLevel) break;
+            wrapper.appendChild(node);
+            node = next;
+          }
+        });
+      }
+
+      const entityCards = [...sitemapTarget.querySelectorAll("h4")];
+      if (entityCards.length) {
+        const grid = document.createElement("div");
+        grid.className = "card-grid";
+        entityCards[0].parentNode.insertBefore(grid, entityCards[0]);
+        entityCards.forEach((heading) => {
+          const card = document.createElement("article");
+          card.className = "content-card";
+          let node = heading;
+          while (node) {
+            const next = node.nextSibling;
+            if (node !== heading && node.nodeType === 1 && /^H[1-4]$/.test(node.tagName)) break;
+            card.appendChild(node);
+            node = next;
+          }
+          grid.appendChild(card);
+        });
+      }
+
+      const screensHeading = sitemapTarget.querySelector("#screens");
+      if (screensHeading) {
+        let node = screensHeading.nextElementSibling;
+        while (node && node.tagName !== "H2") {
+          if (node.tagName === "UL") {
+            node.classList.add("object-grid");
+            break;
+          }
+          node = node.nextElementSibling;
+        }
+      }
+
+      const sectionCardHeadings = [...sitemapTarget.querySelectorAll("h3")].filter((heading) => {
+        const previousH2 = [...sitemapTarget.querySelectorAll("h2")]
+          .filter((h2) => h2.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING)
+          .at(-1);
+        return previousH2 && ["navigation", "traceability"].includes(previousH2.id);
+      });
+      wrapRuns(sectionCardHeadings, "section-card", 3);
+
+      wrapRuns([...flowsTarget.querySelectorAll("h2")], "flow-block", 2);
+      wrapRuns([...flowsTarget.querySelectorAll("h3")], "flow-variant", 3);
+
+      document.querySelectorAll(".document table").forEach((table) => {
+        const wrap = document.createElement("div");
+        wrap.className = "table-scroll";
+        wrap.tabIndex = 0;
+        wrap.setAttribute("role", "region");
+        wrap.setAttribute("aria-label", "Таблиця з горизонтальним прокручуванням");
+        table.parentNode.insertBefore(wrap, table);
+        wrap.appendChild(table);
+      });
+
+      const diagrams = [...document.querySelectorAll("pre code.language-mermaid")];
+      diagrams.forEach((code, index) => {
+        const pre = code.parentElement;
+        const figure = document.createElement("figure");
+        figure.className = "flow-figure";
+        const tools = document.createElement("div");
+        tools.className = "flow-tools";
+        tools.innerHTML = `<strong>Діаграма ${index + 1} із ${diagrams.length}</strong>`;
+        const viewport = document.createElement("div");
+        viewport.className = "flow-viewport";
+        viewport.tabIndex = 0;
+        viewport.setAttribute("role", "region");
+        viewport.setAttribute("aria-label", `User flow ${index + 1}; прокручується у двох напрямках`);
+        const graph = document.createElement("div");
+        graph.className = "mermaid";
+        graph.textContent = code.textContent;
+        viewport.appendChild(graph);
+
+        [
+          ["Зменшити", -0.15],
+          ["Скинути", 0],
+          ["Збільшити", 0.15]
+        ].forEach(([label, delta]) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = label;
+          button.dataset.delta = delta;
+          tools.appendChild(button);
+        });
+        const expand = document.createElement("button");
+        expand.type = "button";
+        expand.className = "expand-flow";
+        expand.textContent = "На весь екран";
+        expand.dataset.action = "expand";
+        tools.appendChild(expand);
+
+        figure.append(tools, viewport);
+        pre.replaceWith(figure);
+      });
+
+      const mainFlow = flowsTarget.querySelector("#main-job-flow")?.closest(".flow-block");
+      const mainVariants = mainFlow ? [...mainFlow.querySelectorAll(":scope > .flow-variant")] : [];
+      if (mainVariants.length >= 2) {
+        const switcher = document.createElement("div");
+        switcher.className = "flow-switch";
+        switcher.setAttribute("role", "tablist");
+        switcher.setAttribute("aria-label", "Деталізація Main job flow");
+        const labels = ["Happy path", "Повний flow"];
+        mainVariants.slice(0, 2).forEach((variant, index) => {
+          const id = `main-flow-variant-${index}`;
+          variant.id = id;
+          variant.setAttribute("role", "tabpanel");
+          variant.classList.toggle("is-happy-flow", index === 0);
+          variant.hidden = false;
+          variant.querySelector(".flow-figure")?.classList.toggle("is-full-flow", index === 1);
+          const button = document.createElement("button");
+          button.type = "button";
+          button.id = `${id}-tab`;
+          button.textContent = labels[index];
+          button.setAttribute("role", "tab");
+          button.setAttribute("aria-controls", id);
+          button.setAttribute("aria-selected", String(index === 0));
+          button.tabIndex = index === 0 ? 0 : -1;
+          button.addEventListener("click", () => {
+            mainVariants.slice(0, 2).forEach((item, itemIndex) => {
+              const active = itemIndex === index;
+              item.hidden = !active;
+              const tab = switcher.children[itemIndex];
+              tab.setAttribute("aria-selected", String(active));
+              tab.tabIndex = active ? 0 : -1;
+            });
+          });
+          switcher.appendChild(button);
+        });
+        mainVariants[0].parentNode.insertBefore(switcher, mainVariants[0]);
+      }
+
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: "strict",
+        theme: "base",
+        flowchart: { curve: "linear", htmlLabels: true, useMaxWidth: false },
+        themeVariables: {
+          fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+          primaryColor: "#f4e4dc",
+          primaryTextColor: "#201e1a",
+          primaryBorderColor: "#ad492c",
+          secondaryColor: "#e6eef3",
+          secondaryTextColor: "#201e1a",
+          secondaryBorderColor: "#36546c",
+          tertiaryColor: "#f5ecca",
+          tertiaryTextColor: "#201e1a",
+          tertiaryBorderColor: "#684f12",
+          lineColor: "#696258",
+          edgeLabelBackground: "#faf9f7",
+          clusterBkg: "#f3efe9",
+          clusterBorder: "#c7beb2"
+        }
+      });
+      await mermaid.run({ nodes: document.querySelectorAll(".mermaid") });
+      mainVariants.slice(0, 2).forEach((variant, index) => {
+        variant.hidden = index !== 0;
+      });
+
+      document.querySelectorAll(".flow-figure").forEach((figure) => {
+        const viewport = figure.querySelector(".flow-viewport");
+        const svg = viewport.querySelector("svg");
+        if (!svg) return;
+        const viewBox = svg.viewBox.baseVal;
+        const ratio = viewBox.width && viewBox.height ? viewBox.width / viewBox.height : 1;
+        const base = figure.classList.contains("is-full-flow")
+          ? Math.max(1500, Math.min(1900, 1050 * ratio))
+          : figure.closest(".is-happy-flow")
+            ? Math.max(320, Math.min(414, 186 * ratio))
+            : Math.max(920, Math.min(1500, 720 * ratio));
+        let scale = 1;
+        const paint = () => {
+          svg.style.width = `${Math.round(base * scale)}px`;
+          svg.style.minWidth = `${Math.round(base * scale)}px`;
+        };
+        paint();
+        figure.querySelectorAll("button").forEach((button) => {
+          button.addEventListener("click", () => {
+            if (button.dataset.action === "expand") {
+              const expanded = figure.classList.toggle("is-expanded");
+              document.body.classList.toggle("diagram-open", expanded);
+              button.textContent = expanded ? "Закрити" : "На весь екран";
+              button.setAttribute("aria-pressed", String(expanded));
+              if (expanded) viewport.focus();
+              return;
+            }
+            const delta = Number(button.dataset.delta);
+            scale = delta === 0 ? 1 : Math.min(1.9, Math.max(.55, scale + delta));
+            paint();
+          });
+        });
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        const expanded = document.querySelector(".flow-figure.is-expanded");
+        if (!expanded) return;
+        expanded.classList.remove("is-expanded");
+        document.body.classList.remove("diagram-open");
+        const button = expanded.querySelector(".expand-flow");
+        button.textContent = "На весь екран";
+        button.setAttribute("aria-pressed", "false");
+        button.focus();
+      });
+
+      const navLinks = [...document.querySelectorAll(".rail a[href^='#']")];
+      const lessonTocLinks = [...document.querySelectorAll(".lesson-toc a[href^='#']")];
+      const allTrackedLinks = [...navLinks, ...lessonTocLinks];
+      const observed = allTrackedLinks
+        .map((link) => document.querySelector(link.getAttribute("href")))
+        .filter(Boolean);
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        if (window.parent !== window) window.parent.postMessage({ type: "ia-section", id: visible.target.id }, location.origin);
+        allTrackedLinks.forEach((link) => {
+          const active = link.getAttribute("href") === `#${visible.target.id}`;
+          link.classList.toggle("active", active);
+          if (active) link.setAttribute("aria-current", "location");
+          else link.removeAttribute("aria-current");
+        });
+      }, { rootMargin: "-15% 0px -70% 0px", threshold: [0, .1, .5] });
+      observed.forEach((element) => observer.observe(element));
+    } catch (error) {
+      console.error(error?.message || String(error));
+      fallback(sitemapTarget, source("#sitemap-source"), "Не вдалося відобразити матеріали уроку. Оновіть сторінку; нижче збережено вихідний текст.");
+      fallback(flowsTarget, source("#flows-source"), "Не вдалося відобразити діаграми. Оновіть сторінку; нижче збережено вихідний текст flows.");
+    }
+  </script>
+</body>
+</html>
