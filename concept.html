@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Стенд стилю — Куток</title>
+<meta name="description" content="Фінальний стиль «Кутка»: бирка з ключем у кольорах і шрифті «Відкритого вікна». Кольори, шрифт, форма, фото, іконки, компоненти й таблиця контрастів.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="concept/tokens.css">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<style>
+  /* Усі значення — з concept/tokens.css. Тут лише розкладка стенду. */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font: var(--weight-regular) var(--text-md)/var(--leading-body) var(--font-ui);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, p, figure, blockquote { margin: 0; }
+  h1, h2, h3 { font-weight: var(--weight-bold); letter-spacing: var(--tracking-head); line-height: var(--leading-tight); text-wrap: balance; }
+  a { color: var(--color-link); }
+  .tabbar a { color: inherit; }
+  :where(a, button, input, summary):focus-visible { outline: var(--stroke) solid var(--color-focus); outline-offset: 2px; }
+  iconify-icon { display: inline-block; flex: none; }
+
+  .skip { position: absolute; left: -9999px; }
+  .skip:focus { left: var(--space-4); top: var(--space-4); padding: var(--space-2) var(--space-3); background: var(--color-ink); color: var(--color-on-ink); border-radius: var(--radius-tag); }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 var(--gutter); }
+  .stand-head { padding: var(--space-7) 0 var(--space-5); max-width: 72ch; }
+  .stand-head h1 { font-size: var(--text-2xl); margin-bottom: var(--space-2); }
+  .stand-head p { color: var(--color-muted); text-wrap: pretty; }
+
+  /* ── Стиль у ділі ── */
+  .hero { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-6); align-items: start; padding-bottom: var(--space-7); }
+  .phone { max-width: 380px; width: 100%; border: 1px solid var(--color-line); border-radius: var(--radius-card); overflow: hidden; background: var(--color-bg); }
+  .phone-top { padding: var(--space-5) var(--space-4) var(--space-4); }
+  .phone-top h2 { font-size: var(--text-xl); margin-bottom: var(--space-3); }
+  .phone-body { padding: 0 var(--space-4) var(--space-4); display: flex; flex-direction: column; gap: var(--space-4); }
+  .note-line { font-size: var(--text-sm); color: var(--color-muted); display: flex; gap: var(--space-2); align-items: center; }
+  .note-line iconify-icon { font-size: var(--icon-md); color: var(--color-verified); }
+  .hero-notes { display: flex; flex-direction: column; gap: var(--space-4); max-width: 60ch; }
+  .hero-notes h2 { font-size: var(--text-lg); }
+  .hero-notes ul { margin: 0; padding-left: var(--space-5); display: grid; gap: var(--space-2); }
+
+  /* ── Компоненти ── */
+  .search {
+    display: flex; align-items: center; gap: var(--space-2);
+    min-height: var(--touch); padding: 0 var(--space-4);
+    border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-ink);
+  }
+  .search iconify-icon { font-size: var(--icon-md); }
+  .chips { display: flex; gap: var(--space-2); margin-top: var(--space-3); overflow-x: auto; scrollbar-width: none; }
+  .chip {
+    flex: none; display: inline-flex; align-items: center; gap: var(--space-1); border: 0; cursor: pointer; font: inherit;
+    min-height: var(--chip-height); padding: 0 var(--space-3); border-radius: var(--radius-control);
+    background: var(--color-surface); color: var(--color-ink); font-size: var(--text-sm); font-weight: var(--weight-medium);
+  }
+  .chip iconify-icon { font-size: var(--icon-sm); }
+  .chip[aria-pressed="true"] { background: var(--color-ink); color: var(--color-on-ink); }
+
+  .card { display: flex; flex-direction: column; gap: var(--space-2); }
+  .card-photo { position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius-card); overflow: hidden; background: var(--color-surface); }
+  .card-photo > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .keytag {
+    position: absolute; top: var(--space-3); left: var(--space-3);
+    display: flex; flex-direction: column;
+    padding: var(--space-2) var(--space-3) var(--space-2) var(--tag-pad-left);
+    background: var(--color-bg); color: var(--color-ink);
+    font-size: var(--text-xs); line-height: var(--leading-tight);
+    border-radius: 0 var(--radius-tag) var(--radius-tag) 0;
+    clip-path: polygon(var(--tag-notch) 0, 100% 0, 100% 100%, var(--tag-notch) 100%, 0 50%);
+    transform: rotate(var(--tag-tilt)); transform-origin: right top;
+    filter: drop-shadow(var(--shadow-tag));
+  }
+  .keytag b { font-size: var(--text-md); font-weight: var(--weight-bold); }
+  .keytag::before {
+    content: ""; position: absolute; left: var(--tag-hole-x); top: 50%;
+    width: var(--space-2); height: var(--space-2); margin-top: calc(var(--space-1) * -1);
+    border-radius: var(--radius-round); background: var(--color-surface); box-shadow: inset 0 0 0 var(--stroke) var(--color-ink);
+  }
+  .save {
+    position: absolute; top: var(--space-3); right: var(--space-3);
+    width: 40px; height: 40px; border-radius: var(--radius-round); border: 0;
+    display: grid; place-items: center; background: var(--color-scrim); color: var(--color-on-ink); cursor: pointer;
+  }
+  .save iconify-icon { font-size: var(--icon-lg); }
+  .author {
+    position: absolute; left: var(--space-3); bottom: var(--space-3);
+    display: flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
+    border-radius: var(--radius-round); background: var(--color-bg); color: var(--color-ink);
+    font-size: var(--text-sm); font-weight: var(--weight-medium); box-shadow: var(--shadow-tag);
+  }
+  .author .avatar img { width: var(--avatar-sm); height: var(--avatar-sm); }
+  .avatar { position: relative; flex: none; display: inline-block; }
+  .avatar img { display: block; border-radius: var(--radius-round); object-fit: cover; }
+  .avatar .mark {
+    position: absolute; right: -3px; bottom: -3px;
+    width: var(--icon-md); height: var(--icon-md); border-radius: var(--radius-round);
+    display: grid; place-items: center; font-size: var(--icon-sm);
+    background: var(--color-verified); color: var(--color-on-ink); border: 2px solid var(--color-bg);
+  }
+  .author .avatar .mark { width: var(--icon-sm); height: var(--icon-sm); font-size: var(--text-xs); right: -2px; bottom: -2px; }
+  .card h3 { font-size: var(--text-md); font-weight: var(--weight-medium); letter-spacing: 0; }
+  .card-facts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); font-size: var(--text-sm); color: var(--color-muted); }
+  .card-facts span, .habits span { display: inline-flex; align-items: center; gap: var(--space-1); }
+  .card-facts iconify-icon { font-size: var(--icon-md); color: var(--color-ink); }
+  .habits { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .habits span { min-height: 28px; padding: 0 var(--space-2); border-radius: var(--radius-tag); background: var(--color-surface); font-size: var(--text-sm); }
+  .habits iconify-icon { font-size: var(--icon-md); }
+
+  .person { display: flex; gap: var(--space-3); align-items: center; padding: var(--space-3); border-radius: var(--radius-card); background: var(--color-surface); }
+  .person .avatar img { width: var(--avatar-md); height: var(--avatar-md); }
+  .person .name { font-weight: var(--weight-bold); }
+  .person .verified { font-size: var(--text-sm); color: var(--color-verified); display: flex; align-items: center; gap: var(--space-1); }
+  .person .verified iconify-icon { font-size: var(--icon-md); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+    min-height: var(--touch); padding: 0 var(--space-5); border: 0; cursor: pointer;
+    border-radius: var(--radius-control); font: var(--weight-medium) var(--text-md)/1 var(--font-ui);
+    background: var(--color-accent); color: var(--color-on-accent);
+    transition: background-color var(--duration) var(--ease-out), transform var(--duration) var(--ease-out);
+  }
+  .btn iconify-icon { font-size: var(--icon-lg); }
+  .btn:hover { background: var(--color-accent-hover); }
+  .btn:active { transform: scale(0.98); }
+  .btn[disabled] { background: var(--color-line); color: var(--color-muted); cursor: not-allowed; transform: none; }
+  .btn-wide { width: 100%; }
+  .btn-quiet { background: var(--color-surface); color: var(--color-ink); }
+  .btn-quiet:hover { background: var(--color-line); }
+  .btn[aria-busy="true"] iconify-icon { animation: spin 900ms linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } .btn:active { transform: none; } .btn[aria-busy="true"] iconify-icon { animation: none; } }
+
+  .tabbar { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); margin-top: var(--tabbar-wave-height); }
+  .tabbar::before, .tabbar::after {
+    content: ""; position: absolute; right: 0; left: 0; bottom: 100%; height: var(--tabbar-wave-height);
+    -webkit-mask: var(--tabbar-wave) no-repeat 0 0 / 100% 100%; mask: var(--tabbar-wave) no-repeat 0 0 / 100% 100%; pointer-events: none;
+  }
+  .tabbar::before { display: none; }
+  .tabbar::after { bottom: calc(100% - 1px); background: var(--color-bg); }
+  .tabbar a { position: relative; z-index: 1; transform: translateY(calc(var(--space-4) * -1)); }
+  .tabbar a { gap: 0; }
+  .tabbar a iconify-icon { transform: translateY(var(--space-1)); }
+  .tabbar a { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: var(--space-2) 0 var(--space-3); font-size: var(--text-xs); color: var(--color-muted); text-decoration: none; }
+  .tabbar a { gap: var(--space-1); }
+  .tabbar a iconify-icon {
+    display: grid; place-items: center;
+    width: calc(var(--icon-lg) + var(--space-6)); height: calc(var(--icon-lg) + var(--space-2));
+    border-radius: var(--radius-round); font-size: var(--icon-lg);
+  }
+  .tabbar a[aria-current="page"] { color: var(--color-link); font-weight: var(--weight-bold); }
+
+  .field { display: flex; flex-direction: column; gap: var(--space-1); max-width: 360px; }
+  .field label { font-size: var(--text-sm); font-weight: var(--weight-medium); }
+  .field input {
+    min-height: var(--touch); padding: 0 var(--space-4);
+    border: 1px solid var(--color-line); border-radius: var(--radius-control);
+    background: var(--color-surface); color: var(--color-ink); font: inherit;
+  }
+  .field input::placeholder { color: var(--color-muted); }
+  .field input:hover { border-color: var(--color-muted); }
+  .field input:focus-visible { outline: var(--stroke) solid var(--color-focus); outline-offset: 1px; border-color: var(--color-focus); }
+  .field .hint { font-size: var(--text-sm); color: var(--color-muted); }
+  .field.is-error input { border-color: var(--color-error); }
+  .field.is-error .hint { color: var(--color-error); display: flex; gap: var(--space-1); align-items: center; }
+  .field.is-error .hint iconify-icon { font-size: var(--icon-md); }
+
+  .banner { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-3) var(--space-4); border-radius: var(--radius-control); font-size: var(--text-sm); }
+  .banner iconify-icon { font-size: var(--icon-lg); }
+  .banner.error { background: var(--color-error-bg); color: var(--color-ink); }
+  .banner.error iconify-icon { color: var(--color-error); }
+  .banner.success { background: var(--color-success-bg); color: var(--color-success); }
+
+  /* ── Розділи опису ── */
+  section.spec { padding: var(--space-7) 0; border-top: 1px solid var(--color-line); }
+  section.spec > h2 { font-size: var(--text-xl); margin-bottom: var(--space-2); }
+  section.spec > p.lead { color: var(--color-muted); max-width: 72ch; margin-bottom: var(--space-5); }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-4); list-style: none; margin: 0; padding: 0; }
+  .swatches li { display: grid; grid-template-columns: var(--touch) 1fr; gap: var(--space-3); align-items: start; }
+  .swatches .sw { width: var(--touch); height: var(--touch); border-radius: var(--radius-tag); border: 1px solid var(--color-line); }
+  .swatches b { display: block; }
+  .swatches code { font-size: var(--text-sm); color: var(--color-muted); }
+  .swatches p { font-size: var(--text-sm); color: var(--color-muted); }
+  .scale { display: grid; gap: var(--space-3); }
+  .scale div { display: grid; grid-template-columns: 120px 1fr; gap: var(--space-4); align-items: baseline; }
+  .scale code { font-size: var(--text-sm); color: var(--color-muted); }
+  .shapes { display: flex; flex-wrap: wrap; gap: var(--space-5); }
+  .shapes figure { display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-sm); color: var(--color-muted); }
+  .shapes .demo { width: 120px; height: 72px; background: var(--color-surface); border: 1px solid var(--color-line); }
+  .spaces { display: flex; align-items: flex-end; gap: var(--space-4); flex-wrap: wrap; }
+  .spaces span { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); font-size: var(--text-xs); color: var(--color-muted); }
+  .spaces i { display: block; background: var(--color-ink); }
+  .photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); }
+  .photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-card); display: block; }
+  .photos figcaption { font-size: var(--text-sm); color: var(--color-muted); margin-top: var(--space-1); }
+  .icon-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-5); }
+  .icon-groups h3 { font-size: var(--text-md); margin-bottom: var(--space-2); }
+  .icon-groups ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  .icon-groups li { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); }
+  .icon-groups iconify-icon { font-size: calc(var(--icon-sm) * 2); }
+  .components { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-6); align-items: start; }
+  .components h3 { font-size: var(--text-md); margin-bottom: var(--space-3); }
+  .stack { display: flex; flex-direction: column; gap: var(--space-3); align-items: flex-start; }
+  table { border-collapse: collapse; width: 100%; font-size: var(--text-sm); }
+  th, td { text-align: left; padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-line); vertical-align: top; }
+  th { font-weight: var(--weight-bold); }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .table-wrap { overflow-x: auto; }
+  .pass { color: var(--color-success); font-weight: var(--weight-bold); }
+  footer { padding: var(--space-6) 0 var(--space-7); color: var(--color-muted); font-size: var(--text-sm); border-top: 1px solid var(--color-line); }
+</style>
+</head>
+<body>
+<a class="skip" href="#content">До стенду</a>
+<main id="content" class="wrap">
+
+  <header class="stand-head">
+    <h1>«Бирка з ключем» — стиль «Кутка»</h1>
+    <p>Образ: пошук закінчується тим, що тобі дають ключі, тож кожне оголошення має бирку з ціною й датою заїзду. Кольори й шрифт — з варіанта 1 «Відкрите вікно»: білий фон, чорнило, зелений для перевірки номера; корал — лише на кнопках і посиланнях. Великі іконки мальовані від руки, маленькі — прості лінійні. Усі значення — у <a href="concept/tokens.css">concept/tokens.css</a>, пояснення — у <a href="concept.md">concept.md</a>.</p>
+  </header>
+
+  <!-- ── Стиль у ділі ── -->
+  <div class="hero">
+    <div class="phone" aria-label="Приклад екрана пошуку">
+      <div class="phone-top">
+        <h2>Кімнати, де вже чекають ключі</h2>
+        <div class="search"><iconify-icon icon="solar:magnifer-linear"></iconify-icon>Осокорки · до 7 500 ₴</div>
+        <div class="chips">
+          <button class="chip" type="button" aria-pressed="true"><iconify-icon icon="solar:tuning-2-linear"></iconify-icon>Фільтри · 3</button>
+          <button class="chip" type="button" aria-pressed="false">Із листопада</button>
+          <button class="chip" type="button" aria-pressed="false">Без куріння</button>
+        </div>
+      </div>
+      <div class="phone-body">
+        <p class="note-line"><iconify-icon icon="solar:shield-check-linear"></iconify-icon>Усі акаунти підтверджені номером телефону. <a href="#verify">Що це означає</a></p>
+
+        <article class="card">
+          <div class="card-photo">
+            <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=760&q=70&auto=format&fit=crop" alt="Світла кімната з чорним диваном, комодом, торшером і рослиною">
+            <span class="keytag"><b>7 300 ₴</b><span>заїзд 1.11</span></span>
+            <button class="save" type="button" aria-label="Зберегти оголошення"><iconify-icon icon="solar:bookmark-linear"></iconify-icon></button>
+            <span class="author"><span class="avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&q=70&auto=format&fit=crop&crop=faces" alt=""><span class="mark" aria-label="Номер підтверджено"><iconify-icon icon="solar:check-linear"></iconify-icon></span></span>Максим</span>
+          </div>
+          <h3>Світла кімната на Осокорках</h3>
+          <div class="card-facts">
+            <span><iconify-icon icon="solar:map-point-linear"></iconify-icon>9 хв від Осокорків</span>
+            <span><iconify-icon icon="solar:calendar-linear"></iconify-icon>з 1 листопада</span>
+          </div>
+          <div class="habits">
+            <span><iconify-icon icon="solar:forbidden-circle-linear"></iconify-icon>без куріння</span>
+            <span><iconify-icon icon="solar:balloon-linear"></iconify-icon>гості рідко</span>
+          </div>
+        </article>
+
+        <button class="btn btn-wide" type="button"><iconify-icon icon="solar:chat-round-line-linear"></iconify-icon>Написати Максиму</button>
+        <button class="btn btn-quiet btn-wide" type="button"><iconify-icon icon="solar:bookmark-linear"></iconify-icon>Зберегти</button>
+      </div>
+      <nav class="tabbar" aria-label="Головна навігація">
+        <a href="#content" aria-current="page"><iconify-icon icon="streamline-freehand:search-magnifier"></iconify-icon>Пошук</a>
+        <a href="#content"><iconify-icon icon="streamline-freehand:messages-bubble-smile"></iconify-icon>Чати</a>
+        <a href="#content"><iconify-icon icon="streamline-freehand:smiley-happy"></iconify-icon>Профіль</a>
+      </nav>
+    </div>
+
+    <div class="hero-notes">
+      <h2>Що тут головне</h2>
+      <ul>
+        <li><b>Бирка з ключем</b> — ціна й дата заїзду на білій бирці з отвором, нахил −4°. Єдиний «характерний» елемент картки.</li>
+        <li><b>Колір — лише на діях.</b> Ніжний корал заливає кнопки дії, затемнений корал — текстові посилання. Решта — білий і чорнило; зелений лише там, де щось підтверджено.</li>
+        <li><b>Іконки у два рівні:</b> великі (меню, стани) мальовані від руки — Streamline Freehand; маленькі — прості лінійні Solar.</li>
+        <li><b>Людина на фото кімнати</b> — плашка з аватаром автора в лівому нижньому куті.</li>
+        <li><b>Активний пункт меню</b> — іконка й підпис кольором акценту (затемнений корал), без підкладки.</li>
+        <li><b>Onest</b> — одна родина на весь інтерфейс; ієрархія через вагу й розмір.</li>
+      </ul>
+      <div class="person" id="verify">
+        <span class="avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=70&auto=format&fit=crop&crop=faces" alt="Максим"><span class="mark"><iconify-icon icon="solar:check-linear"></iconify-icon></span></span>
+        <div>
+          <p class="name">Максим, 28</p>
+          <p class="verified"><iconify-icon icon="solar:shield-check-linear"></iconify-icon>Номер підтверджено 5 вересня 2026</p>
+          <p class="note-line">Це означає лише, що Максим має доступ до цього номера.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Кольори ── -->
+  <section class="spec" aria-labelledby="colors">
+    <h2 id="colors">Кольори</h2>
+    <p class="lead">Стратегія — стримана: нейтралі, корал лише на діях (кнопки, посилання) і один колір змісту (зелений = підтверджено).</p>
+    <ul class="swatches">
+      <li><span class="sw" style="background: var(--color-ink)"></span><div><b>Основний · чорнило</b><code>--color-ink #15171A</code><p>Текст і вибраний чип. «Спокійний, а не тривожний».</p></div></li>
+      <li><span class="sw" style="background: var(--color-accent)"></span><div><b>Акцент · кнопки</b><code>--color-accent #FF9B85</code><p>Заливка кнопок дії з чорнильним текстом; під курсором <code>#FF8A75</code>. Колір кажe «тут можна діяти» — атрибут «прямий».</p></div></li>
+      <li><span class="sw" style="background: var(--color-link)"></span><div><b>Посилання</b><code>--color-link #B94A40</code><p>Той самий корал, затемнений до 5.1 : 1 на білому. Текстові посилання й активний пункт меню.</p></div></li>
+      <li><span class="sw" style="background: var(--color-verified)"></span><div><b>Перевірка</b><code>--color-verified #0A7D45</code><p>Лише номер підтверджено й успіх. «Перевірка точна, а не гучна».</p></div></li>
+      <li><span class="sw" style="background: var(--color-bg)"></span><div><b>Фон</b><code>--color-bg #FFFFFF</code><p>Чистий білий — смак: «не хочу крем з теракотою».</p></div></li>
+      <li><span class="sw" style="background: var(--color-surface)"></span><div><b>Поверхня</b><code>--color-surface #F4F5F6</code><p>Поле, чип, блок профілю — групування без рамок.</p></div></li>
+      <li><span class="sw" style="background: var(--color-muted)"></span><div><b>Другорядний текст</b><code>--color-muted #596069</code><p>Метадані. 6.36 : 1 на білому — читається, а не «елегантно сіре».</p></div></li>
+      <li><span class="sw" style="background: var(--color-line)"></span><div><b>Лінія</b><code>--color-line #E6E8EB</code><p>Розділювачі й межа поля.</p></div></li>
+      <li><span class="sw" style="background: var(--color-error)"></span><div><b>Помилка</b><code>--color-error #B42318</code><p>Глибокий червоний, не святковий (voice.md: прямо, без драми). Фон банера <code>#FDECEA</code>.</p></div></li>
+      <li><span class="sw" style="background: var(--color-success)"></span><div><b>Успіх</b><code>--color-success #0A7D45</code><p>Той самий зелений, що й перевірка: обидва означають «підтверджено». Фон <code>#E8F5EE</code>.</p></div></li>
+    </ul>
+  </section>
+
+  <!-- ── Шрифт ── -->
+  <section class="spec" aria-labelledby="type">
+    <h2 id="type">Шрифт</h2>
+    <p class="lead">Onest — одна гротескна родина з кирилицею, ваги 400 / 500 / 700. Другого шрифту свідомо немає: характер дають бирка й іконки, а не шрифтова пара. Шкала 1.2, фіксовані rem.</p>
+    <div class="scale">
+      <div><code>--text-2xl 28</code><span style="font-size: var(--text-2xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-head)">Кімнати поруч із метро</span></div>
+      <div><code>--text-xl 23</code><span style="font-size: var(--text-xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-head)">Профіль Максима</span></div>
+      <div><code>--text-lg 19</code><span style="font-size: var(--text-lg); font-weight: var(--weight-bold)">Про побут</span></div>
+      <div><code>--text-md 16</code><span>Шукаю спокійного сусіда, гості рідко, працюю вдома.</span></div>
+      <div><code>--text-sm 14</code><span style="font-size: var(--text-sm); color: var(--color-muted)">9 хв від Осокорків · з 1 листопада</span></div>
+      <div><code>--text-xs 12</code><span style="font-size: var(--text-xs)">заїзд 1.11</span></div>
+    </div>
+  </section>
+
+  <!-- ── Форма ── -->
+  <section class="spec" aria-labelledby="shape">
+    <h2 id="shape">Форма</h2>
+    <p class="lead">Три радіуси й коло. Тіні тільки там, де щось лежить поверх фото або екрана.</p>
+    <div class="shapes">
+      <figure><span class="demo" style="border-radius: var(--radius-tag)"></span>--radius-tag 8 · бирка, мітки</figure>
+      <figure><span class="demo" style="border-radius: var(--radius-control)"></span>--radius-control 14 · кнопка, поле, чип</figure>
+      <figure><span class="demo" style="border-radius: var(--radius-card)"></span>--radius-card 18 · фото, профіль</figure>
+      <figure><span class="demo" style="border-radius: var(--radius-card); box-shadow: var(--shadow-tag); border-color: transparent; background: var(--color-bg)"></span>--shadow-tag · над фото</figure>
+      <figure><span class="demo" style="border-radius: var(--radius-card); box-shadow: var(--shadow-float); border-color: transparent; background: var(--color-bg)"></span>--shadow-float · шторка</figure>
+    </div>
+    <p class="lead" style="margin-top: var(--space-5)">Відступи — крок 4: 4 · 8 · 12 · 16 · 24 · 32 · 48. Поля екрана 16.</p>
+    <div class="spaces">
+      <span><i style="width: var(--space-1); height: var(--space-1)"></i>4</span>
+      <span><i style="width: var(--space-2); height: var(--space-2)"></i>8</span>
+      <span><i style="width: var(--space-3); height: var(--space-3)"></i>12</span>
+      <span><i style="width: var(--space-4); height: var(--space-4)"></i>16</span>
+      <span><i style="width: var(--space-5); height: var(--space-5)"></i>24</span>
+      <span><i style="width: var(--space-6); height: var(--space-6)"></i>32</span>
+      <span><i style="width: var(--space-7); height: var(--space-7)"></i>48</span>
+    </div>
+  </section>
+
+  <!-- ── Фото ── -->
+  <section class="spec" aria-labelledby="photos">
+    <h2 id="photos">Фото</h2>
+    <p class="lead">Unsplash, за темою: кімната — інтер’єр при денному світлі, людина — портрет крупним планом. Без фільтрів: людина має бачити реальні кольори кімнати.</p>
+    <div class="photos">
+      <figure><img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=70&auto=format&fit=crop" alt="Світла кімната з чорним диваном, комодом і торшером"><figcaption>Кімната · інтер’єр</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&q=70&auto=format&fit=crop" alt="Спальня з ліжком, тумбою і настінною лампою"><figcaption>Кімната · інтер’єр</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=70&auto=format&fit=crop&crop=faces" alt="Портрет усміхненого чоловіка"><figcaption>Людина · портрет</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=600&q=70&auto=format&fit=crop&crop=faces" alt="Портрет жінки з рудим волоссям"><figcaption>Людина · портрет</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ── Іконки ── -->
+  <section class="spec" aria-labelledby="icons">
+    <h2 id="icons">Іконки</h2>
+    <p class="lead">Два рівні. <b>Великі</b> (нижнє меню, ілюстрації станів) — Streamline Freehand, мальовані від руки: у них характер продукту. <b>Маленькі</b> (чипи, характеристики, позначки, кнопки, підказки) — Solar linear, прості лінійні: на 16–20 px мальований штрих стає шумом. Обидва набори — <code>currentColor</code>. Правило дизайнера: «всі маленькі іконки роби простими лінійними, великі як зараз».</p>
+    <div class="icon-groups">
+      <div><h3>Великі · нижнє меню</h3><ul>
+        <li><iconify-icon icon="streamline-freehand:search-magnifier"></iconify-icon>Пошук</li>
+        <li><iconify-icon icon="streamline-freehand:messages-bubble-smile"></iconify-icon>Чати</li>
+        <li><iconify-icon icon="streamline-freehand:smiley-happy"></iconify-icon>Профіль</li>
+      </ul></div>
+      <div><h3>Великі · стани</h3><ul>
+        <li><iconify-icon icon="streamline-freehand:search-magnifier"></iconify-icon>Нічого не знайдено</li>
+        <li><iconify-icon icon="streamline-freehand:alerts-warning-triangle" style="color: var(--color-error)"></iconify-icon>Помилка завантаження</li>
+      </ul></div>
+      <div><h3>Маленькі · характеристики</h3><ul>
+        <li><iconify-icon icon="solar:map-point-linear"></iconify-icon>Відстань до метро</li>
+        <li><iconify-icon icon="solar:calendar-linear"></iconify-icon>Дата заїзду</li>
+        <li><iconify-icon icon="solar:cat-linear"></iconify-icon>Тварини</li>
+        <li><iconify-icon icon="solar:forbidden-circle-linear"></iconify-icon>Без куріння</li>
+        <li><iconify-icon icon="solar:balloon-linear"></iconify-icon>Гості</li>
+        <li><iconify-icon icon="solar:moon-linear"></iconify-icon>Тиша вночі</li>
+      </ul></div>
+      <div><h3>Маленькі · перевірка</h3><ul>
+        <li><iconify-icon icon="solar:shield-check-linear" style="color: var(--color-verified)"></iconify-icon>Номер підтверджено</li>
+        <li><iconify-icon icon="solar:check-linear" style="color: var(--color-verified)"></iconify-icon>Галочка на аватарі</li>
+      </ul></div>
+      <div><h3>Маленькі · кнопки й стани</h3><ul>
+        <li><iconify-icon icon="solar:chat-round-line-linear"></iconify-icon>Написати</li>
+        <li><iconify-icon icon="solar:bookmark-linear"></iconify-icon>Зберегти</li>
+        <li><iconify-icon icon="solar:plain-2-linear"></iconify-icon>Надіслати</li>
+        <li><iconify-icon icon="solar:tuning-2-linear"></iconify-icon>Фільтри</li>
+        <li><iconify-icon icon="solar:hourglass-linear"></iconify-icon>Завантаження</li>
+        <li><iconify-icon icon="solar:danger-triangle-linear" style="color: var(--color-error)"></iconify-icon>Помилка в полі</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- ── Компоненти ── -->
+  <section class="spec" aria-labelledby="components">
+    <h2 id="components">Компоненти «Кутка»</h2>
+    <p class="lead">Три базові компоненти зі станами. На екранах вони мають виглядати саме так — однаково в кожному місці.</p>
+    <div class="components">
+      <div>
+        <h3>Кнопка дії</h3>
+        <div class="stack">
+          <button class="btn" type="button"><iconify-icon icon="solar:chat-round-line-linear"></iconify-icon>Написати Максиму</button>
+          <button class="btn btn-quiet" type="button"><iconify-icon icon="solar:bookmark-linear"></iconify-icon>Зберегти</button>
+          <button class="btn" type="button" aria-busy="true"><iconify-icon icon="solar:hourglass-linear"></iconify-icon>Надсилаємо…</button>
+          <button class="btn" type="button" disabled><iconify-icon icon="solar:plain-2-linear"></iconify-icon>Надіслати</button>
+        </div>
+      </div>
+      <div>
+        <h3>Картка оголошення</h3>
+        <article class="card">
+          <div class="card-photo">
+            <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=760&q=70&auto=format&fit=crop" alt="Спальня з ліжком, тумбою і настінною лампою">
+            <span class="keytag"><b>8 500 ₴</b><span>заїзд 15.10</span></span>
+            <button class="save" type="button" aria-label="Зберегти оголошення"><iconify-icon icon="solar:bookmark-linear"></iconify-icon></button>
+            <span class="author"><span class="avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=96&q=70&auto=format&fit=crop&crop=faces" alt=""><span class="mark" aria-label="Номер підтверджено"><iconify-icon icon="solar:check-linear"></iconify-icon></span></span>Ірина</span>
+          </div>
+          <h3>Кімната біля Лук’янівської</h3>
+          <div class="card-facts">
+            <span><iconify-icon icon="solar:map-point-linear"></iconify-icon>7 хв пішки</span>
+            <span><iconify-icon icon="solar:calendar-linear"></iconify-icon>з 15 жовтня</span>
+          </div>
+          <div class="habits">
+            <span><iconify-icon icon="solar:cat-linear"></iconify-icon>є кіт</span>
+            <span><iconify-icon icon="solar:moon-linear"></iconify-icon>тихо після 23:00</span>
+          </div>
+        </article>
+      </div>
+      <div>
+        <h3>Поле форми</h3>
+        <div class="stack">
+          <div class="field">
+            <label for="f-budget">Бюджет на місяць</label>
+            <input id="f-budget" type="text" inputmode="numeric" placeholder="Наприклад, 8 000 ₴">
+            <span class="hint">Лише сума за кімнату, без комунальних.</span>
+          </div>
+          <div class="field is-error">
+            <label for="f-phone">Номер телефону</label>
+            <input id="f-phone" type="tel" value="+380 67 12" aria-invalid="true" aria-describedby="f-phone-err">
+            <span class="hint" id="f-phone-err"><iconify-icon icon="solar:danger-triangle-linear"></iconify-icon>У номері бракує цифр. Перевір і спробуй ще раз.</span>
+          </div>
+          <div class="banner success"><iconify-icon icon="solar:check-linear"></iconify-icon>Номер підтверджено. Тепер можна писати людям.</div>
+          <div class="banner error"><iconify-icon icon="solar:danger-triangle-linear"></iconify-icon>Пошук зараз недоступний. Фільтри збережено — спробуй оновити.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Контраст ── -->
+  <section class="spec" aria-labelledby="contrast">
+    <h2 id="contrast">Контраст (WCAG AA)</h2>
+    <p class="lead">Пораховано скриптом <code>python3 concept/contrast.py</code> з <code>concept/tokens.css</code>. Поріг: 4.5 для тексту, 3.0 для іконок і великого тексту.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Текст</th><th>Фон</th><th>Де</th><th>Коефіцієнт</th><th>Поріг</th><th>AA</th></tr></thead>
+        <tbody>
+          <tr><td>ink #15171A</td><td>bg #FFFFFF</td><td>основний текст на фоні</td><td class="num">17.96</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>muted #596069</td><td>bg #FFFFFF</td><td>метадані на фоні</td><td class="num">6.36</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>ink #15171A</td><td>surface #F4F5F6</td><td>текст у полі, чипі, блоці профілю</td><td class="num">16.45</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>muted #596069</td><td>surface #F4F5F6</td><td>підказка в полі</td><td class="num">5.83</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>on-ink #FFFFFF</td><td>ink #15171A</td><td>текст головної кнопки</td><td class="num">17.96</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>verified #0A7D45</td><td>bg #FFFFFF</td><td>«Номер підтверджено» на фоні</td><td class="num">5.21</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>verified #0A7D45</td><td>surface #F4F5F6</td><td>позначка на поверхні</td><td class="num">4.77</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>on-ink #FFFFFF</td><td>verified #0A7D45</td><td>галочка на зеленому колі</td><td class="num">5.21</td><td class="num">3.0</td><td class="pass">✓</td></tr>
+          <tr><td>success #0A7D45</td><td>success-bg #E8F5EE</td><td>повідомлення про успіх</td><td class="num">4.64</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>error #B42318</td><td>bg #FFFFFF</td><td>текст помилки під полем</td><td class="num">6.57</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>error #B42318</td><td>error-bg #FDECEA</td><td>іконка в банері помилки</td><td class="num">5.75</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>ink #15171A</td><td>error-bg #FDECEA</td><td>текст у банері помилки</td><td class="num">15.70</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>muted #596069</td><td>line #E6E8EB</td><td>текст кнопки disabled</td><td class="num">5.18</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>on-accent #15171A</td><td>accent #FF9B85</td><td>текст кнопки дії</td><td class="num">8.79</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>on-accent #15171A</td><td>accent-hover #FF8A75</td><td>кнопка під курсором</td><td class="num">7.82</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>link #B94A40</td><td>bg #FFFFFF</td><td>посилання й активний пункт меню на фоні</td><td class="num">5.10</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>link #B94A40</td><td>surface #F4F5F6</td><td>посилання на поверхні</td><td class="num">4.67</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+          <tr><td>line #E6E8EB</td><td>ink #15171A</td><td>час у моєму повідомленні чату</td><td class="num">14.63</td><td class="num">4.5</td><td class="pass">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+<footer class="wrap">
+  Іконки: <a href="https://www.streamlinehq.com/icons/streamline-freehand-free">Streamline Freehand</a>, CC BY 4.0; <a href="https://github.com/480-design/Solar-Icon-Set">Solar</a>, CC BY 4.0. Фото: Unsplash. Шрифт: Onest (SIL OFL).
+</footer>
+</body>
+</html>

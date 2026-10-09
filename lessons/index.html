@@ -435,6 +435,30 @@
         font: 600 13px/1 -apple-system, "SF Pro Text", system-ui, sans-serif;
         font-variant-numeric: tabular-nums;
       }
+      .phone-screen.is-immersive .phone-status {
+        position: absolute;
+        inset: 0 0 auto;
+        z-index: 2;
+        color: #fff;
+        background: transparent;
+      }
+      .phone-screen.is-immersive.status-dark .phone-status { color: #111; }
+      /* Статус-бар — біла «шапка» зі скругленими нижніми кутами; контент
+         прокручується під нею й видний у кутах. Сторінці додаємо відступ
+         --cap зверху, щоб нічого не ховалося під шапкою. */
+      .phone-screen:not(.is-immersive) .phone-status {
+        z-index: 2;
+        margin-bottom: -22px;
+        border-radius: 0 0 22px 22px;
+      }
+      .phone-screen.is-dimmed .phone-status::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: rgb(21 23 26 / 0.38);
+      }
+      .phone-screen.is-dimmed .phone-status { isolation: isolate; }
       .phone-island {
         position: absolute;
         top: 10px;
@@ -470,7 +494,7 @@
         left: 0;
         display: block;
         width: 390px;
-        height: calc(100% / var(--s));
+        height: calc(100% / var(--s) + 2px); /* без шва між екраном і home-панеллю */
         border: 0;
         background: var(--paper);
         transform: scale(var(--s));
@@ -1324,7 +1348,7 @@
           </button>
         </div>
         <p class="progress" id="progress">Урок 2 із 12</p>
-        <div class="course-meter" aria-hidden="true"><i data-status="done"></i><i data-status="done"></i><i data-status="done"></i><i data-status="done"></i><i data-status="active"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i></div>
+        <div class="course-meter" aria-hidden="true"><i data-status="done"></i><i data-status="done"></i><i data-status="done"></i><i data-status="done"></i><i data-status="active"></i><i data-status="active"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i></div>
         <nav class="course-tree" id="lesson-navigation" aria-label="Уроки курсу">
           <ol>
             <li class="ct-lesson" data-status="done">
@@ -1400,10 +1424,21 @@
                 <li><a href="?lesson=5#inventory" data-target="inventory">Інвентар і звірка</a></li>
               </ul>
             </li>
-            <li class="ct-lesson" data-status="upcoming">
+            <li class="ct-lesson" data-status="active">
               <div class="ct-row">
-                <a class="ct-link" href="?lesson=6" data-lesson="6" title="06 · Концепт"><span class="ct-glyph" aria-hidden="true">6</span><span class="ct-title">Концепт</span><span class="ct-state">, незабаром</span></a>
+                <a class="ct-link" href="?lesson=6" data-lesson="6" title="06 · Концепт"><span class="ct-glyph" aria-hidden="true">6</span><span class="ct-title">Концепт</span><span class="ct-state">, у роботі</span></a>
+                <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-6" aria-label="Розділи: Концепт"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               </div>
+              <ul class="ct-sub" id="ct-sub-6" data-for="6" hidden>
+                <li><a href="?lesson=6#overview" data-target="overview">Коротко</a></li>
+                <li><a href="?lesson=6#references" data-target="references">Референси</a></li>
+                <li><a href="?lesson=6#attributes" data-target="attributes">Смак і атрибути</a></li>
+                <li><a href="?lesson=6#directions" data-target="directions">Напрями</a></li>
+                <li><a href="?lesson=6#style" data-target="style">Обраний стиль</a></li>
+                <li><a href="?lesson=6#screens" data-target="screens">Екрани</a></li>
+                <li><a href="?lesson=6#edits" data-target="edits">Правки</a></li>
+                <li><a href="?lesson=6#open" data-target="open">Що відкрито</a></li>
+              </ul>
             </li>
             <li class="ct-lesson" data-status="upcoming">
               <div class="ct-row">
@@ -2374,6 +2409,9 @@
         <article id="lesson-five" class="lesson-embed" aria-label="Урок 5 — Тон оф войс і мікрокопі">
           <iframe class="ia-frame" data-lesson-frame="5" src="about:blank" data-src="../voice.html?embed=1" title="Тон оф войс і мікрокопі Кутка"></iframe>
         </article>
+        <article id="lesson-six" class="lesson-embed" aria-label="Урок 6 — Концепт">
+          <iframe class="ia-frame" data-lesson-frame="6" src="about:blank" data-src="../concept-lesson.html?embed=1" title="Концепт Кутка"></iframe>
+        </article>
         <article id="lesson-four" class="lesson-four" aria-label="Урок 4 — Прототипування і вайрфреймінг">
           <header class="wireframe-nav">
             <h1>Вайрфрейми</h1>
@@ -2516,12 +2554,13 @@
           String(current).padStart(2, "0") +
           " із 12 · " +
           titles[current];
-        if (current === 3 || current === 4 || current === 5) {
+        if (current >= 3 && current <= 6) {
           document.body.classList.add(
             current === 4 ? "lesson-four-active" : "lesson-embed-active",
           );
           document.getElementById("lesson-three").classList.toggle("hidden", current !== 3);
           document.getElementById("lesson-five").classList.toggle("hidden", current !== 5);
+          document.getElementById("lesson-six").classList.toggle("hidden", current !== 6);
           document.getElementById("lesson-two").classList.add("hidden");
           document.querySelector(".mobile-toc").classList.add("hidden");
         } else if (current !== 2) {
@@ -2571,7 +2610,7 @@
             });
           });
         }
-        // Lessons 3 and 5 live in embedded pages; the rail tree scrolls them
+        // Lessons 3, 5 and 6 live in embedded pages; the rail tree scrolls them
         // and highlights the section the embedded page reports as visible.
         var lessonFrame = document.querySelector(
           '[data-lesson-frame="' + current + '"]',
@@ -2587,7 +2626,7 @@
             else link.removeAttribute("aria-current");
           });
         }
-        if ((current === 3 || current === 5) && lessonFrame) {
+        if ((current === 3 || current === 5 || current === 6) && lessonFrame) {
           var frameBase =
             lessonFrame.dataset.src || lessonFrame.getAttribute("src");
           if (location.hash || lessonFrame.dataset.src)
@@ -2728,9 +2767,34 @@
           if (wireframePending) wireframeFrame.src = requestedLink.href;
         }
         if (wireframeFrame) {
+          // Екрани з фото на всю висоту (body.photo-top) заходять під статус-бар:
+          // він стає прозорим і білим поверх фото.
+          var phoneScreen = wireframeFrame.closest(".phone-screen");
+          function syncImmersive() {
+            var doc = wireframeDocument();
+            var immersive = !!(doc && doc.body && doc.body.classList.contains("photo-top"));
+            if (phoneScreen) {
+              phoneScreen.classList.toggle("is-immersive", immersive);
+              // Світлий фон під статус-баром (скелетон) — статус лишається темним.
+              phoneScreen.classList.toggle("status-dark", immersive && doc.body.classList.contains("status-dark"));
+            }
+            if (immersive) doc.documentElement.style.setProperty("--frame-status", "44px");
+            if (doc && !immersive && !doc.getElementById("hub-cap")) {
+              var cap = doc.createElement("style");
+              cap.id = "hub-cap";
+              cap.textContent = "html{padding-top:22px}.appbar{top:22px}";
+              doc.head.appendChild(cap);
+            }
+            // Відкрита шторка затемнює й статус-бар мокапа, як на справжньому телефоні.
+            if (phoneScreen) phoneScreen.classList.remove("is-dimmed");
+            if (doc) doc.addEventListener("toggle", function () {
+              phoneScreen.classList.toggle("is-dimmed", !!doc.querySelector("details.sheet[open]"));
+            }, true);
+          }
           wireframeFrame.addEventListener("load", function () {
             syncWireframeNavigation();
             connectWireframeScroll();
+            syncImmersive();
           });
           if (!wireframePending) syncWireframeNavigation();
         }

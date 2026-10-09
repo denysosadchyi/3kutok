@@ -6,17 +6,33 @@
 <meta name="wireframe-job" content="Related 1–4 — оцінка кімнати, людини й перехід до контакту">
 <title>Оголошення — завантаження</title>
 <link rel="stylesheet" href="listings-states.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="concept-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 </head>
-<body class="has-actionbar">
+<body class="has-actionbar photo-top status-dark skin">
 <header class="appbar"><a class="appbar-back" href="listings.html" aria-label="Назад до результатів"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span></span><span></span></header>
 <main id="content" aria-busy="true">
 <p class="sr-only" role="status">Завантажуємо оголошення</p>
-<div class="hero-photo" aria-hidden="true"><div class="skeleton ph-photo" style="border-radius:0"></div></div>
+<div class="hero-photo" aria-hidden="true"><div class="skeleton ph-photo hero-sk"></div></div>
+<ul class="gallery" aria-hidden="true"><li><div class="skeleton gallery-sk"></div></li><li><div class="skeleton gallery-sk"></div></li><li><div class="skeleton gallery-sk"></div></li><li><div class="skeleton gallery-sk"></div></li></ul>
 <div class="title-block stack-8" aria-hidden="true"><div class="skeleton sk-title"></div><div class="skeleton sk-line w-40"></div></div>
-<div class="list stack-8" aria-hidden="true" style="padding:14px 16px"><div class="skeleton sk-line"></div><div class="skeleton sk-line w-60"></div><div class="skeleton sk-line w-40"></div></div>
-<div class="skeleton sk-line w-40" aria-hidden="true" style="margin-top:8px"></div>
-<div class="list" aria-hidden="true" style="padding:12px 16px;display:flex;gap:12px;align-items:center"><div class="skeleton ph-avatar"></div><div class="stack-8" style="flex:1"><div class="skeleton sk-line w-60"></div><div class="skeleton sk-line w-40"></div></div></div>
+<div class="list stack-8 list-pad" aria-hidden="true"><div class="skeleton sk-line"></div><div class="skeleton sk-line w-60"></div><div class="skeleton sk-line w-40"></div></div>
+<div class="skeleton sk-line w-40 sk-gap" aria-hidden="true"></div>
+<div class="list list-pad sk-person" aria-hidden="true"><div class="skeleton ph-avatar"></div><div class="stack-8 grow"><div class="skeleton sk-line w-60"></div><div class="skeleton sk-line w-40"></div></div></div>
 </main>
 <div class="actionbar" aria-hidden="true"><div class="skeleton sk-btn"></div></div>
+<script>
+document.addEventListener("click", function (e) {
+  var sheet = e.target.closest("details.sheet[open]");
+  if (sheet && !e.target.closest(".sheet-panel, summary")) sheet.open = false;
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+  document.querySelectorAll("details.sheet[open]").forEach(function (d) { d.open = false; });
+});
+</script>
 </body>
 </html>

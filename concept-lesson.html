@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Урок 6 «Концепт» для Кутка: референси, смак і атрибути, дев'ять напрямів, обраний стиль «Бирка з ключем», перенесення на екрани й правки дизайнера.">
+  <link rel="icon" href="data:,">
+  <title>Концепт · Куток</title>
+  <script>if (new URLSearchParams(location.search).get("embed") === "1") document.documentElement.classList.add("embed");</script>
+  <style>
+    :root {
+      --paper: #faf9f7;
+      --surface: #ffffff;
+      --wash: #f3efe9;
+      --line: #dfd9d0;
+      --line-strong: #c7beb2;
+      --ink: #201e1a;
+      --muted: #696258;
+      --rust: #ad492c;
+      --rust-dark: #78301d;
+      --rust-wash: #f4e4dc;
+      --green: #295142;
+      --green-wash: #e1ece6;
+      --ochre: #684f12;
+      --ochre-wash: #f5ecca;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.58;
+    }
+    ::selection { background: var(--rust-wash); color: var(--ink); }
+    a { color: var(--rust-dark); text-underline-offset: 3px; }
+    code {
+      padding: 1px 6px;
+      border-radius: 5px;
+      background: var(--wash);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .86em;
+    }
+    .skip {
+      position: fixed; z-index: 30; top: 12px; left: 12px;
+      transform: translateY(-160%);
+      padding: 10px 14px; border-radius: 8px;
+      background: var(--ink); color: #fff;
+    }
+    .skip:focus { transform: none; }
+
+    main {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 52px clamp(22px, 4vw, 64px) 110px;
+    }
+    html.embed .skip { display: none; }
+    html.embed main { padding-top: 48px; }
+
+    /* Hero */
+    .hero { margin-bottom: 40px; }
+    .hero h1 { margin: 0 0 14px; }
+    .hero > p { max-width: 64ch; margin: 0; color: var(--muted); font-size: 17px; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 20px; font-size: 13px; color: var(--muted); }
+    .hero-meta b { color: var(--ink); font-weight: 650; }
+
+    section { margin: 0 0 76px; scroll-margin-top: 24px; }
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(240px, 380px);
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 26px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .section-head h2 { margin: 0; font-size: 28px; line-height: 1.15; letter-spacing: -0.02em; }
+    .section-head p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    /* Overview */
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+    }
+    .summary h3 { margin: 0 0 10px; padding-top: 14px; border-top: 2px solid var(--ink); font-size: 16px; }
+    .summary ul { margin: 0; padding-left: 20px; }
+    .summary li + li { margin-top: 8px; }
+    .numbers {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 32px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .numbers div { padding: 16px 18px 16px 0; }
+    .numbers div + div { padding-left: 18px; border-left: 1px solid var(--line); }
+    .numbers b { display: block; font-size: 30px; line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+    .numbers span { color: var(--muted); font-size: 13px; }
+
+    /* Principles */
+    .principle {
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr);
+      gap: 0 20px;
+      padding: 26px 0;
+      border-top: 1px solid var(--line);
+    }
+    .principle:last-of-type { border-bottom: 1px solid var(--line); }
+    .section-head + .principle { border-top: 0; padding-top: 4px; }
+    .principle .n { color: var(--rust); font-size: 30px; font-weight: 750; line-height: 1; font-variant-numeric: tabular-nums; }
+    .principle h3 { margin: 0 0 6px; font-size: 21px; line-height: 1.25; }
+    .principle .rule { max-width: 70ch; margin: 0 0 16px; }
+    .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .say, .dont {
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14.5px;
+    }
+    .say { background: var(--green-wash); }
+    .dont { background: var(--rust-wash); }
+    .say > span, .dont > span {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .say > span { color: var(--green); }
+    .dont > span { color: var(--rust-dark); }
+    .say q, .dont q { display: block; quotes: none; }
+    .say q + q, .dont q + q { margin-top: 4px; }
+    .dont q { text-decoration: line-through; text-decoration-color: rgb(120 48 29 / 45%); }
+    .dont small { color: var(--rust-dark); font-size: 12px; }
+    details.why { margin-top: 12px; font-size: 14px; color: var(--muted); }
+    details.why summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+    details.why ul { margin: 8px 0 0; padding-left: 20px; }
+    details.why li + li { margin-top: 6px; }
+
+    .not-principles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 28px; margin-top: 30px; }
+    .not-principles h4 { margin: 0 0 4px; font-size: 15px; }
+    .not-principles p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    /* Glossary table */
+    .table-wrap { overflow-x: auto; border-top: 2px solid var(--ink); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 11px 12px 11px 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-size: 12px; font-weight: 700; }
+    td:first-child { color: var(--muted); width: 28%; }
+    td strong { font-weight: 650; }
+    td.no { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+    .tag {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 999px;
+      background: var(--wash);
+      color: var(--muted);
+      font-size: 11.5px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+    .two-col h3 { margin: 0 0 10px; font-size: 18px; }
+    .two-col ul { margin: 0; padding-left: 20px; }
+    .two-col li + li { margin-top: 8px; }
+    .words { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 14px; }
+    .words .ok { background: var(--green-wash); color: var(--green); }
+    .words .ban { background: var(--rust-wash); color: var(--rust-dark); text-decoration: line-through; }
+
+    /* Banned */
+    .banned { display: grid; gap: 10px; }
+    .banned .row { display: grid; grid-template-columns: 160px minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: stretch; }
+    .banned .row > b { padding-top: 12px; font-size: 14px; }
+
+    /* Microcopy kinds */
+    .kinds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; }
+    .kind { padding: 20px 0; border-top: 1px solid var(--line); }
+    .kind h3 { margin: 0 0 6px; font-size: 17px; }
+    .kind p { margin: 0 0 12px; font-size: 14.5px; }
+    .kind .pair { grid-template-columns: 1fr; gap: 8px; }
+
+    /* Inventory */
+    .ba { display: grid; gap: 0; border-top: 2px solid var(--ink); }
+    .ba .row { display: grid; grid-template-columns: 70px minmax(0, 1fr) 24px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+    .ba .id { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .ba .was { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+    .ba .arrow { color: var(--muted); }
+    .ba .now { font-weight: 600; }
+    .open-list { margin: 18px 0 0; padding-left: 20px; font-size: 14.5px; }
+    .open-list li + li { margin-top: 8px; }
+    .callout { margin-top: 24px; padding: 14px 16px; border-radius: 10px; background: var(--ochre-wash); font-size: 14.5px; }
+    .callout b { color: var(--ochre); }
+
+    footer { padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+
+    @media (max-width: 860px) {
+      .section-head, .summary, .two-col, .kinds, .not-principles { grid-template-columns: 1fr; }
+      .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .numbers div:nth-child(3) { padding-left: 0; border-left: 0; }
+      .banned .row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .principle { grid-template-columns: 1fr; }
+      .principle .n { margin-bottom: 8px; }
+      .pair { grid-template-columns: 1fr; }
+      .ba .row { grid-template-columns: 1fr; gap: 2px; }
+      .ba .arrow { display: none; }
+    }
+  
+    /* Урок 6: палітра, напрями, екрани */
+    .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+    .swatches li { font-size: 13.5px; }
+    .swatches i { display: block; height: 52px; margin-bottom: 8px; border: 1px solid var(--line); border-radius: 10px; }
+    .swatches b { display: block; font-size: 14px; }
+    .swatches code { font-size: 12px; }
+    .swatches span { color: var(--muted); }
+    .dirs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 28px; }
+    .dir { padding: 16px 0; border-top: 1px solid var(--line); font-size: 14.5px; }
+    .dir h3 { margin: 0 0 4px; font-size: 16px; }
+    .dir p { margin: 0; color: var(--muted); }
+    .dir.chosen h3 { color: var(--rust-dark); }
+    .shots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .shot { display: grid; gap: 8px; font-size: 14px; }
+    /* Екран завжди верстається на справжніх 390 px і масштабується в мініатюру */
+    .shot .frame { --s: 0.6; position: relative; aspect-ratio: 390 / 760; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: #fff; }
+    .shot iframe { position: absolute; top: 0; left: 0; width: 390px; height: 760px; border: 0; transform: scale(var(--s)); transform-origin: 0 0; }
+    .shot a { font-weight: 600; }
+    .stand { margin-top: 32px; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fff; }
+    .stand iframe { display: block; width: 100%; height: min(86vh, 1100px); border: 0; }
+    .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 10px; color: var(--ink); font-weight: 600; text-decoration: none; background: var(--surface); }
+    .links a:hover { border-color: var(--ink); }
+    .timeline { margin: 0; padding: 0; list-style: none; border-top: 2px solid var(--ink); }
+    .timeline li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+    .timeline q { color: var(--muted); font-style: italic; }
+    @media (max-width: 860px) { .dirs { grid-template-columns: 1fr; } .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } .timeline li { grid-template-columns: 1fr; gap: 4px; } }
+  </style>
+  <link rel="stylesheet" href="assets/styles/lesson-system.css">
+</head>
+<body>
+  <a class="skip" href="#content">Перейти до матеріалу</a>
+  <main id="content">
+    <header class="hero">
+      <h1>Урок 6. Концепт</h1>
+      <p>Як Куток отримав свій вигляд: референси сервісів, яким довіряють, смак дизайнера й атрибути з даних, дев’ять напрямів на вибір, стиль «Бирка з ключем» — і його перенесення на вайрфрейми. Стиль знаходили на цьому уроці; описувати його в DESIGN.md будемо на наступному.</p>
+      <div class="hero-meta">
+        <span><b>3</b> сервіси-референси</span>
+        <span><b>5</b> пар атрибутів</span>
+        <span><b>9</b> напрямів</span>
+        <span><b>18</b> пар контрасту, усі AA</span>
+        <span>Джерела: <a href="concept.md">concept.md</a>, <a href="concept/references.md">references.md</a>, <a href="concept/tokens.css">tokens.css</a></span>
+      </div>
+    </header>
+
+    <section id="overview">
+      <div class="section-head">
+        <h2>Коротко</h2>
+        <p>Що в результаті й де це лежить.</p>
+      </div>
+      <div class="summary">
+        <div>
+          <h3>Що вийшло</h3>
+          <ul>
+            <li><b>Образ — бирка від ключа.</b> Пошук закінчується тим, що тобі дають ключі, тож ціна стоїть на білій бирці з отвором поверх фото кімнати.</li>
+            <li><b>Кольори й шрифт</b> — з напряму «Відкрите вікно»: білий фон, чорнило, Onest. Корал — лише на кнопках і посиланнях, зелений — лише там, де щось підтверджено.</li>
+            <li><b>Іконки у два рівні:</b> великі мальовані від руки (Streamline Freehand), маленькі — прості лінійні (Solar).</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Артефакти</h3>
+          <ul>
+            <li><a href="concept.html">concept.html</a> — стенд стилю: кольори, шрифт, форма, фото, іконки, компоненти, таблиця контрастів.</li>
+            <li><a href="concept/tokens.css">concept/tokens.css</a> — єдине джерело значень; екрани беруть усе звідси.</li>
+            <li><a href="concept/directions.html">concept/directions.html</a> — дев’ять напрямів, з яких обирали.</li>
+            <li><a href="wireframes/concept-skin.css">wireframes/concept-skin.css</a> — шкіра вайрфреймів; генератор — <code>wireframes/_build.py</code>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="links"><a href="concept.html">Відкрити стенд</a><a href="concept/directions.html">Дев’ять напрямів</a><a href="lessons/?lesson=4&amp;wireframe=listings" target="_top">Екрани в уроці 4</a></div>
+    </section>
+
+    <section id="references">
+      <div class="section-head">
+        <h2>Референси</h2>
+        <p>Лише сервіси з ресерчу, яким довіряють. З кожного — один прийом, який можна показати пальцем.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Джерело</th><th>Прийом</th><th>Яке хвилювання знімає</th></tr></thead>
+          <tbody>
+            <tr><td>Airbnb, основа</td><td>Біла плашка поверх фото в лівому верхньому куті; фото ~2/3 картки, кути 20 px; яскравий колір лише на одній дії</td><td>«Чи це не фейк, як в OLX?», «чи кімната справжня?»</td></tr>
+            <tr><td>Airbnb, екрани</td><td>Позначка на аватарі; тап показує дату й межу перевірки; «відгуків поки немає» замість порожнечі</td><td>«Галочка — значить безпечно?»</td></tr>
+            <tr><td>Bumble</td><td>Звички як мітки-пігулки; «попросити підтвердження» в меню ⋯</td><td>«Чи зійдемося побутом?»</td></tr>
+            <tr><td>WhatsApp</td><td>Живе фото людини поруч із контентом; великі pill-контроли</td><td>«З ким я житиму? Тут лише кімната»</td></tr>
+            <tr><td>Couchsurfing</td><td>Позначка біля імені скрізь, де людина з’являється, зокрема в чаті</td><td>«Це та сама людина, з якою я говорю?»</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="callout"><b>Головна знахідка:</b> обов’язкову перевірку телефону ніде не показують позначкою — Bumble дає галочку лише за селфі чи ID, Couchsurfing у 2026 році взагалі прибрав телефон із верифікації. Номер у Кутку підтверджують усі, тому «Телефон підтверджено» на кожній картці нічого б не розрізняло. Деталі й посилання — <a href="concept/references.md">references.md</a>.</p>
+    </section>
+
+    <section id="attributes">
+      <div class="section-head">
+        <h2>Смак і атрибути</h2>
+        <p>Спершу смак дизайнера, потім пари протилежностей. Біля кожної — на чому тримається: дані чи здогадка.</p>
+      </div>
+      <div class="two-col">
+        <div>
+          <h3>Подобається</h3>
+          <ul><li>monobank — має характер і не схожий на банк</li><li>Airbnb — великі фото головні на екрані</li></ul>
+        </div>
+        <div>
+          <h3>Не хочу</h3>
+          <ul><li>кремовий фон з теракотою</li><li>сірі плашки замість фото</li><li>екрани без іконок</li></ul>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-top: 28px">
+        <table>
+          <thead><tr><th>Пара</th><th>Звідки</th><th>Тримається на</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Спокійний</strong>, а не тривожний</td><td>шахрайство у фб-групах; emotional job «не стрибок у невідомість»</td><td>дані + <span class="tag">[?]</span></td></tr>
+            <tr><td><strong>Людина на першому плані</strong>, а не квадратні метри</td><td>Related job 3 — зрозуміти спосіб життя іншої людини</td><td>дані + <span class="tag">[?]</span></td></tr>
+            <tr><td><strong>Перевірка точна</strong>, а не гучна</td><td>бенчмарк Airbnb / LinkedIn; бриф: телефон ≠ особа; voice.md, принцип 2</td><td>дані</td></tr>
+            <tr><td><strong>Прямий</strong>, а не бюрократичний</td><td>бриф: сторони рівні, контакт через чат, без заявок</td><td>дані</td></tr>
+            <tr><td><strong>З характером</strong>, а не стерильний</td><td>позиціонування «не дошка оголошень»; смак — monobank</td><td>переважно смак</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="callout"><b>Конфлікт «спокійний ↔ з характером»</b> розв’язано так: кольору мало, а характер несуть бирка й мальовані іконки.</p>
+    </section>
+
+    <section id="directions">
+      <div class="section-head">
+        <h2>Напрями</h2>
+        <p>Перші три розрізнялися лише осями (світлий / темний, кількість кольору, шрифт, форма) — «простуваті, без душі». Наступні шість виросли кожен з образу.</p>
+      </div>
+      <div class="dirs">
+        <div class="dir"><h3>1 · Відкрите вікно</h3><p>Білий, чорнило, один зелений, Onest. <b>Взято кольори й шрифт.</b></p></div>
+        <div class="dir"><h3>2 · Нічний Поділ</h3><p>Темний, лайм, Unbounded.</p></div>
+        <div class="dir"><h3>3 · Чорнильний лист</h3><p>Індиго-верх, сериф Literata.</p></div>
+        <div class="dir"><h3>4 · Лінії метро</h3><p>Кольори ліній, схема «станція → хвилини → дім».</p></div>
+        <div class="dir"><h3>5 · Записка від сусідки</h3><p>Рукописна цитата на жовтому стікері.</p></div>
+        <div class="dir"><h3>6 · Ризограф</h3><p>Рожево-синій дуотон, зін.</p></div>
+        <div class="dir"><h3>7 · Вікна вночі</h3><p>Темно-синій вечір, бурштин, курсив.</p></div>
+        <div class="dir chosen"><h3>8 · Бирка з ключем ✓</h3><p>Бирка з ціною на фото. <b>Обрано як основу.</b></p></div>
+        <div class="dir"><h3>9 · Смальта</h3><p>Київська мозаїка: кобальт, вохра, бірюза.</p></div>
+      </div>
+      <div class="links"><a href="concept/directions.html">Подивитися всі дев’ять</a></div>
+    </section>
+
+    <section id="style">
+      <div class="section-head">
+        <h2>Обраний стиль</h2>
+        <p>«8, але кольори й шрифти з 1». Усі значення — у tokens.css; стенд і екрани беруть тільки звідти.</p>
+      </div>
+      <ul class="swatches">
+        <li><i style="background:#ffffff"></i><b>Фон</b><code>#FFFFFF</code><br><span>чисто білий, без крему</span></li>
+        <li><i style="background:#15171a"></i><b>Чорнило</b><code>#15171A</code><br><span>текст, вибраний чип</span></li>
+        <li><i style="background:#ff9b85"></i><b>Корал</b><code>#FF9B85</code><br><span>кнопки дії</span></li>
+        <li><i style="background:#b94a40"></i><b>Посилання</b><code>#B94A40</code><br><span>посилання, активне меню</span></li>
+        <li><i style="background:#0a7d45"></i><b>Перевірка</b><code>#0A7D45</code><br><span>номер підтверджено, успіх</span></li>
+        <li><i style="background:#b42318"></i><b>Помилка</b><code>#B42318</code><br><span>завжди з іконкою</span></li>
+      </ul>
+      <div class="two-col" style="margin-top: 28px">
+        <div>
+          <h3>Шрифт і форма</h3>
+          <ul>
+            <li>Onest 400 / 500 / 700, шкала 1.2: 12 · 14 · 16 · 19 · 23 · 28.</li>
+            <li>Радіуси: бирка 8, кнопка й поле 14, картка 18, коло.</li>
+            <li>Тінь лише над фото й у шторці.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Перевірка</h3>
+          <ul>
+            <li>Контраст рахує скрипт <code>python3 concept/contrast.py</code> — 18 пар, усі AA.</li>
+            <li>Корал як текст на білому дає лише 2.0 : 1, тому він тільки заливка; для тексту — затемнений <code>#B94A40</code>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="stand">
+        <iframe src="concept.html" title="Стенд стилю «Бирка з ключем»" loading="lazy"></iframe>
+      </div>
+      <div class="links"><a href="concept.html">Відкрити стенд на весь екран</a></div>
+    </section>
+
+    <section id="screens">
+      <div class="section-head">
+        <h2>Екрани</h2>
+        <p>Урок перевіряє стиль на двох екранах; на прохання дизайнера перенесено на всі чотири. Екрани клікабельні.</p>
+      </div>
+      <div class="shots">
+        <div class="shot"><div class="frame"><iframe src="wireframes/listings.html" title="Результати пошуку" loading="lazy" tabindex="-1"></iframe></div><a href="lessons/?lesson=4&amp;wireframe=listings" target="_top">Результати пошуку</a></div>
+        <div class="shot"><div class="frame"><iframe src="wireframes/listing.html" title="Оголошення" loading="lazy" tabindex="-1"></iframe></div><a href="lessons/?lesson=4&amp;wireframe=listing" target="_top">Оголошення</a></div>
+        <div class="shot"><div class="frame"><iframe src="wireframes/profile.html" title="Профіль" loading="lazy" tabindex="-1"></iframe></div><a href="lessons/?lesson=4&amp;wireframe=profile" target="_top">Профіль Ірини</a></div>
+        <div class="shot"><div class="frame"><iframe src="wireframes/chat.html" title="Чат" loading="lazy" tabindex="-1"></iframe></div><a href="lessons/?lesson=4&amp;wireframe=chat" target="_top">Чат з Іриною</a></div>
+      </div>
+    </section>
+
+    <section id="edits">
+      <div class="section-head">
+        <h2>Правки дизайнера</h2>
+        <p>Кожну правку вносили в спільне джерело — токени, стенд, шкіру екранів, — а не на один екран.</p>
+      </div>
+      <ol class="timeline">
+        <li><q>активний пункт меню треба виділити якось</q><span>Підсвітка активного пункту; зрештою — іконка й підпис кольором посилань, без підкладки.</span></li>
+        <li><q>фотки додай де треба із стоків … аватарки</q><span>Аватар автора з галочкою на кожній картці; фото в профілі, чаті, оголошенні.</span></li>
+        <li><q>всі маленькі іконки роби простими лінійними. великі як зараз залиш</q><span>Два рівні іконок: Freehand для меню й станів, Solar linear для решти.</span></li>
+        <li><q>не вистачає акцентного кольору … кораловий ніжний</q><span>Три проби; спершу корал на бирці й меню — відкочено; лишився лише на кнопках і посиланнях.</span></li>
+        <li><q>фото щоби займало всю цю область</q><span>Фото оголошення заходить під статус-бар; «назад» — біла іконка в колі; карусель інших фото.</span></li>
+        <li><q>по центру. без фону. іконка велика … всі стейти</q><span>Повноекранні стани по центру, без підкладки, іконка 72 px — у всіх чотирьох екранах.</span></li>
+        <li><q>опусти бірку … одна відстань</q><span>Бирка повертається від правого верхнього кута: 12 px зверху й зліва.</span></li>
+      </ol>
+    </section>
+
+    <section id="open">
+      <div class="section-head">
+        <h2>Що відкрито</h2>
+        <p>Рішення, які ще треба прийняти, і крок уроку, який не пройдено.</p>
+      </div>
+      <ul class="open-list">
+        <li><b>Крок 7</b> — таблиця проблем з доказами й <code>/impeccable audit</code> — ще попереду.</li>
+        <li><b>Урок 4 тепер кольоровий:</b> хаб бере ті самі файли з <code>wireframes/</code>. Якщо урок 4 має лишитися ахроматичним, потрібна копія.</li>
+        <li><b>«Профіль» у нижньому меню</b> нікуди не веде — екрана власного профілю немає.</li>
+        <li><b>Посилання й помилка</b> обидва червонуваті (<code>#B94A40</code> і <code>#B42318</code>); помилка завжди з іконкою — перевірити на кроці 7.</li>
+        <li><b>Ліцензії іконок</b> — CC BY 4.0 для обох наборів, атрибуція є на стенді.</li>
+      </ul>
+    </section>
+
+    <footer>Джерела сторінки: <a href="concept.md">concept.md</a>, <a href="concept/references.md">concept/references.md</a>, <a href="concept/tokens.css">concept/tokens.css</a>, журнал прогону — <a href="RUN-LOG.md">RUN-LOG.md</a>. Позначка [?] означає непідтверджене припущення.</footer>
+  </main>
+  <script>
+    // Масштаб мініатюр екранів під ширину колонки.
+    (function () {
+      var frames = [].slice.call(document.querySelectorAll(".shot .frame"));
+      function fit() { frames.forEach(function (f) { f.style.setProperty("--s", f.clientWidth / 390); }); }
+      if ("ResizeObserver" in window) { var ro = new ResizeObserver(fit); frames.forEach(function (f) { ro.observe(f); }); }
+      fit();
+    })();
+  </script>
+  <script>
+    // Повідомляє хабу уроків, який розділ зараз видно, щоб підсвітити його в дереві.
+    (function () {
+      if (window.parent === window) return;
+      var sections = [].slice.call(document.querySelectorAll("main > section[id]"));
+      var observer = new IntersectionObserver(function (entries) {
+        var visible = entries.filter(function (e) { return e.isIntersecting; })[0];
+        if (visible) window.parent.postMessage({ type: "lesson-section", id: visible.target.id }, location.origin);
+      }, { rootMargin: "-15% 0px -70% 0px" });
+      sections.forEach(function (s) { observer.observe(s); });
+    })();
+  </script>
+</body>
+</html>

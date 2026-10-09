@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Три напрями стилю — Куток</title>
+<meta name="description" content="Три різні варіанти візуального стилю «Кутка» для вибору: палітра, шрифти, картка оголошення, кнопка, позначка перевірки й іконки.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Literata:opsz,wght@7..72,500;7..72,600&family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;700&family=Commissioner:wght@400;500;700;800&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600&family=Dela+Gothic+One&family=Playfair+Display:ital,wght@1,600&family=Manrope:wght@400;500;600;700&family=Rubik:wght@400;500;700&family=Yeseva+One&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<style>
+  /* Хром сторінки — нейтральний, щоб не заважати порівнянню варіантів */
+  :root {
+    --page-bg: #ffffff;
+    --page-ink: #16181b;
+    --page-muted: #5a5f66;
+    --page-line: #e3e5e8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--page-ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .skip { position: absolute; left: -9999px; }
+  .skip:focus { left: 16px; top: 16px; background: var(--page-ink); color: #fff; padding: 8px 12px; z-index: 10; }
+  header.intro { max-width: 72ch; margin: 0 auto; padding: 40px 16px 8px; }
+  header.intro h1 { font-size: 1.75rem; line-height: 1.2; margin: 0 0 8px; text-wrap: balance; }
+  header.intro h2 { font-size: 1.375rem; margin: 0 0 4px; }
+  header.intro p { margin: 0 0 8px; color: var(--page-muted); text-wrap: pretty; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 32px;
+    max-width: 1240px;
+    margin: 24px auto 64px;
+    padding: 0 16px;
+  }
+  .direction { display: flex; flex-direction: column; gap: 16px; }
+  .direction > h2 { margin: 0; font-size: 1.25rem; line-height: 1.25; }
+  .direction > .scene { margin: 0; color: var(--page-muted); font-size: 0.9375rem; }
+  .facts { margin: 0; padding: 0; list-style: none; font-size: 0.875rem; display: grid; gap: 4px; }
+  .facts b { font-weight: 600; }
+  .swatches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .swatches li { font-size: 0.75rem; line-height: 1.3; }
+  .swatches .chip-color { display: block; height: 44px; border-radius: 8px; border: 1px solid var(--page-line); margin-bottom: 4px; }
+  .swatches code { font-size: 0.75rem; }
+  .why { margin: 0; font-size: 0.875rem; color: var(--page-muted); }
+
+  /* Телефон-зразок: кожен варіант задає свої змінні */
+  .phone {
+    width: 100%;
+    max-width: 380px;
+    border-radius: 32px;
+    overflow: hidden;
+    border: 1px solid var(--page-line);
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .phone .top { padding: 20px 16px 16px; background: var(--top-bg, var(--bg)); color: var(--top-ink, var(--ink)); }
+  .phone .top h3 { margin: 0 0 12px; font-family: var(--font-head); font-weight: var(--head-weight); font-size: 1.375rem; line-height: 1.2; letter-spacing: var(--head-track, 0); }
+  .search {
+    display: flex; align-items: center; gap: 8px;
+    min-height: 48px; padding: 0 16px;
+    border-radius: var(--r-control);
+    background: var(--field-bg); color: var(--field-ink);
+    border: 1px solid var(--field-line, transparent);
+    font-size: 0.9375rem;
+  }
+  .search iconify-icon { font-size: 20px; }
+  .chips { display: flex; gap: 8px; margin-top: 12px; overflow: hidden; }
+  .chips span {
+    flex: none; display: inline-flex; align-items: center; gap: 6px;
+    min-height: 36px; padding: 0 14px; border-radius: var(--r-control);
+    background: var(--chip-bg); color: var(--chip-ink); font-size: 0.875rem; font-weight: 500;
+  }
+  .content { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+  .meta-line { margin: 0; font-size: 0.875rem; color: var(--muted); }
+
+  .card { display: flex; flex-direction: column; gap: 10px; }
+  .card .photo { position: relative; aspect-ratio: 4 / 3; border-radius: var(--r-card); overflow: hidden; background: var(--line); }
+  .card .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .fav {
+    position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%;
+    display: grid; place-items: center; background: rgb(0 0 0 / 0.35); color: #fff; font-size: 20px;
+  }
+  .card .author {
+    position: absolute; left: 12px; bottom: 12px; display: flex; align-items: center; gap: 8px;
+    padding: 4px 12px 4px 4px; border-radius: 999px; background: var(--pill-bg); color: var(--pill-ink);
+    font-size: 0.8125rem; font-weight: 500;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 0.16);
+  }
+  .card .author img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+  .card h4 { margin: 0; font-family: var(--font-card-title, var(--font-body)); font-size: 1rem; font-weight: 600; line-height: 1.3; }
+  .card .price { font-weight: 600; white-space: nowrap; }
+  .card .row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+  .card .facts-row { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--muted); font-size: 0.875rem; }
+  .card .facts-row span { display: inline-flex; align-items: center; gap: 4px; }
+  .card .facts-row iconify-icon { font-size: 16px; }
+  .habits { display: flex; flex-wrap: wrap; gap: 6px; }
+  .habits span {
+    display: inline-flex; align-items: center; gap: 4px; min-height: 28px; padding: 0 10px;
+    border-radius: var(--r-tag); background: var(--chip-bg); color: var(--chip-ink); font-size: 0.8125rem;
+  }
+
+  .person { display: flex; gap: 12px; align-items: center; padding: 12px; border-radius: var(--r-card); background: var(--surface); border: 1px solid var(--surface-line, transparent); }
+  .avatar { position: relative; flex: none; }
+  .avatar img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; display: block; }
+  .avatar .mark {
+    position: absolute; right: -4px; bottom: -4px; width: 24px; height: 24px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 16px;
+    background: var(--mark-bg); color: var(--mark-ink); border: 2px solid var(--surface);
+  }
+  .person p { margin: 0; }
+  .person .name { font-weight: 600; }
+  .person .verified { font-size: 0.8125rem; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+  .person .verified iconify-icon { color: var(--mark-text, var(--ink)); font-size: 16px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; padding: 0 24px; border: 0; cursor: pointer;
+    border-radius: var(--r-button); background: var(--btn-bg); color: var(--btn-ink);
+    font: 600 1rem/1 var(--font-body); width: 100%;
+    transition: filter 160ms cubic-bezier(.25,1,.5,1), transform 160ms cubic-bezier(.25,1,.5,1);
+  }
+  .btn iconify-icon { font-size: 20px; }
+  .btn:hover { filter: brightness(1.12); }
+  .btn:active { transform: scale(0.98); }
+  .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } .btn:active { transform: none; } }
+
+  .tabbar { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); background: var(--tab-bg, var(--bg)); }
+  .tabbar span { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0 12px; font-size: 0.75rem; color: var(--muted); }
+  .tabbar span iconify-icon { font-size: 24px; }
+  .tabbar span[aria-current] { color: var(--tab-active); font-weight: 600; }
+
+  .icons { display: flex; flex-wrap: wrap; gap: 14px; font-size: 24px; color: var(--page-ink); }
+  .icons-label { font-size: 0.8125rem; color: var(--page-muted); margin: 0; }
+
+  /* ── Варіант 1 «Відкрите вікно»: світлий, майже без кольору ── */
+  .v1 {
+    --bg: #ffffff; --surface: #f4f5f6; --line: #e6e8eb;
+    --ink: #15171a; --muted: #596069;
+    --field-bg: #f1f3f4; --field-ink: #596069;
+    --chip-bg: #f1f3f4; --chip-ink: #15171a;
+    --pill-bg: #ffffff; --pill-ink: #15171a;
+    --btn-bg: #15171a; --btn-ink: #ffffff;
+    --mark-bg: #0a7d45; --mark-ink: #ffffff; --mark-text: #0a7d45;
+    --tab-active: #15171a; --focus: #0a7d45;
+    --font-head: "Onest", system-ui, sans-serif; --font-body: "Onest", system-ui, sans-serif;
+    --head-weight: 700; --head-track: -0.01em;
+    --r-card: 20px; --r-control: 999px; --r-button: 999px; --r-tag: 999px;
+  }
+  /* ── Варіант 2 «Нічний Поділ»: темний, лаймовий сигнал ── */
+  .v2 {
+    --bg: #0f1011; --surface: #1b1d1f; --line: #2b2e31; --surface-line: #2b2e31;
+    --ink: #f3f2ec; --muted: #a7aaac;
+    --field-bg: #1b1d1f; --field-ink: #a7aaac; --field-line: #2b2e31;
+    --chip-bg: #1b1d1f; --chip-ink: #f3f2ec;
+    --pill-bg: #0f1011; --pill-ink: #f3f2ec;
+    --btn-bg: #d6f25a; --btn-ink: #0f1011;
+    --mark-bg: #d6f25a; --mark-ink: #0f1011; --mark-text: #d6f25a;
+    --tab-active: #d6f25a; --tab-bg: #0f1011; --focus: #d6f25a;
+    --font-head: "Unbounded", system-ui, sans-serif; --font-body: "Onest", system-ui, sans-serif;
+    --head-weight: 700; --head-track: -0.02em;
+    --r-card: 12px; --r-control: 10px; --r-button: 10px; --r-tag: 6px;
+  }
+  /* ── Варіант 3 «Чорнильний лист»: світлий, багато кольору, серифні заголовки ── */
+  .v3 {
+    --bg: #ffffff; --surface: #f3f1ff; --line: #e4e1f5;
+    --ink: #1a1733; --muted: #5d5a73;
+    --top-bg: #3a2db0; --top-ink: #ffffff;
+    --field-bg: #ffffff; --field-ink: #5d5a73;
+    --chip-bg: #f3f1ff; --chip-ink: #1a1733;
+    --pill-bg: #ffd84d; --pill-ink: #1a1733;
+    --btn-bg: #3a2db0; --btn-ink: #ffffff;
+    --mark-bg: #3a2db0; --mark-ink: #ffffff; --mark-text: #3a2db0;
+    --tab-active: #3a2db0; --focus: #3a2db0;
+    --font-head: "Literata", Georgia, serif; --font-body: "Golos Text", system-ui, sans-serif;
+    --font-card-title: "Literata", Georgia, serif;
+    --head-weight: 600;
+    --r-card: 28px; --r-control: 16px; --r-button: 16px; --r-tag: 999px;
+  }
+  .v3 .chips span { background: rgb(255 255 255 / 0.14); color: #ffffff; }
+
+  /* ── Варіант 4 «Лінії метро» ── */
+  .v4 {
+    --bg: #ffffff; --surface: #f3f4f5; --line: #e5e7ea;
+    --ink: #121417; --muted: #5a6068;
+    --field-bg: #f3f4f5; --field-ink: #121417;
+    --chip-bg: #f3f4f5; --chip-ink: #121417;
+    --pill-bg: #ffffff; --pill-ink: #121417;
+    --btn-bg: #121417; --btn-ink: #ffffff;
+    --mark-bg: #121417; --mark-ink: #ffffff; --mark-text: #121417;
+    --tab-active: #121417; --focus: #0b6cb8;
+    --font-head: "Commissioner", system-ui, sans-serif; --font-body: "Commissioner", system-ui, sans-serif;
+    --head-weight: 800; --head-track: -0.02em;
+    --r-card: 14px; --r-control: 999px; --r-button: 14px; --r-tag: 999px;
+  }
+  .v4 .top h3 { font-size: 1.75rem; }
+  .roundel {
+    flex: none; display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--line); color: #ffffff; font: 800 0.8125rem/1 "Commissioner", sans-serif;
+  }
+  .v4 .search .roundel { background: var(--line, #d4202c); }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .route { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: var(--ink); }
+  .route b { font-weight: 700; }
+  .route .roundel { width: 22px; height: 22px; font-size: 0.75rem; }
+  .route .track { flex: 1; height: 4px; border-radius: 2px; background: var(--line); position: relative; }
+  .route .track::after { content: ""; position: absolute; right: -3px; top: -3px; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 3px solid var(--line); box-sizing: border-box; }
+  .route iconify-icon { font-size: 20px; }
+  .v4 .route .track, .v4 .search .roundel, .v4 .route .roundel { background: var(--line); }
+  .v4 .route .track::after { border-color: var(--line); }
+
+  /* ── Варіант 5 «Записка від сусідки» ── */
+  .v5 {
+    --bg: #ffffff; --surface: #eef1ff; --line: #e3e6f2;
+    --ink: #1b1b1f; --muted: #5c5c66;
+    --field-bg: #eef1ff; --field-ink: #1b1b1f;
+    --chip-bg: #eef1ff; --chip-ink: #1b1b1f;
+    --pill-bg: #ffffff; --pill-ink: #1b1b1f;
+    --btn-bg: #2340c8; --btn-ink: #ffffff;
+    --mark-bg: #2340c8; --mark-ink: #ffffff; --mark-text: #2340c8;
+    --tab-active: #2340c8; --focus: #2340c8;
+    --font-head: "Nunito", system-ui, sans-serif; --font-body: "Nunito", system-ui, sans-serif;
+    --head-weight: 800;
+    --r-card: 6px; --r-control: 12px; --r-button: 12px; --r-tag: 999px;
+  }
+  .v5 iconify-icon { color: #2340c8; }
+  .v5 .btn iconify-icon, .v5 .avatar .mark iconify-icon, .v5 .fav iconify-icon { color: inherit; }
+  .v5 .photo.polaroid { padding: 8px 8px 28px; background: #ffffff; border-radius: 4px; box-shadow: 0 1px 2px rgb(0 0 0 / .12), 0 8px 20px rgb(0 0 0 / .10); transform: rotate(-1.2deg); aspect-ratio: auto; overflow: visible; }
+  .v5 .photo.polaroid img { aspect-ratio: 4 / 3; height: auto; border-radius: 2px; }
+  .v5 .photo.polaroid .fav { top: 18px; right: 18px; }
+  .note { margin: -18px 8px 4px 40px; padding: 12px 14px; background: #ffe45c; color: #1b1b1f; border-radius: 2px; transform: rotate(1.4deg); box-shadow: 0 6px 14px rgb(0 0 0 / .12); position: relative; }
+  .note blockquote { margin: 0 0 6px; font: 600 1.3125rem/1.2 "Caveat", cursive; color: #1d2f9a; }
+  .note figcaption { display: flex; align-items: center; gap: 6px; font-size: 0.8125rem; font-weight: 600; }
+  .note figcaption img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+
+  /* ── Варіант 6 «Ризограф» ── */
+  .v6 {
+    --bg: #ffffff; --surface: #ffe5f3; --line: #141414; --surface-line: #141414;
+    --ink: #141414; --muted: #55555c;
+    --field-bg: #ffffff; --field-ink: #141414; --field-line: #141414;
+    --chip-bg: #ffffff; --chip-ink: #141414;
+    --pill-bg: #0078bf; --pill-ink: #ffffff;
+    --btn-bg: #ff48b0; --btn-ink: #141414;
+    --mark-bg: #0078bf; --mark-ink: #ffffff; --mark-text: #0078bf;
+    --tab-active: #141414; --focus: #0078bf;
+    --font-head: "Dela Gothic One", system-ui, sans-serif; --font-body: "Onest", system-ui, sans-serif;
+    --head-weight: 400;
+    --r-card: 0px; --r-control: 0px; --r-button: 0px; --r-tag: 0px;
+  }
+  .v6 .top h3 { font-size: 1.625rem; line-height: 1.1; }
+  .v6 .search { border-width: 2px; }
+  .v6 .chips span { border: 2px solid #141414; }
+  .v6 .photo.riso { background: #ff48b0; border: 2px solid #141414; box-shadow: 5px 5px 0 #0078bf; }
+  .v6 .photo.riso img { filter: grayscale(1) contrast(1.25); mix-blend-mode: multiply; }
+  .v6 .photo.riso::after { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: radial-gradient(rgb(20 20 20 / .22) 1px, transparent 1.4px); background-size: 4px 4px; }
+  .v6 .card .author { border-radius: 0; box-shadow: none; border: 2px solid #141414; z-index: 1; }
+  .v6 .avatar img { border-radius: 0; border: 2px solid #141414; }
+  .v6 .avatar .mark { border-radius: 0; border: 2px solid #141414; }
+  .v6 .person { border-width: 2px; border-style: solid; }
+  .v6 .btn { border: 2px solid #141414; box-shadow: 4px 4px 0 #141414; }
+  .v6 .btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #141414; }
+  .v6 .tabbar { border-top: 2px solid #141414; }
+  .v6 .habits span { border: 1.5px solid #141414; background: #ffffff; }
+
+  /* ── Варіант 7 «Вікна вночі» ── */
+  .v7 {
+    --bg: #0c1324; --surface: #18213a; --line: #273152; --surface-line: #273152;
+    --ink: #f4f1e8; --muted: #a9b0c2;
+    --field-bg: #18213a; --field-ink: #a9b0c2; --field-line: #273152;
+    --chip-bg: #18213a; --chip-ink: #f4f1e8;
+    --pill-bg: rgb(12 19 36 / .82); --pill-ink: #f4f1e8;
+    --btn-bg: #ffb547; --btn-ink: #0c1324;
+    --mark-bg: #ffb547; --mark-ink: #0c1324; --mark-text: #ffb547;
+    --tab-active: #ffb547; --focus: #ffb547;
+    --font-head: "Playfair Display", Georgia, serif; --font-body: "Manrope", system-ui, sans-serif;
+    --font-card-title: "Playfair Display", Georgia, serif;
+    --head-weight: 600;
+    --r-card: 22px; --r-control: 999px; --r-button: 999px; --r-tag: 999px;
+  }
+  .v7 .top h3 { font-style: italic; font-size: 1.625rem; }
+  .v7 .person .name { font-family: "Playfair Display", Georgia, serif; font-style: italic; font-size: 1.125rem; font-weight: 600; }
+  .v7 .photo.glow { box-shadow: 0 0 0 1px #273152, 0 12px 40px -12px rgb(255 181 71 / .45); }
+
+  /* ── Варіант 8 «Бирка з ключем» ── */
+  .v8 {
+    --bg: #ffffff; --surface: #eef7f2; --line: #dcebe3;
+    --ink: #11231c; --muted: #4f6159;
+    --field-bg: #eef7f2; --field-ink: #11231c;
+    --chip-bg: #eef7f2; --chip-ink: #11231c;
+    --pill-bg: #ffffff; --pill-ink: #11231c;
+    --btn-bg: #0c5c3f; --btn-ink: #ffffff;
+    --mark-bg: #0c5c3f; --mark-ink: #ffffff; --mark-text: #0c5c3f;
+    --tab-active: #0c5c3f; --focus: #0c5c3f;
+    --font-head: "Rubik", system-ui, sans-serif; --font-body: "Rubik", system-ui, sans-serif;
+    --head-weight: 700;
+    --r-card: 18px; --r-control: 14px; --r-button: 14px; --r-tag: 8px;
+  }
+  .v8 iconify-icon { color: #0c5c3f; }
+  .v8 .btn iconify-icon, .v8 .avatar .mark iconify-icon, .v8 .fav iconify-icon { color: inherit; }
+  .keytag {
+    position: absolute; top: 14px; left: 14px; display: flex; flex-direction: column; gap: 0;
+    padding: 8px 14px 8px 28px; background: #c7f2dc; color: #11231c; font-size: 0.75rem; line-height: 1.25;
+    clip-path: polygon(12px 0, 100% 0, 100% 100%, 12px 100%, 0 50%);
+    transform: rotate(-4deg); transform-origin: left center; box-shadow: 0 4px 10px rgb(0 0 0 / .14);
+  }
+  .keytag b { font-size: 1rem; }
+  .keytag::before { content: ""; position: absolute; left: 10px; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: #ffffff; box-shadow: inset 0 0 0 2px #0c5c3f; }
+  .muted-price { color: var(--muted); font-weight: 400 !important; font-size: 0.875rem; }
+
+  /* ── Варіант 9 «Смальта» ── */
+  .v9 {
+    --bg: #ffffff; --surface: #eef2fa; --line: #dfe5f1;
+    --ink: #16233f; --muted: #525d75;
+    --field-bg: #eef2fa; --field-ink: #16233f;
+    --chip-bg: #eef2fa; --chip-ink: #16233f;
+    --pill-bg: #e9b53a; --pill-ink: #16233f;
+    --btn-bg: #1f4fa3; --btn-ink: #ffffff;
+    --mark-bg: #1f4fa3; --mark-ink: #ffffff; --mark-text: #1f4fa3;
+    --tab-active: #1f4fa3; --focus: #1f4fa3;
+    --font-head: "Yeseva One", Georgia, serif; --font-body: "IBM Plex Sans", system-ui, sans-serif;
+    --head-weight: 400;
+    --r-card: 8px; --r-control: 6px; --r-button: 6px; --r-tag: 4px;
+  }
+  .v9 .top h3 { font-size: 1.625rem; }
+  .v9 .mosaic {
+    height: 28px;
+    background:
+      conic-gradient(from 90deg at 50% 50%, #1f4fa3 0 25%, #e9b53a 0 50%, #1f8a80 0 75%, #16233f 0) 0 0 / 28px 28px,
+      #1f4fa3;
+    filter: saturate(1.05);
+    box-shadow: inset 0 -2px 0 #ffffff;
+  }
+  .v9 .habits span { background: #d3f0ec; color: #16233f; font-weight: 600; }
+  .v9 .habits span iconify-icon { color: #1f8a80; }
+  .v9 .photo.tiles { border: 6px solid transparent; border-image: repeating-linear-gradient(90deg, #1f4fa3 0 10px, #e9b53a 10px 20px, #1f8a80 20px 30px) 6; border-radius: 0; }
+</style>
+</head>
+<body>
+<a class="skip" href="#content">До варіантів</a>
+<header class="intro">
+  <h1>Три напрями стилю для «Кутка»</h1>
+  <p>Варіанти 4–9 мають власну «душу» — образ, з якого виростає все інше. Варіанти 1–3 нижче, для порівняння. Варіанти відрізняються щонайменше двома речами: світлий чи темний фон, скільки кольору на екрані, характер шрифту, форма елементів. Кожен спирається на атрибути з <a href="../concept.md">concept.md</a> і прийоми з <a href="references.md">references.md</a>.</p>
+  <p>Позначка перевірки скрізь показує лише те, що перевірено: номер телефону, з датою. На картці в стрічці її немає — рішення §0 у references.md.</p>
+</header>
+
+<main id="content" class="grid">
+
+  <!-- ─────────── 4 ─────────── -->
+  <section class="direction" aria-labelledby="d4">
+    <h2 id="d4">4 · «Лінії метро»</h2>
+    <p class="scene">Марта мислить станціями: «до Лук’янівської 7 хвилин — підходить». Кольори київських ліній — не декор, а мова пошуку. Під кожним фото — маленька схема: станція, лінія, хвилини пішки до дому.</p>
+    <ul class="facts">
+      <li><b>Фон:</b> світлий, чисто білий</li>
+      <li><b>Колір:</b> функціональний — червона, синя, зелена лінії тільки там, де є станція; кнопки чорнильні</li>
+      <li><b>Шрифт:</b> Commissioner — гротеск із характером «покажчика», одна родина 400–800</li>
+      <li><b>Форма:</b> кола станцій, пігулки-чипи, картки 14px</li>
+      <li><b>Іконки:</b> Solar linear</li>
+    </ul>
+    <ul class="swatches" aria-label="Палітра варіанта 4">
+      <li><span class="chip-color" style="background:#ffffff"></span>Фон<br><code>#FFFFFF</code></li>
+      <li><span class="chip-color" style="background:#121417"></span>Чорнило · кнопка<br><code>#121417</code></li>
+      <li><span class="chip-color" style="background:#5a6068"></span>Другорядний<br><code>#5A6068</code></li>
+      <li><span class="chip-color" style="background:#d4202c"></span>М1 червона<br><code>#D4202C</code></li>
+      <li><span class="chip-color" style="background:#0b6cb8"></span>М2 синя<br><code>#0B6CB8</code></li>
+      <li><span class="chip-color" style="background:#00965e"></span>М3 зелена<br><code>#00965E</code></li>
+    </ul>
+
+    <div class="phone v4">
+      <div class="top">
+        <h3>Де хочеш жити?</h3>
+        <div class="search"><span class="roundel" style="--line:#d4202c">М</span>Лук’янівська, Золоті ворота, Університет</div>
+        <div class="chips"><span><span class="dot" style="background:#d4202c"></span>Червона</span><span><span class="dot" style="background:#00965e"></span>Зелена</span><span><iconify-icon icon="solar:tuning-2-linear"></iconify-icon>до 9 000 ₴</span></div>
+      </div>
+      <div class="content">
+        <article class="card">
+          <div class="photo">
+            <img src="https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=760&q=70&auto=format&fit=crop" alt="Простора кімната-лофт з цегляною стіною, жовтим диваном і книжковими полицями" loading="lazy">
+            <span class="fav"><iconify-icon icon="solar:heart-linear"></iconify-icon></span>
+            <span class="author"><img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=96&q=70&auto=format&fit=crop&crop=faces" alt="">Тарас</span>
+          </div>
+          <div class="route" aria-label="Лук’янівська, червона лінія, 7 хвилин пішки">
+            <span class="roundel" style="--line:#d4202c">М</span><b>Лук’янівська</b><span class="track" style="--line:#d4202c"></span><span>7 хв</span><iconify-icon icon="solar:home-smile-linear"></iconify-icon>
+          </div>
+          <div class="row"><h4>Кімната-лофт у сталінці</h4><span class="price">8 900 ₴</span></div>
+          <div class="facts-row"><span><iconify-icon icon="solar:calendar-linear"></iconify-icon>з 1 листопада</span><span><iconify-icon icon="solar:moon-linear"></iconify-icon>тихо після 23:00</span></div>
+        </article>
+        <div class="person">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=160&q=70&auto=format&fit=crop&crop=faces" alt="Тарас"><span class="mark"><iconify-icon icon="solar:verified-check-linear"></iconify-icon></span></div>
+          <div><p class="name">Тарас, 27</p><p class="verified"><iconify-icon icon="solar:smartphone-linear"></iconify-icon>Номер підтверджено 2 вересня 2026</p></div>
+        </div>
+        <button class="btn" type="button"><iconify-icon icon="solar:chat-round-line-linear"></iconify-icon>Написати Тарасу</button>
+      </div>
+      <nav class="tabbar" aria-label="Нижнє меню, варіант 4"><span aria-current="page"><iconify-icon icon="solar:magnifer-linear"></iconify-icon>Пошук</span><span><iconify-icon icon="solar:chat-round-line-linear"></iconify-icon>Чати</span><span><iconify-icon icon="solar:user-rounded-linear"></iconify-icon>Профіль</span></nav>
+    </div>
+    <p class="why"><b>Душа:</b> мова київського метро — кружок «М», кольори ліній, схема «станція → хвилини → дім». <b>Звідки:</b> бриф — пошук за станціями метро як головний фільтр; атрибути «прямий», «з характером». <b>Не вгадується з теми:</b> «житло» не дає метро-схеми; колір несе інформацію про локацію. <b>Ризик:</b> три кольори ліній плюс колір станів (помилка теж червона) — треба розвести помилку з червоною лінією.</p>
+  </section>
+
+  <!-- ─────────── 5 ─────────── -->
+  <section class="direction" aria-labelledby="d5">
+    <h2 id="d5">5 · «Записка від сусідки»</h2>
+    <p class="scene">Оголошення — це не прайс, а записка від живої людини, приклеєна на холодильник. Власні слова людини написані від руки синьою ручкою; фото кімнати — як знімок, притиснутий магнітом.</p>
+    <ul class="facts">
+      <li><b>Фон:</b> світлий, чисто білий</li>
+      <li><b>Колір:</b> помірно — синя ручка (кнопка, позначка) і жовтий стікер із цитатою</li>
+      <li><b>Шрифт:</b> Nunito (інтерфейс, округлий) + Caveat (лише слова самої людини)</li>
+      <li><b>Форма:</b> «паперова» — фото в білій рамці з легким нахилом, стікер, кути 6–12px</li>
+      <li><b>Іконки:</b> Solar bold-duotone, у кольорі ручки</li>
+    </ul>
+    <ul class="swatches" aria-label="Палітра варіанта 5">
+      <li><span class="chip-color" style="background:#ffffff"></span>Фон<br><code>#FFFFFF</code></li>
+      <li><span class="chip-color" style="background:#1b1b1f"></span>Текст<br><code>#1B1B1F</code></li>
+      <li><span class="chip-color" style="background:#5c5c66"></span>Другорядний<br><code>#5C5C66</code></li>
+      <li><span class="chip-color" style="background:#2340c8"></span>Синя ручка · кнопка<br><code>#2340C8</code></li>
+      <li><span class="chip-color" style="background:#ffe45c"></span>Стікер<br><code>#FFE45C</code></li>
+      <li><span class="chip-color" style="background:#eef1ff"></span>Поверхня<br><code>#EEF1FF</code></li>
+    </ul>
+
+    <div class="phone v5">
+      <div class="top">
+        <h3>Хто шукає сусіда поруч</h3>
+        <div class="search"><iconify-icon icon="solar:magnifer-bold-duotone"></iconify-icon>Оболонь · до 8 500 ₴</div>
+        <div class="chips"><span><iconify-icon icon="solar:tuning-2-bold-duotone"></iconify-icon>Фільтри · 3</span><span>Із жовтня</span><span>Можна з котом</span></div>
+      </div>
+      <div class="content">
+        <article class="card">
+          <div class="photo polaroid">
+            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=760&q=70&auto=format&fit=crop" alt="Кімната з жовтим кріслом, торшером і картиною на стіні" loading="lazy">
+            <span class="fav"><iconify-icon icon="solar:heart-bold-duotone"></iconify-icon></span>
+          </div>
+          <figure class="note">
+            <blockquote>«Вечорами граю на гітарі до 22:00, а кіт Бублик любить гостей»</blockquote>
+            <figcaption><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=96&q=70&auto=format&fit=crop&crop=faces" alt="">Соня пише</figcaption>
+          </figure>
+          <div class="row"><h4>Кімната з жовтим кріслом на Оболоні</h4><span class="price">8 200 ₴</span></div>
+          <div class="facts-row"><span><iconify-icon icon="solar:map-point-bold-duotone"></iconify-icon>6 хв від Мінської</span><span><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>з 25 жовтня</span></div>
+        </article>
+        <div class="person">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=160&q=70&auto=format&fit=crop&crop=faces" alt="Соня"><span class="mark"><iconify-icon icon="solar:verified-check-bold"></iconify-icon></span></div>
+          <div><p class="name">Соня, 25</p><p class="verified"><iconify-icon icon="solar:smartphone-bold-duotone"></iconify-icon>Номер підтверджено 14 вересня 2026</p></div>
+        </div>
+        <button class="btn" type="button"><iconify-icon icon="solar:chat-round-line-bold-duotone"></iconify-icon>Написати Соні</button>
+      </div>
+      <nav class="tabbar" aria-label="Нижнє меню, варіант 5"><span aria-current="page"><iconify-icon icon="solar:magnifer-bold-duotone"></iconify-icon>Пошук</span><span><iconify-icon icon="solar:chat-round-line-bold-duotone"></iconify-icon>Чати</span><span><iconify-icon icon="solar:user-rounded-bold-duotone"></iconify-icon>Профіль</span></nav>
+    </div>
+    <p class="why"><b>Душа:</b> голос людини, написаний від руки, і фото як знімок на холодильнику. <b>Звідки:</b> атрибут «людина на першому плані»; jtbd Related 3 — зрозуміти спосіб життя іншої людини; voice.md — тексти користувачів не переписуємо, тут вони навіть виділені. <b>Не вгадується з теми:</b> білий + синя ручка + жовтий стікер — це шкільний зошит і холодильник, не «затишне житло». <b>Ризик:</b> рукописний шрифт гірше читається — лише для коротких цитат, ніколи для кнопок і міток.</p>
+  </section>
+
+  <!-- ─────────── 6 ─────────── -->
+  <section class="direction" aria-labelledby="d6">
+    <h2 id="d6">6 · «Ризограф»</h2>
+    <p class="scene">Київський зін про те, як жити разом: фото надруковані двома фарбами — рожевою й синьою, жирний заголовок, чорні рамки. Для 22–30 років, які збирають афіші з Подолу, а не каталоги меблів.</p>
+    <ul class="facts">
+      <li><b>Фон:</b> світлий, чисто білий; фото — дуотон рожевий/чорний з растром</li>
+      <li><b>Колір:</b> сміливий (~30 %) — флуоресцентний рожевий і синій ризо</li>
+      <li><b>Шрифт:</b> Dela Gothic One (лише заголовки) + Onest (усе інше)</li>
+      <li><b>Форма:</b> гострі кути, рамки 2px, жорстка зсунута тінь</li>
+      <li><b>Іконки:</b> Solar bold</li>
+    </ul>
+    <ul class="swatches" aria-label="Палітра варіанта 6">
+      <li><span class="chip-color" style="background:#ffffff"></span>Фон<br><code>#FFFFFF</code></li>
+      <li><span class="chip-color" style="background:#141414"></span>Чорна фарба · текст<br><code>#141414</code></li>
+      <li><span class="chip-color" style="background:#55555c"></span>Другорядний<br><code>#55555C</code></li>
+      <li><span class="chip-color" style="background:#ff48b0"></span>Рожевий ризо · кнопка<br><code>#FF48B0</code></li>
+      <li><span class="chip-color" style="background:#0078bf"></span>Синій ризо · позначка<br><code>#0078BF</code></li>
+      <li><span class="chip-color" style="background:#ffe5f3"></span>Рожева підкладка<br><code>#FFE5F3</code></li>
+    </ul>
+
+    <div class="phone v6">
+      <div class="top">
+        <h3>Жити разом — без лотереї</h3>
+        <div class="search"><iconify-icon icon="solar:magnifier-bold"></iconify-icon>Поділ · до 10 000 ₴</div>
+        <div class="chips"><span><iconify-icon icon="solar:tuning-2-bold"></iconify-icon>Фільтри · 3</span><span>Із листопада</span><span>Сова</span></div>
+      </div>
+      <div class="content">
+        <article class="card">
+          <div class="photo riso">
+            <img src="https://images.unsplash.com/photo-1554995207-c18c203602cb?w=760&q=70&auto=format&fit=crop" alt="Вітальня з коричневим диваном, подушками і рослинами" loading="lazy">
+            <span class="fav"><iconify-icon icon="solar:heart-bold"></iconify-icon></span>
+            <span class="author"><img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=96&q=70&auto=format&fit=crop&crop=faces" alt="">Даша</span>
+          </div>
+          <div class="row"><h4>Кімната в трушці біля Контрактової</h4><span class="price">9 600 ₴</span></div>
+          <div class="facts-row"><span><iconify-icon icon="solar:map-point-bold"></iconify-icon>4 хв від метро</span><span><iconify-icon icon="solar:calendar-bold"></iconify-icon>з 1 листопада</span></div>
+          <div class="habits"><span><iconify-icon icon="solar:moon-bold"></iconify-icon>сова</span><span><iconify-icon icon="solar:home-smile-bold"></iconify-icon>гості по п’ятницях</span></div>
+        </article>
+        <div class="person">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=160&q=70&auto=format&fit=crop&crop=faces" alt="Даша"><span class="mark"><iconify-icon icon="solar:verified-check-bold"></iconify-icon></span></div>
+          <div><p class="name">Даша, 23</p><p class="verified"><iconify-icon icon="solar:smartphone-bold"></iconify-icon>Номер підтверджено 30 серпня 2026</p></div>
+        </div>
+        <button class="btn" type="button"><iconify-icon icon="solar:chat-round-line-bold"></iconify-icon>Написати Даші</button>
+      </div>
+      <nav class="tabbar" aria-label="Нижнє меню, варіант 6"><span aria-current="page"><iconify-icon icon="solar:magnifier-bold"></iconify-icon>Пошук</span><span><iconify-icon icon="solar:chat-round-line-bold"></iconify-icon>Чати</span><span><iconify-icon icon="solar:user-rounded-bold"></iconify-icon>Профіль</span></nav>
+    </div>
+    <p class="why"><b>Душа:</b> друкована графіка — дуотон, растр, рамки, тінь без розмиття; продукт звучить як свій для міської аудиторії 22–30. <b>Звідки:</b> аудиторія з брифу; смак — monobank «має характер»; атрибут «з характером». <b>Не вгадується з теми:</b> ні крему, ні теракоти, ні «довірливого синього». <b>Ризик:</b> найгучніший — конфлікт з атрибутом «спокійний»; дуотон ховає реальні кольори кімнати, тож у самому оголошенні фото треба показувати без обробки.</p>
+  </section>
+
+
+  <!-- ─────────── 7 ─────────── -->
+  <section class="direction" aria-labelledby="d7">
+    <h2 id="d7">7 · «Вікна вночі»</h2>
+    <p class="scene">Ввечері дивишся на багатоповерхівку навпроти: кожне світле вікно — чийсь дім і чиєсь життя. Темно-синій вечір, бурштинове світло вікна, імена людей — курсивом, як підписи під фото.</p>
+    <ul class="facts"><li><b>Фон:</b> темний, глибокий вечірній синій</li><li><b>Колір:</b> бурштин «світла у вікні» — лише кнопка, позначка, активна вкладка (~10 %)</li><li><b>Шрифт:</b> Playfair Display курсив (імена й заголовки) + Manrope (інтерфейс)</li><li><b>Форма:</b> фото на всю ширину картки, кути 22px, м’які пігулки</li><li><b>Іконки:</b> Solar linear</li></ul>
+    <ul class="swatches" aria-label="Палітра варіанта 7"><li><span class="chip-color" style="background:#0c1324"></span>Фон<br><code>#0C1324</code></li><li><span class="chip-color" style="background:#18213a"></span>Поверхня<br><code>#18213A</code></li><li><span class="chip-color" style="background:#f4f1e8"></span>Текст<br><code>#F4F1E8</code></li><li><span class="chip-color" style="background:#a9b0c2"></span>Другорядний<br><code>#A9B0C2</code></li><li><span class="chip-color" style="background:#273152"></span>Лінія<br><code>#273152</code></li><li><span class="chip-color" style="background:#ffb547"></span>Світло вікна<br><code>#FFB547</code></li></ul>
+
+    <div class="phone v7">
+      <div class="top">
+        <h3>Хто світить вікном поруч</h3>
+        <div class="search"><iconify-icon icon="solar:magnifer-linear"></iconify-icon>Татарка · до 9 000 ₴</div>
+        <div class="chips"><span><iconify-icon icon="solar:tuning-2-linear"></iconify-icon>Фільтри · 3</span><span>Із жовтня</span><span>Тиха</span></div>
+      </div>
+      <div class="content">
+        <article class="card">
+          <div class="photo glow">
+            <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?w=760&q=70&auto=format&fit=crop" alt="Спальня з теплими лампами, великим ліжком і помаранчевими пуфами" loading="lazy">
+            <span class="fav"><iconify-icon icon="solar:heart-linear"></iconify-icon></span>
+            <span class="author"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=96&q=70&auto=format&fit=crop&crop=faces" alt=""><i>Віра</i></span>
+          </div>
+          
+          <div class="row"><h4>Спальня з теплими лампами</h4><span class="price">8 700 ₴</span></div>
+          <div class="facts-row"><span><iconify-icon icon="solar:map-point-linear"></iconify-icon>8 хв від Лук’янівської</span><span><iconify-icon icon="solar:calendar-linear"></iconify-icon>з 10 жовтня</span></div>
+          <div class="habits"><span><iconify-icon icon="solar:moon-linear"></iconify-icon>читає до опівночі</span><span><iconify-icon icon="solar:cat-linear"></iconify-icon>без тварин</span></div>
+        </article>
+        <div class="person">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&q=70&auto=format&fit=crop&crop=faces" alt="Віра"><span class="mark"><iconify-icon icon="solar:verified-check-linear"></iconify-icon></span></div>
+          <div><p class="name">Віра, 26</p><p class="verified"><iconify-icon icon="solar:smartphone-linear"></iconify-icon>Номер підтверджено 9 вересня 2026</p></div>
+        </div>
+        <button class="btn" type="button"><iconify-icon icon="solar:chat-round-line-linear"></iconify-icon>Написати Вірі</button>
+      </div>
+      <nav class="tabbar" aria-label="Нижнє меню, варіант 7"><span aria-current="page"><iconify-icon icon="solar:magnifer-linear"></iconify-icon>Пошук</span><span><iconify-icon icon="solar:chat-round-line-linear"></iconify-icon>Чати</span><span><iconify-icon icon="solar:user-rounded-linear"></iconify-icon>Профіль</span></nav>
+    </div>
+    <p class="why"><b>Душа:</b> вечірні вікна багатоповерхівок — у кожному чиєсь життя. <b>Звідки:</b> атрибути «людина на першому плані» і «спокійний»; сцена — Марта гортає ввечері. <b>Не вгадується з теми:</b> «затишне житло» дає крем; тут тепло несе лише світло вікна на темному. <b>Ризик:</b> курсивний сериф — тільки для імен і заголовків; темний режим вимагає перевірки фото.</p>
+  </section>
+
+  <!-- ─────────── 8 ─────────── -->
+  <section class="direction" aria-labelledby="d8">
+    <h2 id="d8">8 · «Бирка з ключем»</h2>
+    <p class="scene">Мета пошуку — момент, коли тобі дають ключі. Кожна картка має бирку, як на ключі від кімнати: ціна і дата заїзду на м’ятній бирці з дірочкою. Кольори — як у київських ключниць і бирок у під’їзді.</p>
+    <ul class="facts"><li><b>Фон:</b> світлий, чисто білий</li><li><b>Колір:</b> м’ятна бирка + темно-зелена кнопка (~12 %)</li><li><b>Шрифт:</b> Rubik — м’який округлий гротеск, одна родина</li><li><b>Форма:</b> бирка зі «зрізаними» кутами й отвором, кнопки 14px</li><li><b>Іконки:</b> Solar bold-duotone</li></ul>
+    <ul class="swatches" aria-label="Палітра варіанта 8"><li><span class="chip-color" style="background:#ffffff"></span>Фон<br><code>#FFFFFF</code></li><li><span class="chip-color" style="background:#eef7f2"></span>Поверхня<br><code>#EEF7F2</code></li><li><span class="chip-color" style="background:#11231c"></span>Текст<br><code>#11231C</code></li><li><span class="chip-color" style="background:#4f6159"></span>Другорядний<br><code>#4F6159</code></li><li><span class="chip-color" style="background:#c7f2dc"></span>Бирка<br><code>#C7F2DC</code></li><li><span class="chip-color" style="background:#0c5c3f"></span>Кнопка · позначка<br><code>#0C5C3F</code></li></ul>
+
+    <div class="phone v8">
+      <div class="top">
+        <h3>Кімнати, де вже чекають ключі</h3>
+        <div class="search"><iconify-icon icon="solar:magnifer-bold-duotone"></iconify-icon>Осокорки · до 7 500 ₴</div>
+        <div class="chips"><span><iconify-icon icon="solar:tuning-2-bold-duotone"></iconify-icon>Фільтри · 3</span><span>Із листопада</span><span>Без куріння</span></div>
+      </div>
+      <div class="content">
+        <article class="card">
+          <div class="photo tagged">
+            <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=760&q=70&auto=format&fit=crop" alt="Світла мінімалістична кімната з чорним диваном, комодом, торшером і рослиною" loading="lazy">
+            <span class="fav"><iconify-icon icon="solar:heart-bold-duotone"></iconify-icon></span>
+            <span class="keytag"><b>7 300 ₴</b><span>заїзд 1.11</span></span><span class="author"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&q=70&auto=format&fit=crop&crop=faces" alt="">Максим</span>
+          </div>
+          
+          <div class="row"><h4>Світла кімната на Осокорках</h4><span class="price muted-price">за місяць</span></div>
+          <div class="facts-row"><span><iconify-icon icon="solar:map-point-bold-duotone"></iconify-icon>9 хв від Осокорків</span><span><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>з 1 листопада</span></div>
+          <div class="habits"><span><iconify-icon icon="solar:home-smile-bold-duotone"></iconify-icon>гості рідко</span><span><iconify-icon icon="solar:moon-bold-duotone"></iconify-icon>жайворонок</span></div>
+        </article>
+        <div class="person">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=70&auto=format&fit=crop&crop=faces" alt="Максим"><span class="mark"><iconify-icon icon="solar:verified-check-bold"></iconify-icon></span></div>
+          <div><p class="name">Максим, 28</p><p class="verified"><iconify-icon icon="solar:smartphone-bold-duotone"></iconify-icon>Номер підтверджено 5 вересня 2026</p></div>
+        </div>
+        <button class="btn" type="button"><iconify-icon icon="solar:chat-round-line-bold-duotone"></iconify-icon>Написати Максиму</button>
+      </div>
+      <nav class="tabbar" aria-label="Нижнє меню, варіант 8"><span aria-current="page"><iconify-icon icon="solar:magnifer-bold-duotone"></iconify-icon>Пошук</span><span><iconify-icon icon="solar:chat-round-line-bold-duotone"></iconify-icon>Чати</span><span><iconify-icon icon="solar:user-rounded-bold-duotone"></iconify-icon>Профіль</span></nav>
+    </div>
+    <p class="why"><b>Душа:</b> бирка від ключа — предмет, яким закінчується успішний пошук (Main job: «перейти до спільного проживання»). <b>Звідки:</b> jtbd.md, Main job; атрибут «прямий». <b>Не вгадується з теми:</b> м’ята і темно-зелений не з «затишку», а з ключниці. <b>Ризик:</b> бирка дублює ціну під фото — у стрічці лишити ціну тільки на бирці.</p>
+  </section>
+
+  <!-- ─────────── 9 ─────────── -->
+  <section class="direction" aria-labelledby="d9">
+    <h2 id="d9">9 · «Смальта»</h2>
+    <p class="scene">Київські модерністські мозаїки на фасадах і в під’їздах: квадратики смальти — кобальт, вохра, бірюза. Мозаїка складається з окремих шматочків, як спільне життя — з окремих людей. Шматочки стають мітками звичок і рамкою екрана.</p>
+    <ul class="facts"><li><b>Фон:</b> світлий, чисто білий; верх — смуга мозаїки</li><li><b>Колір:</b> три кольори смальти, кожен має роль: кобальт — дія, вохра — люди, бірюза — звички (~20 %)</li><li><b>Шрифт:</b> Yeseva One (лише заголовки) + IBM Plex Sans (інтерфейс)</li><li><b>Форма:</b> майже квадратна — кути 4–8px, мітки-плитки</li><li><b>Іконки:</b> Solar bold</li></ul>
+    <ul class="swatches" aria-label="Палітра варіанта 9"><li><span class="chip-color" style="background:#ffffff"></span>Фон<br><code>#FFFFFF</code></li><li><span class="chip-color" style="background:#16233f"></span>Текст<br><code>#16233F</code></li><li><span class="chip-color" style="background:#525d75"></span>Другорядний<br><code>#525D75</code></li><li><span class="chip-color" style="background:#1f4fa3"></span>Кобальт · кнопка<br><code>#1F4FA3</code></li><li><span class="chip-color" style="background:#e9b53a"></span>Вохра · люди<br><code>#E9B53A</code></li><li><span class="chip-color" style="background:#1f8a80"></span>Бірюза · звички<br><code>#1F8A80</code></li></ul>
+
+    <div class="phone v9">
+      <div class="mosaic" aria-hidden="true"></div>
+      <div class="top">
+        <h3>Кімнати в місті мозаїк</h3>
+        <div class="search"><iconify-icon icon="solar:magnifier-bold"></iconify-icon>Дарниця · до 8 000 ₴</div>
+        <div class="chips"><span><iconify-icon icon="solar:tuning-2-bold"></iconify-icon>Фільтри · 3</span><span>Із жовтня</span><span>Можна з котом</span></div>
+      </div>
+      <div class="content">
+        <article class="card">
+          <div class="photo tiles">
+            <img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=760&q=70&auto=format&fit=crop" alt="Світла вітальня з синім диваном, кріслом і рослинами біля вікна" loading="lazy">
+            <span class="fav"><iconify-icon icon="solar:heart-bold"></iconify-icon></span>
+            <span class="author"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=96&q=70&auto=format&fit=crop&crop=faces" alt="">Катя</span>
+          </div>
+          
+          <div class="row"><h4>Кімната з синім диваном на Дарниці</h4><span class="price">7 900 ₴</span></div>
+          <div class="facts-row"><span><iconify-icon icon="solar:map-point-bold"></iconify-icon>5 хв від Дарниці</span><span><iconify-icon icon="solar:calendar-bold"></iconify-icon>з 15 жовтня</span></div>
+          <div class="habits"><span><iconify-icon icon="solar:cat-bold"></iconify-icon>є кіт</span><span><iconify-icon icon="solar:moon-bold"></iconify-icon>сова</span></div>
+        </article>
+        <div class="person">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&q=70&auto=format&fit=crop&crop=faces" alt="Катя"><span class="mark"><iconify-icon icon="solar:verified-check-bold"></iconify-icon></span></div>
+          <div><p class="name">Катя, 24</p><p class="verified"><iconify-icon icon="solar:smartphone-bold"></iconify-icon>Номер підтверджено 18 вересня 2026</p></div>
+        </div>
+        <button class="btn" type="button"><iconify-icon icon="solar:chat-round-line-bold"></iconify-icon>Написати Каті</button>
+      </div>
+      <nav class="tabbar" aria-label="Нижнє меню, варіант 9"><span aria-current="page"><iconify-icon icon="solar:magnifier-bold"></iconify-icon>Пошук</span><span><iconify-icon icon="solar:chat-round-line-bold"></iconify-icon>Чати</span><span><iconify-icon icon="solar:user-rounded-bold"></iconify-icon>Профіль</span></nav>
+    </div>
+    <p class="why"><b>Душа:</b> київська модерністська мозаїка — місцевий образ, який аудиторія 22–30 знає з вулиць. <b>Звідки:</b> позиціонування «Куток — київський, не загальна дошка»; атрибут «з характером»; кольори мають ролі, як просить impeccable. <b>Не вгадується з теми:</b> мозаїка не про «житло», а про місто. <b>Ризик:</b> три кольори — дисципліна ролей обов’язкова; бірюза як фон тексту не проходить AA (4.2), тож лише для плиток.</p>
+  </section>
+</main>
+
+<header class="intro">
+  <h2>Перший підхід: варіанти 1–3</h2>
+  <p>Залишені для порівняння.</p>
+</header>
+
+<div class="grid" id="first">
+
+  <!-- ─────────── 1 ─────────── -->
+  <section class="direction" aria-labelledby="d1">
+    <h2 id="d1">1 · «Відкрите вікно»</h2>
+    <p class="scene">Марта гортає на обідній перерві, при денному світлі, між робочими задачами. Екран має відповідати за секунду й не кричати.</p>
+    <ul class="facts">
+      <li><b>Фон:</b> світлий, чисто білий</li>
+      <li><b>Колір:</b> майже немає (~3 %) — зелений тільки на позначці перевірки, кнопки чорнильні</li>
+      <li><b>Шрифт:</b> Onest — одна гротескна родина, 400 / 500 / 700</li>
+      <li><b>Форма:</b> картки 20px, кнопки й поля — пігулки</li>
+      <li><b>Іконки:</b> Solar linear</li>
+    </ul>
+    <ul class="swatches" aria-label="Палітра варіанта 1">
+      <li><span class="chip-color" style="background:#ffffff"></span>Фон<br><code>#FFFFFF</code></li>
+      <li><span class="chip-color" style="background:#f4f5f6"></span>Поверхня<br><code>#F4F5F6</code></li>
+      <li><span class="chip-color" style="background:#15171a"></span>Чорнило · кнопка<br><code>#15171A</code></li>
+      <li><span class="chip-color" style="background:#596069"></span>Другорядний текст<br><code>#596069</code></li>
+      <li><span class="chip-color" style="background:#e6e8eb"></span>Лінія<br><code>#E6E8EB</code></li>
+      <li><span class="chip-color" style="background:#0a7d45"></span>Позначка перевірки<br><code>#0A7D45</code></li>
+    </ul>
+
+    <div class="phone v1">
+      <div class="top">
+        <h3>Кімнати й люди поруч із метро</h3>
+        <div class="search"><iconify-icon icon="solar:magnifer-linear"></iconify-icon>Лук’янівська · до 9 000 ₴</div>
+        <div class="chips"><span><iconify-icon icon="solar:tuning-2-linear"></iconify-icon>Фільтри · 3</span><span>Із жовтня</span><span>Без куріння</span></div>
+      </div>
+      <div class="content">
+        <p class="meta-line">Усі акаунти підтверджені номером телефону. <u>Що це означає</u></p>
+        <article class="card">
+          <div class="photo">
+            <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=760&q=70&auto=format&fit=crop" alt="Світла спальня з ліжком, тумбою і настінною лампою" loading="lazy">
+            <span class="fav"><iconify-icon icon="solar:heart-linear"></iconify-icon></span>
+            <span class="author"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=96&q=70&auto=format&fit=crop&crop=faces" alt="">Ірина</span>
+          </div>
+          <div class="row"><h4>Кімната біля Лук’янівської</h4><span class="price">8 500 ₴</span></div>
+          <div class="facts-row"><span><iconify-icon icon="solar:map-point-linear"></iconify-icon>7 хв пішки</span><span><iconify-icon icon="solar:calendar-linear"></iconify-icon>з 15 жовтня</span></div>
+          <div class="habits"><span><iconify-icon icon="solar:cat-linear"></iconify-icon>є кіт</span><span><iconify-icon icon="solar:moon-linear"></iconify-icon>тихо після 23:00</span></div>
+        </article>
+        <div class="person">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=160&q=70&auto=format&fit=crop&crop=faces" alt="Ірина"><span class="mark"><iconify-icon icon="solar:verified-check-linear"></iconify-icon></span></div>
+          <div><p class="name">Ірина, 26</p><p class="verified"><iconify-icon icon="solar:smartphone-linear"></iconify-icon>Номер підтверджено 12 вересня 2026</p></div>
+        </div>
+        <button class="btn" type="button"><iconify-icon icon="solar:chat-round-line-linear"></iconify-icon>Написати Ірині</button>
+      </div>
+      <nav class="tabbar" aria-label="Нижнє меню, варіант 1"><span aria-current="page"><iconify-icon icon="solar:magnifer-linear"></iconify-icon>Пошук</span><span><iconify-icon icon="solar:chat-round-line-linear"></iconify-icon>Чати</span><span><iconify-icon icon="solar:user-rounded-linear"></iconify-icon>Профіль</span></nav>
+    </div>
+
+    <p class="icons-label">Набір Solar linear:</p>
+    <div class="icons" aria-hidden="true"><iconify-icon icon="solar:magnifer-linear"></iconify-icon><iconify-icon icon="solar:verified-check-linear"></iconify-icon><iconify-icon icon="solar:chat-round-line-linear"></iconify-icon><iconify-icon icon="solar:home-smile-linear"></iconify-icon><iconify-icon icon="solar:map-point-linear"></iconify-icon><iconify-icon icon="solar:calendar-linear"></iconify-icon><iconify-icon icon="solar:cat-linear"></iconify-icon><iconify-icon icon="solar:heart-linear"></iconify-icon></div>
+    <p class="why"><b>Атрибути:</b> «спокійний», «точна перевірка». <b>Прийоми:</b> A2, A3 (Airbnb — темна службова кнопка), W1, W2. <b>Не вгадується з теми:</b> «житло» тягне до кремового з теракотою, тут — чистий білий і чорнило; єдиний колір несе зміст, а не настрій. <b>Ризик:</b> найближчий до Airbnb; характер (пара 5) тримається лише на іконках.</p>
+  </section>
+
+  <!-- ─────────── 2 ─────────── -->
+  <section class="direction" aria-labelledby="d2">
+    <h2 id="d2">2 · «Нічний Поділ»</h2>
+    <p class="scene">Вечір, Марта в тимчасовому житлі, гортає в ліжку перед сном. Темний екран не сліпить, а один лаймовий сигнал — як світло у вікні навпроти.</p>
+    <ul class="facts">
+      <li><b>Фон:</b> темний, нейтральний майже-чорний</li>
+      <li><b>Колір:</b> помітний (~15 %) — лайм на кнопці, позначці й активній вкладці</li>
+      <li><b>Шрифт:</b> Unbounded (заголовки, з характером) + Onest (текст)</li>
+      <li><b>Форма:</b> майже прямокутна — картки 12px, кнопки 10px, мітки 6px</li>
+      <li><b>Іконки:</b> Solar bold</li>
+    </ul>
+    <ul class="swatches" aria-label="Палітра варіанта 2">
+      <li><span class="chip-color" style="background:#0f1011"></span>Фон<br><code>#0F1011</code></li>
+      <li><span class="chip-color" style="background:#1b1d1f"></span>Поверхня<br><code>#1B1D1F</code></li>
+      <li><span class="chip-color" style="background:#f3f2ec"></span>Текст<br><code>#F3F2EC</code></li>
+      <li><span class="chip-color" style="background:#a7aaac"></span>Другорядний текст<br><code>#A7AAAC</code></li>
+      <li><span class="chip-color" style="background:#2b2e31"></span>Лінія<br><code>#2B2E31</code></li>
+      <li><span class="chip-color" style="background:#d6f25a"></span>Акцент · кнопка<br><code>#D6F25A</code></li>
+    </ul>
+
+    <div class="phone v2">
+      <div class="top">
+        <h3>Кімнати й люди поруч із метро</h3>
+        <div class="search"><iconify-icon icon="solar:magnifier-bold"></iconify-icon>Контрактова · до 10 000 ₴</div>
+        <div class="chips"><span><iconify-icon icon="solar:tuning-2-bold"></iconify-icon>Фільтри · 3</span><span>Із листопада</span><span>Можна з котом</span></div>
+      </div>
+      <div class="content">
+        <p class="meta-line">Усі акаунти підтверджені номером телефону. <u>Що це означає</u></p>
+        <article class="card">
+          <div class="photo">
+            <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=760&q=70&auto=format&fit=crop" alt="Вітальня з диваном, кріслом, книжковою полицею і рослинами" loading="lazy">
+            <span class="fav"><iconify-icon icon="solar:heart-bold"></iconify-icon></span>
+            <span class="author"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=96&q=70&auto=format&fit=crop&crop=faces" alt="">Андрій</span>
+          </div>
+          <div class="row"><h4>Кімната у двушці на Подолі</h4><span class="price">9 200 ₴</span></div>
+          <div class="facts-row"><span><iconify-icon icon="solar:map-point-bold"></iconify-icon>5 хв від метро</span><span><iconify-icon icon="solar:calendar-bold"></iconify-icon>з 1 листопада</span></div>
+          <div class="habits"><span><iconify-icon icon="solar:cat-bold"></iconify-icon>можна з котом</span><span><iconify-icon icon="solar:moon-bold"></iconify-icon>сова</span></div>
+        </article>
+        <div class="person">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&q=70&auto=format&fit=crop&crop=faces" alt="Андрій"><span class="mark"><iconify-icon icon="solar:verified-check-bold"></iconify-icon></span></div>
+          <div><p class="name">Андрій, 29</p><p class="verified"><iconify-icon icon="solar:smartphone-bold"></iconify-icon>Номер підтверджено 3 серпня 2026</p></div>
+        </div>
+        <button class="btn" type="button"><iconify-icon icon="solar:chat-round-line-bold"></iconify-icon>Написати Андрію</button>
+      </div>
+      <nav class="tabbar" aria-label="Нижнє меню, варіант 2"><span aria-current="page"><iconify-icon icon="solar:magnifier-bold"></iconify-icon>Пошук</span><span><iconify-icon icon="solar:chat-round-line-bold"></iconify-icon>Чати</span><span><iconify-icon icon="solar:user-rounded-bold"></iconify-icon>Профіль</span></nav>
+    </div>
+
+    <p class="icons-label">Набір Solar bold:</p>
+    <div class="icons" aria-hidden="true"><iconify-icon icon="solar:magnifier-bold"></iconify-icon><iconify-icon icon="solar:verified-check-bold"></iconify-icon><iconify-icon icon="solar:chat-round-line-bold"></iconify-icon><iconify-icon icon="solar:home-smile-bold"></iconify-icon><iconify-icon icon="solar:map-point-bold"></iconify-icon><iconify-icon icon="solar:calendar-bold"></iconify-icon><iconify-icon icon="solar:cat-bold"></iconify-icon><iconify-icon icon="solar:heart-bold"></iconify-icon></div>
+    <p class="why"><b>Атрибути:</b> «з характером», «прямий». <b>Прийоми:</b> A3 (акцент лише на головній дії), A4, W1. <b>Не вгадується з теми:</b> темний екран і лайм нічого спільного з «затишним житлом» не мають; характер — від смаку (monobank). <b>Ризик:</b> найслабше тримає пару 1 «спокійний»; фото на темному фоні темнішають.</p>
+  </section>
+
+  <!-- ─────────── 3 ─────────── -->
+  <section class="direction" aria-labelledby="d3">
+    <h2 id="d3">3 · «Чорнильний лист»</h2>
+    <p class="scene">Марта читає оголошення уважно, як лист від людини: хто пише, як живе. Верх екрана залитий чорнильним кольором, далі — білий аркуш із серифними заголовками.</p>
+    <ul class="facts">
+      <li><b>Фон:</b> світлий, але верх екрана залитий кольором</li>
+      <li><b>Колір:</b> багато (~35 %) — чорнильний індиго + жовта плашка автора</li>
+      <li><b>Шрифт:</b> Literata (сериф, заголовки й назви) + Golos Text (текст)</li>
+      <li><b>Форма:</b> м’яка — картки 28px, кнопки 16px, мітки-пігулки</li>
+      <li><b>Іконки:</b> Solar bold-duotone</li>
+    </ul>
+    <ul class="swatches" aria-label="Палітра варіанта 3">
+      <li><span class="chip-color" style="background:#3a2db0"></span>Чорнило · кнопка<br><code>#3A2DB0</code></li>
+      <li><span class="chip-color" style="background:#ffffff"></span>Фон<br><code>#FFFFFF</code></li>
+      <li><span class="chip-color" style="background:#f3f1ff"></span>Поверхня<br><code>#F3F1FF</code></li>
+      <li><span class="chip-color" style="background:#1a1733"></span>Текст<br><code>#1A1733</code></li>
+      <li><span class="chip-color" style="background:#5d5a73"></span>Другорядний текст<br><code>#5D5A73</code></li>
+      <li><span class="chip-color" style="background:#ffd84d"></span>Плашка автора<br><code>#FFD84D</code></li>
+    </ul>
+
+    <div class="phone v3">
+      <div class="top">
+        <h3>Кімнати й люди поруч із метро</h3>
+        <div class="search"><iconify-icon icon="solar:magnifer-bold-duotone"></iconify-icon>Лівобережна · до 8 000 ₴</div>
+        <div class="chips"><span><iconify-icon icon="solar:tuning-2-bold-duotone"></iconify-icon>Фільтри · 3</span><span>Із жовтня</span><span>Без тварин</span></div>
+      </div>
+      <div class="content">
+        <p class="meta-line">Усі акаунти підтверджені номером телефону. <u>Що це означає</u></p>
+        <article class="card">
+          <div class="photo">
+            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=760&q=70&auto=format&fit=crop" alt="Світла кімната з великим вікном, обіднім столом і кріслом" loading="lazy">
+            <span class="fav"><iconify-icon icon="solar:heart-bold-duotone"></iconify-icon></span>
+            <span class="author"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=96&q=70&auto=format&fit=crop&crop=faces" alt="">Олена</span>
+          </div>
+          <div class="row"><h4>Кімната з великим вікном на Лівому</h4><span class="price">7 800 ₴</span></div>
+          <div class="facts-row"><span><iconify-icon icon="solar:map-point-bold-duotone"></iconify-icon>10 хв пішки</span><span><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>з 20 жовтня</span></div>
+          <div class="habits"><span><iconify-icon icon="solar:home-smile-bold-duotone"></iconify-icon>гості рідко</span><span><iconify-icon icon="solar:moon-bold-duotone"></iconify-icon>жайворонок</span></div>
+        </article>
+        <div class="person">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=160&q=70&auto=format&fit=crop&crop=faces" alt="Олена"><span class="mark"><iconify-icon icon="solar:verified-check-bold"></iconify-icon></span></div>
+          <div><p class="name">Олена, 24</p><p class="verified"><iconify-icon icon="solar:smartphone-bold-duotone"></iconify-icon>Номер підтверджено 21 вересня 2026</p></div>
+        </div>
+        <button class="btn" type="button"><iconify-icon icon="solar:chat-round-line-bold-duotone"></iconify-icon>Написати Олені</button>
+      </div>
+      <nav class="tabbar" aria-label="Нижнє меню, варіант 3"><span aria-current="page"><iconify-icon icon="solar:magnifer-bold-duotone"></iconify-icon>Пошук</span><span><iconify-icon icon="solar:chat-round-line-bold-duotone"></iconify-icon>Чати</span><span><iconify-icon icon="solar:user-rounded-bold-duotone"></iconify-icon>Профіль</span></nav>
+    </div>
+
+    <p class="icons-label">Набір Solar bold-duotone:</p>
+    <div class="icons" aria-hidden="true"><iconify-icon icon="solar:magnifer-bold-duotone"></iconify-icon><iconify-icon icon="solar:verified-check-bold-duotone"></iconify-icon><iconify-icon icon="solar:chat-round-line-bold-duotone"></iconify-icon><iconify-icon icon="solar:home-smile-bold-duotone"></iconify-icon><iconify-icon icon="solar:map-point-bold-duotone"></iconify-icon><iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon><iconify-icon icon="solar:cat-bold-duotone"></iconify-icon><iconify-icon icon="solar:heart-bold-duotone"></iconify-icon></div>
+    <p class="why"><b>Атрибути:</b> «людина на першому плані», «з характером». <b>Прийоми:</b> A2, W1 (жовта плашка автора на фото), B1. <b>Не вгадується з теми:</b> індиго не з «житла» і не корпоративний «синій для довіри»; сериф подає оголошення як лист від людини. <b>Ризик:</b> найбільше кольору — пара 1 «спокійний» під питанням; індиго можна сприйняти як «банківський синій».</p>
+  </section>
+
+</div>
+</body>
+</html>

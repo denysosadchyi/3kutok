@@ -6,16 +6,31 @@
 <meta name="wireframe-job" content="Related 2–3 — оцінка іншої сторони та побутової сумісності">
 <title>Профіль Ірини — помилка</title>
 <link rel="stylesheet" href="listings-states.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="concept-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 </head>
-<body class="">
+<body class=" skin">
 <header class="appbar"><a class="appbar-back" href="listing.html" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><h1 class="appbar-title">Профіль Ірини</h1><span></span></header>
 <main id="content">
-<section class="state" role="alert">
-  <div class="state-icon" aria-hidden="true"></div>
+<section class="state state-error" role="alert">
+  <div class="state-icon"><iconify-icon icon="streamline-freehand:alerts-warning-triangle" aria-hidden="true"></iconify-icon></div>
   <h2>Не вдалося завантажити профіль</h2>
   <p>Перевір з’єднання й спробуй ще.</p>
-  <div class="actions"><a class="btn btn-primary" href="profile-loading.html">Спробувати ще</a><a class="btn btn-secondary" href="listing.html">Назад до оголошення</a></div>
+  <div class="actions"><a class="btn btn-primary" href="profile.html">Спробувати ще</a><a class="btn btn-secondary" href="listing.html">Назад до оголошення</a></div>
 </section>
 </main>
+<script>
+document.addEventListener("click", function (e) {
+  var sheet = e.target.closest("details.sheet[open]");
+  if (sheet && !e.target.closest(".sheet-panel, summary")) sheet.open = false;
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+  document.querySelectorAll("details.sheet[open]").forEach(function (d) { d.open = false; });
+});
+</script>
 </body>
 </html>

@@ -6,11 +6,17 @@
 <meta name="wireframe-job" content="Related 1 — звузити пошук; Related 2 — зменшити невизначеність; Related 3 — оцінити придатність до спільного побуту; Related 4 — перевести придатний варіант у взаємну домовленість">
 <title>Оголошення — Куток</title>
 <link rel="stylesheet" href="listings-states.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="concept-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 </head>
-<body class="has-actionbar">
+<body class="has-actionbar photo-top skin">
 <header class="appbar"><a class="appbar-back" href="listings.html" aria-label="Назад до результатів"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span></span><span></span></header>
 <main id="content">
-<div class="hero-photo"><div class="ph ph-photo" role="img" aria-label="Фото кімнати">Фото кімнати</div></div>
+<div class="hero-photo"><img class="hero-img" src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=900&q=70&auto=format&fit=crop" alt="Світла спальня з ліжком, тумбою і настінною лампою"><span class="photo-count">1 / 5</span></div>
+<ul class="gallery" aria-label="Інші фото квартири"><li><img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=480&q=70&auto=format&fit=crop" alt="Спільна вітальня з синім диваном і рослинами" loading="lazy"></li><li><img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?w=480&q=70&auto=format&fit=crop" alt="Кухня з білими шафами й острівцем" loading="lazy"></li><li><img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=480&q=70&auto=format&fit=crop" alt="Куточок вітальні з диваном і книжковою полицею" loading="lazy"></li><li><img src="https://images.unsplash.com/photo-1554995207-c18c203602cb?w=480&q=70&auto=format&fit=crop" alt="Вітальня з коричневим диваном і подушками" loading="lazy"></li></ul>
 <div class="title-block">
   <h1>Кімната біля Лук’янівської</h1>
   <p class="price">10 500 грн/міс</p>
@@ -24,10 +30,20 @@
 <p class="surface">Окрема кімната у трикімнатній квартирі. Комунальні платежі оплачуються окремо.</p>
 <h2 class="section-title">Хто живе в квартирі</h2>
 <ul class="list">
-  <li><a class="list-link" href="profile-loading.html" aria-label="Відкрити профіль Ірини"><span class="ph ph-avatar" role="img" aria-label="Фото профілю"></span><span class="grow"><strong>Ірина, 29 років</strong><span class="muted small">Живе з одним співмешканцем</span></span><svg class="chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m6 3.5 4.5 4.5L6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
-  <li class="note"><span class="dot" aria-hidden="true"></span><span><strong>Номер підтверджено 12 вересня</strong><br><span class="muted small">Це означає лише, що людина має доступ до цього номера.</span></span></li>
+  <li><a class="list-link" href="profile.html" aria-label="Відкрити профіль Ірини"><span class="avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&q=70&auto=format&fit=crop&crop=faces" alt="Фото профілю Ірини"><span class="mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon></span></span><span class="grow"><strong>Ірина, 29 років</strong><span class="muted small">Живе з одним співмешканцем</span></span><svg class="chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m6 3.5 4.5 4.5L6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+  <li class="note"><span class="dot"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon></span><span><strong>Номер підтверджено 12 вересня</strong><br><span class="muted small">Це означає лише, що людина має доступ до цього номера.</span></span></li>
 </ul>
 </main>
-<div class="actionbar"><a class="btn btn-primary" href="chat-loading.html">Написати Ірині</a></div>
+<div class="actionbar"><a class="btn btn-primary" href="chat.html">Написати Ірині</a></div>
+<script>
+document.addEventListener("click", function (e) {
+  var sheet = e.target.closest("details.sheet[open]");
+  if (sheet && !e.target.closest(".sheet-panel, summary")) sheet.open = false;
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+  document.querySelectorAll("details.sheet[open]").forEach(function (d) { d.open = false; });
+});
+</script>
 </body>
 </html>

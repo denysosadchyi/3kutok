@@ -1,7 +1,7 @@
 # Design System
 
 Правила візуальної мови, додавання сторінок і адаптиву зафіксовані в
-[`DESIGN.md`](../DESIGN.md). Спільні production-токени та базова responsive-
+[`DESIGN-artifacts.md`](../DESIGN-artifacts.md). Спільні production-токени та базова responsive-
 поведінка lesson hub живуть у
 [`assets/styles/lesson-system.css`](../assets/styles/lesson-system.css).
 

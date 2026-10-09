@@ -6,13 +6,18 @@
 <meta name="wireframe-job" content="Related 1 — звузити пошук; Related 2 — зменшити невизначеність; Related 3 — оцінити придатність до спільного побуту; Related 4 — перевести придатний варіант у взаємну домовленість">
 <title>Профіль Ірини — Куток</title>
 <link rel="stylesheet" href="listings-states.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="concept-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 </head>
-<body class="has-actionbar">
+<body class="has-actionbar skin">
 <header class="appbar"><a class="appbar-back" href="listing.html" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><h1 class="appbar-title">Профіль Ірини</h1><span></span></header>
 <main id="content">
 
 <div class="profile-head">
-  <div class="ph ph-avatar-lg" role="img" aria-label="Фото профілю">Фото профілю</div>
+  <div class="avatar-lg"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=240&q=70&auto=format&fit=crop&crop=faces" alt="Фото профілю Ірини"><span class="mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon></span></div>
   <h2>Ірина, 29 років</h2>
   <p class="muted small">Здає кімнату біля Лук’янівської</p>
 </div>
@@ -25,10 +30,30 @@
   <div><dt>Тиша ввечері</dt><dd>після 23:00</dd></div>
 </dl>
 <h2 class="section-title">Що підтверджено</h2>
-<ul class="list"><li class="note"><span class="dot" aria-hidden="true"></span><span><strong>Номер підтверджено 12 вересня</strong><br><span class="muted small">Це означає лише, що людина має доступ до цього номера.</span></span></li></ul>
+<ul class="list"><li class="note"><span class="dot"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon></span><span><strong>Номер підтверджено 12 вересня</strong><br><span class="muted small">Це означає лише, що людина має доступ до цього номера.</span></span></li></ul>
 <h2 class="section-title">Оголошення</h2>
-<ul class="list"><li><a class="list-link" href="listing.html" aria-label="Відкрити оголошення"><span class="ph ph-thumb" role="img" aria-label="Фото кімнати"></span><span class="grow"><strong>Кімната біля Лук’янівської</strong><span class="muted small">10 500 грн/міс · з 1 жовтня</span></span><svg class="chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m6 3.5 4.5 4.5L6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li></ul>
+<ul class="card-list">
+  <li class="card">
+    <div class="card-photo">
+      <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=720&q=70&auto=format&fit=crop" alt="Світла спальня з ліжком, тумбою і настінною лампою" loading="lazy">
+      <p class="card-price keytag">10 500 грн/міс</p>
+    </div>
+    <div class="card-body">
+      <h2><a class="card-link" href="listing.html">Кімната біля Лук’янівської</a></h2>
+      <p class="card-meta">з 1 жовтня</p>
+    </div>
+  </li></ul>
 </main>
-<div class="actionbar"><a class="btn btn-primary" href="chat-loading.html">Написати Ірині</a></div>
+<div class="actionbar"><a class="btn btn-primary" href="chat.html">Написати Ірині</a></div>
+<script>
+document.addEventListener("click", function (e) {
+  var sheet = e.target.closest("details.sheet[open]");
+  if (sheet && !e.target.closest(".sheet-panel, summary")) sheet.open = false;
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+  document.querySelectorAll("details.sheet[open]").forEach(function (d) { d.open = false; });
+});
+</script>
 </body>
 </html>
