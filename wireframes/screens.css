@@ -3,10 +3,6 @@
    Усі компоненти, що повторюються, — у ../ui/kit.css; значення тут теж
    беремо тільки зі змінних кіта. */
 
-/* Хаб уроків ховає скролбар кадру й малює свій (lessons/index.html) */
-html.external-scrollbar { scrollbar-width: none; }
-html.external-scrollbar::-webkit-scrollbar { display: none; }
-
 /* listings — пігулка автора на фото картки */
 .card-author {
   position: absolute;
@@ -59,7 +55,7 @@ html.external-scrollbar::-webkit-scrollbar { display: none; }
   bottom: var(--space-3);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-round);
-  background: var(--color-scrim);
+  background: var(--color-scrim-photo);
   color: var(--color-on-ink);
   font-size: var(--text-xs);
   font-weight: var(--weight-medium);

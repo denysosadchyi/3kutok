@@ -12,13 +12,12 @@
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 </head>
 <body class="shell shell--actionbar shell--photo-top">
-<header class="topbar topbar--over-photo"><a class="topbar__back" href="listings.html" aria-label="Назад до результатів"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span></span><span></span></header>
+<header class="topbar topbar--over-photo"><a class="topbar__back" href="listings.html" aria-label="Назад до результатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><span></span><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button></header>
 <main class="shell__main" id="content">
-<div class="hero-photo"><img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=900&q=70&auto=format&fit=crop" alt="Світла спальня з ліжком, тумбою і настінною лампою"><span class="photo-count">1 / 5</span></div>
-<ul class="gallery" aria-label="Інші фото квартири"><li class="gallery__item"><img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=480&q=70&auto=format&fit=crop" alt="Спільна вітальня з синім диваном і рослинами" loading="lazy"></li><li class="gallery__item"><img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?w=480&q=70&auto=format&fit=crop" alt="Кухня з білими шафами й острівцем" loading="lazy"></li><li class="gallery__item"><img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=480&q=70&auto=format&fit=crop" alt="Куточок вітальні з диваном і книжковою полицею" loading="lazy"></li><li class="gallery__item"><img src="https://images.unsplash.com/photo-1554995207-c18c203602cb?w=480&q=70&auto=format&fit=crop" alt="Вітальня з коричневим диваном і подушками" loading="lazy"></li></ul>
+<div class="hero-photo"><img src="../visuals/room-lukianivska-bedroom.jpg" alt="Світла спальня з ліжком, тумбою і настінною лампою"><p class="price-tag">10 500 грн/міс</p><span class="photo-count">1 / 5</span></div>
+<ul class="gallery" aria-label="Інші фото квартири"><li class="gallery__item"><img src="../visuals/room-lukianivska-living.jpg" alt="Спільна вітальня з диваном, рослинами й книжковою полицею" loading="lazy"></li><li class="gallery__item"><img src="../visuals/room-lukianivska-kitchen.jpg" alt="Спільна кухня з білими шафами й обіднім столом біля вікна" loading="lazy"></li><li class="gallery__item"><img src="../visuals/room-lukianivska-corner.jpg" alt="Куточок вітальні з кріслом, торшером і книжковою полицею" loading="lazy"></li><li class="gallery__item"><img src="../visuals/room-lukianivska-bathroom.jpg" alt="Спільна ванна кімната з пральною машиною" loading="lazy"></li></ul>
 <div class="listing-title">
   <h1 class="listing-title__name">Кімната біля Лук’янівської</h1>
-  <p class="listing-title__price">10 500 грн/міс</p>
   <p class="listing-title__meta">Шевченківський район · з 1 жовтня</p>
 </div>
 <dl class="group">
@@ -29,9 +28,10 @@
 <p class="listing-description">Окрема кімната у трикімнатній квартирі. Комунальні платежі оплачуються окремо.</p>
 <h2 class="section-title">Хто живе в квартирі</h2>
 <ul class="group">
-  <li class="group__row"><a class="person-row" href="profile.html" aria-label="Відкрити профіль Ірини"><span class="avatar avatar--md"><img src="../assets/people/iryna.jpg" alt="Фото профілю Ірини"><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon></span></span><span class="person-row__text"><strong class="person-row__name">Ірина, 29 років</strong><span class="person-row__caption">Живе з одним співмешканцем</span></span><svg class="chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m6 3.5 4.5 4.5L6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
-  <li class="group__row verified-note"><span class="verified-note__icon"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon></span><span class="verified-note__text"><strong class="verified-note__title">Номер підтверджено 12 вересня</strong><br><span class="verified-note__limit">Це означає лише, що людина має доступ до цього номера.</span></span></li>
+  <li class="group__row"><a class="person-row" href="profile.html" aria-label="Відкрити профіль Ірини"><span class="avatar avatar--md"><img src="../visuals/person-iryna.jpg" alt="Фото профілю Ірини"><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span><span class="person-row__text"><strong class="person-row__name">Ірина, 29 років</strong><span class="person-row__caption">Живе з одним співмешканцем</span></span><iconify-icon class="chevron" icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></a></li>
 </ul>
+<h2 class="section-title">Що підтверджено</h2>
+<ul class="group"><li class="group__row verified-note"><span class="verified-note__icon"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon></span><span class="verified-note__text"><strong class="verified-note__title">Номер підтверджено 12 вересня</strong><br><span class="verified-note__limit">Це означає лише, що людина має доступ до цього номера.</span></span></li></ul>
 </main>
 <div class="actionbar"><a class="button button--primary" href="chat.html">Написати Ірині</a></div>
 <script>

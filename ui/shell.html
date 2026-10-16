@@ -69,26 +69,28 @@
 
 <!-- ═══ Варіанти верхнього шару ═══ -->
 
+<!-- Назва в шапці — <h1>, якщо нижче на екрані немає власного h1.
+     У профілі h1 — ім'я людини, тож тут <p>. ⋯ — «Заблокувати чи поскаржитися». -->
 <template id="topbar-title">
   <header class="topbar">
-    <a class="topbar__back" href="#" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <h1 class="topbar__title">Профіль Ірини</h1>
-    <span></span>
+    <a class="topbar__back" href="#" aria-label="Назад до оголошення"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a>
+    <p class="topbar__title">Профіль Ірини</p>
+    <button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button>
   </header>
 </template>
 
 <template id="topbar-photo">
   <header class="topbar topbar--over-photo">
-    <a class="topbar__back" href="#" aria-label="Назад до результатів"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <span></span><span></span>
+    <a class="topbar__back" href="#" aria-label="Назад до результатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a>
+    <span></span><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button>
   </header>
 </template>
 
 <template id="topbar-person">
   <header class="topbar topbar--person">
-    <a class="topbar__back" href="#" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <a class="topbar__person" href="#"><span class="avatar"><img src="../assets/people/iryna.jpg" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></a>
-    <button class="topbar__action" type="button" aria-label="Заблокувати або поскаржитися"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="4.5" cy="10" r="1.6" fill="currentColor"/><circle cx="10" cy="10" r="1.6" fill="currentColor"/><circle cx="15.5" cy="10" r="1.6" fill="currentColor"/></svg></button>
+    <a class="topbar__back" href="#" aria-label="Назад до оголошення"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a>
+    <a class="topbar__person" href="#"><span class="avatar"><img src="../visuals/person-iryna.jpg" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено 12 вересня"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено 12 вересня</span></span></a>
+    <button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button>
   </header>
 </template>
 
@@ -99,7 +101,7 @@
 </template>
 
 <template id="composer">
-  <form class="composer"><label class="sr-only" for="message">Повідомлення Ірині</label><textarea class="composer__input" id="message" name="message" rows="1" placeholder="Повідомлення"></textarea><a class="composer__send" href="#" aria-label="Надіслати"><iconify-icon icon="solar:plain-2-linear" aria-hidden="true"></iconify-icon></a></form>
+  <form class="composer"><label class="sr-only" for="message">Повідомлення Ірині</label><textarea class="composer__input" id="message" name="message" rows="1" placeholder="Повідомлення"></textarea><button class="composer__send" type="button" aria-disabled="true" aria-label="Надіслати"><iconify-icon icon="solar:plain-2-linear" aria-hidden="true"></iconify-icon></button></form>
 </template>
 
 <script>

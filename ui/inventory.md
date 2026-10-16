@@ -14,7 +14,7 @@
   людини), рахується як стан «завантаження» цього компонента й позначений
   «(скелетон)».
 - **Стани** — лише ті, що є в розмітці або в CSS вайрфреймів
-  (`listings-states.css`, `concept-skin.css`). Стану `disabled` немає ніде.
+  (`listings-states.css`, `concept-skin.css`). Стану `disabled` не було; з уроку 7 він є в «Надіслати» (`aria-disabled`).
 - **Фото:** «так» — компонент без справжнього фото не працює; «аватар» —
   потрібне фото людини; «—» — фото не потрібне.
 
@@ -28,7 +28,7 @@
 | Кнопка «Назад» в app bar | ті самі 12 сторінок | звичайна; кругла на затемненні з розмиттям поверх фото (`listing`, `listing-loading`); focus | — |
 | Велика шапка екрана (заголовок + підзаголовок) | listings, listings-loading, listings-empty, listings-error | — | — |
 | Людина в app bar (аватар + ім'я + щит перевірки) | chat, chat-loading, chat-empty, chat-error | посилання на профіль; focus | аватар |
-| Кнопка-іконка ⋯ «Заблокувати або поскаржитися» | chat, chat-loading, chat-empty, chat-error | focus | — |
+| Кнопка-іконка ⋯ «Заблокувати чи поскаржитися» | chat, chat-loading, chat-empty, chat-error, profile, profile-empty, listing, listing-loading | focus; кругла на затемненні поверх фото (`listing`, `listing-loading`) | — |
 | Нижнє меню (Пошук · Чати · Профіль) | listings, listings-loading, listings-empty, listings-error | пункт активний (`aria-current`, колір посилання, 700), неактивний; «Профіль» — не посилання (екрана немає) | — |
 | Панель дії внизу (одна кнопка на всю ширину) | listing, listing-loading, profile, profile-loading, profile-empty | звичайна; завантаження — скелетон кнопки (`listing-loading`, `profile-loading`) | — |
 | Шторка знизу (bottom sheet): тримач, заголовок, «Скасувати», тіло, низ із кнопкою | listings, listings-loading, listings-empty, listings-error | закрита / відкрита (`details[open]`), затемнення під нею; закриття тапом поза шторкою й Esc | — |
@@ -38,7 +38,7 @@
 | Компонент | Екрани | Стани | Фото |
 |---|---|---|---|
 | Картка оголошення (фото 4:3 + назва-посилання + метадані) | listings, listings-loading, profile, profile-empty | звичайна; focus на всю картку; завантаження (скелетон: фото + 2 рядки) | так |
-| Бирка з ціною поверх фото | listings, profile, profile-empty | — | так (лежить на фото) |
+| Бирка з ціною поверх фото | listings, profile, profile-empty, listing | у картці — зверху ліворуч; на головному фото — знизу ліворуч | так (лежить на фото) |
 | Позначка перевірки на аватарі (зелене коло з галочкою) | listings, listing, profile, profile-empty | розмір 24px (аватар профілю) і 16px (малі аватари) | аватар |
 | Шапка профілю (великий аватар + ім'я + підпис) | profile, profile-loading, profile-empty | повна; без віку (`profile-empty`); завантаження (скелетон) | аватар |
 | Заголовок секції («Спосіб життя», «Що підтверджено», «Хто живе в квартирі») | listing, profile, profile-empty | завантаження (скелетон рядка, `listing-loading`) | — |
@@ -47,7 +47,7 @@
 | Рядок людини-посилання (аватар + ім'я + підпис + шеврон) | listing, listing-loading (скелетон) | звичайний; focus; завантаження (скелетон) | аватар |
 | Головне фото оголошення | listing, listing-loading | фото + лічильник «1 / 5»; завантаження (скелетон) | так |
 | Карусель фото (горизонтальний скрол зі snap) | listing, listing-loading | заповнена; завантаження (4 скелетони) | так |
-| Блок назви й ціни (заголовок + ціна + метадані) | listing, listing-loading | заповнений; завантаження (скелетон) | — |
+| Блок назви (заголовок + метадані; ціна — на бирці) | listing, listing-loading | заповнений; завантаження (скелетон) | — |
 | Рядок під фільтрами (кількість / статус) | listings, listings-loading, listings-empty, listings-error | «12 оголошень»; «0 оголошень»; «Завантажуємо оголошення» (`role="status"`); «Фільтри збережено» | — |
 
 ### Форми
@@ -55,7 +55,7 @@
 | Компонент | Екрани | Стани | Фото |
 |---|---|---|---|
 | Кнопка основна (корал) | listings, listings-loading\*, listings-empty, listings-error, listing, listing-empty, listing-error, profile, profile-empty, profile-error, chat-error | hover, active (стиск 0.98), focus; варіант на всю ширину (`btn-block`, у шторці) | — |
-| Кнопка вторинна (сіра) | listing-error, profile-error | hover, active, focus | — |
+| Кнопка вторинна (сіра) | listings, listing-error, profile-error, chat-error | hover, active, focus | — |
 | Кнопка-посилання «Скасувати» | listings, listings-loading, listings-empty, listings-error | focus | — |
 | Чип-кнопка «Фільтри · N» (відкриває шторку) | listings, listings-loading, listings-empty, listings-error | вибраний (чорнило) — єдиний варіант; лічильник фільтрів у підписі; focus | — |
 | Чип значення фільтра | listings, listings-loading, listings-empty, listings-error | тільки показ; ряд скролиться горизонтально | — |
@@ -76,7 +76,7 @@
 | Компонент | Екрани | Стани | Фото |
 |---|---|---|---|
 | Картка контексту кімнати (мініатюра + назва + ціна й дата + шеврон) | chat, chat-loading, chat-empty, chat-error | посилання на оголошення; focus | так (мініатюра) |
-| Поле повідомлення + кнопка «Надіслати» | chat, chat-loading, chat-empty, chat-error | поле: порожнє з плейсхолдером, focus; кнопка: hover, focus | — |
+| Поле повідомлення + кнопка «Надіслати» | chat, chat-loading, chat-empty, chat-error | поле: порожнє з плейсхолдером, focus; кнопка: hover, focus, неактивна (`aria-disabled`: поле порожнє, завантаження, помилка) | — |
 | Бульбашка повідомлення з часом | chat, chat-loading (скелетон) | моя (чорнило) / чужа (поверхня); завантаження (скелетон: 3 бульбашки) | — |
 
 ## Разове
@@ -114,3 +114,12 @@
 Нижнє меню вже веде на «Чати» і «Профіль», але веде туди, де екранів поки
 немає: «Чати» відкриває `chat.html`, «Профіль» — не посилання. Коли ці
 екрани намалюють, інвентар треба оновити.
+
+## Зміни уроку 7
+
+Після критики й аудиту (див. «Правки уроку 7» у [`DESIGN.md`](../DESIGN.md))
+таблицю оновлено: ⋯ тепер і в профілі та оголошенні, бирка — і на головному
+фото, текстовий рядок ціни в оголошенні прибрано, «Надіслати» має
+неактивний стан, вторинна кнопка — також у `listings` («Показати ще 9») і
+`chat-error` («Назад до результатів»). Фото в колонці «так»/«аватар» — з
+[`visuals/`](../visuals/README.md).

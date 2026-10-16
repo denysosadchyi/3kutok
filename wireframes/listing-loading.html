@@ -12,15 +12,16 @@
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 </head>
 <body class="shell shell--actionbar shell--photo-top status-dark">
-<header class="topbar topbar--over-photo"><a class="topbar__back" href="listings.html" aria-label="Назад до результатів"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span></span><span></span></header>
+<header class="topbar topbar--over-photo"><a class="topbar__back" href="listings.html" aria-label="Назад до результатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><span></span><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button></header>
 <main class="shell__main" id="content" aria-busy="true">
+<h1 class="sr-only">Оголошення</h1>
 <p class="sr-only" role="status">Завантажуємо оголошення</p>
 <div class="hero-photo" aria-hidden="true"><div class="skeleton"></div></div>
 <ul class="gallery" aria-hidden="true"><li class="gallery__item"><div class="skeleton"></div></li><li class="gallery__item"><div class="skeleton"></div></li><li class="gallery__item"><div class="skeleton"></div></li><li class="gallery__item"><div class="skeleton"></div></li></ul>
 <div class="listing-title skeleton-stack" aria-hidden="true"><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--line skeleton--w40"></div></div>
-<div class="group group--padded skeleton-stack" aria-hidden="true"><div class="skeleton skeleton--line group__row"></div><div class="skeleton skeleton--line skeleton--w60 group__row"></div><div class="skeleton skeleton--line skeleton--w40 group__row"></div></div>
+<div class="group" aria-hidden="true"><div class="group__row"><div class="skeleton skeleton--line"></div></div><div class="group__row"><div class="skeleton skeleton--line skeleton--w60"></div></div><div class="group__row"><div class="skeleton skeleton--line skeleton--w40"></div></div></div>
 <div class="skeleton skeleton--line skeleton--w40 skeleton--section" aria-hidden="true"></div>
-<div class="group group--padded skeleton-person" aria-hidden="true"><div class="skeleton skeleton--avatar group__row"></div><div class="group__row skeleton-person__text"><div class="skeleton skeleton--line skeleton--w60"></div><div class="skeleton skeleton--line skeleton--w40"></div></div></div>
+<div class="group group--padded skeleton-person" aria-hidden="true"><div class="skeleton skeleton--avatar"></div><div class="skeleton-person__text"><div class="skeleton skeleton--line skeleton--w60"></div><div class="skeleton skeleton--line skeleton--w40"></div></div></div>
 </main>
 <div class="actionbar" aria-hidden="true"><div class="skeleton skeleton--button"></div></div>
 <script>

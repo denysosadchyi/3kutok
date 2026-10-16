@@ -2752,7 +2752,12 @@
         function sizeWireframeScroll() {
           var doc = wireframeDocument();
           if (!doc || !wireframeScroll) return;
-          doc.documentElement.classList.add("external-scrollbar");
+          if (!doc.getElementById("hub-scrollbar")) {
+            var hide = doc.createElement("style");
+            hide.id = "hub-scrollbar";
+            hide.textContent = "html{scrollbar-width:none}html::-webkit-scrollbar{display:none}";
+            doc.head.appendChild(hide);
+          }
           var root = doc.scrollingElement || doc.documentElement;
           var track = wireframeScroll.firstElementChild;
           var scrollRange = Math.max(0, root.scrollHeight - root.clientHeight);
