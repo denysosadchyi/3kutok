@@ -1,0 +1,87 @@
+/* Разові блоки екранів «Кутка» — те, що стоїть лише на одній сторінці
+   (ui/inventory.md, розділ «Разове») і тому не входить у кіт.
+   Усі компоненти, що повторюються, — у ../ui/kit.css; значення тут теж
+   беремо тільки зі змінних кіта. */
+
+/* Хаб уроків ховає скролбар кадру й малює свій (lessons/index.html) */
+html.external-scrollbar { scrollbar-width: none; }
+html.external-scrollbar::-webkit-scrollbar { display: none; }
+
+/* listings — пігулка автора на фото картки */
+.card-author {
+  position: absolute;
+  bottom: var(--space-3);
+  left: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
+  border-radius: var(--radius-round);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  box-shadow: var(--shadow-tag);
+}
+
+/* listings — сортування: кнопка в рядку під фільтрами + шторка з варіантами */
+.sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--touch);
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+.sort svg { width: var(--icon-sm); height: var(--icon-sm); }
+.sort-options { margin: 0; padding: var(--space-2) var(--gutter) calc(var(--space-5) + var(--safe-bottom)); list-style: none; }
+.sort-options a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--touch);
+  padding: var(--space-3) 0;
+  color: var(--color-ink);
+  font-size: var(--text-md);
+  text-decoration: none;
+}
+.sort-options li + li a { box-shadow: var(--hairline-top); }
+.sort-options a[aria-current] { font-weight: var(--weight-bold); }
+.sort-options iconify-icon { font-size: var(--icon-md); color: var(--color-link); }
+
+/* listing — лічильник фото на головному фото */
+.photo-count {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-round);
+  background: var(--color-scrim);
+  color: var(--color-on-ink);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+}
+
+/* listing — абзац опису на сірій поверхні */
+.listing-description {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+/* profile-empty — компактний стан усередині секції */
+.state-note {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.state-note__title { max-width: var(--measure-state-title); font-size: var(--text-md); font-weight: var(--weight-bold); }
+.state-note__text { max-width: var(--measure-state-text); color: var(--color-muted); text-wrap: pretty; }
+
+/* chat — розділювач дня */
+.chat-day { color: var(--color-muted); font-size: var(--text-xs); text-align: center; }

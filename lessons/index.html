@@ -1440,10 +1440,21 @@
                 <li><a href="?lesson=6#open" data-target="open">Що відкрито</a></li>
               </ul>
             </li>
-            <li class="ct-lesson" data-status="upcoming">
+            <li class="ct-lesson" data-status="active">
               <div class="ct-row">
-                <a class="ct-link" href="?lesson=7" data-lesson="7" title="07 · Збірка UI"><span class="ct-glyph" aria-hidden="true">7</span><span class="ct-title">Збірка UI</span><span class="ct-state">, незабаром</span></a>
+                <a class="ct-link" href="?lesson=7" data-lesson="7" title="07 · Збірка UI"><span class="ct-glyph" aria-hidden="true">7</span><span class="ct-title">Збірка UI</span><span class="ct-state">, у роботі</span></a>
+                <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-7" aria-label="Розділи: Збірка UI"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               </div>
+              <ul class="ct-sub" id="ct-sub-7" data-for="7" hidden>
+                <li><a href="?lesson=7#overview" data-target="overview">Кіт</a></li>
+                <li><a href="?lesson=7#shell" data-target="shell">Оболонка</a></li>
+                <li><a href="?lesson=7#navigation" data-target="navigation">Навігація</a></li>
+                <li><a href="?lesson=7#cards" data-target="cards">Картки й списки</a></li>
+                <li><a href="?lesson=7#forms" data-target="forms">Форми</a></li>
+                <li><a href="?lesson=7#feedback" data-target="feedback">Зворотний зв'язок</a></li>
+                <li><a href="?lesson=7#chat" data-target="chat">Чат</a></li>
+                <li><a href="?lesson=7#gaps" data-target="gaps">Поза кітом</a></li>
+              </ul>
             </li>
             <li class="ct-lesson" data-status="upcoming">
               <div class="ct-row">
@@ -2412,6 +2423,9 @@
         <article id="lesson-six" class="lesson-embed" aria-label="Урок 6 — Концепт">
           <iframe class="ia-frame" data-lesson-frame="6" src="about:blank" data-src="../concept-lesson.html?embed=1" title="Концепт Кутка"></iframe>
         </article>
+        <article id="lesson-seven" class="lesson-embed" aria-label="Урок 7 — Збірка UI">
+          <iframe class="ia-frame" data-lesson-frame="7" src="about:blank" data-src="../ui/kit.html?embed=1" title="Кіт компонентів Кутка"></iframe>
+        </article>
         <article id="lesson-four" class="lesson-four" aria-label="Урок 4 — Прототипування і вайрфреймінг">
           <header class="wireframe-nav">
             <h1>Вайрфрейми</h1>
@@ -2554,13 +2568,14 @@
           String(current).padStart(2, "0") +
           " із 12 · " +
           titles[current];
-        if (current >= 3 && current <= 6) {
+        if (current >= 3 && current <= 7) {
           document.body.classList.add(
             current === 4 ? "lesson-four-active" : "lesson-embed-active",
           );
           document.getElementById("lesson-three").classList.toggle("hidden", current !== 3);
           document.getElementById("lesson-five").classList.toggle("hidden", current !== 5);
           document.getElementById("lesson-six").classList.toggle("hidden", current !== 6);
+          document.getElementById("lesson-seven").classList.toggle("hidden", current !== 7);
           document.getElementById("lesson-two").classList.add("hidden");
           document.querySelector(".mobile-toc").classList.add("hidden");
         } else if (current !== 2) {
@@ -2626,7 +2641,7 @@
             else link.removeAttribute("aria-current");
           });
         }
-        if ((current === 3 || current === 5 || current === 6) && lessonFrame) {
+        if ((current === 3 || current === 5 || current === 6 || current === 7) && lessonFrame) {
           var frameBase =
             lessonFrame.dataset.src || lessonFrame.getAttribute("src");
           if (location.hash || lessonFrame.dataset.src)
@@ -2767,12 +2782,12 @@
           if (wireframePending) wireframeFrame.src = requestedLink.href;
         }
         if (wireframeFrame) {
-          // Екрани з фото на всю висоту (body.photo-top) заходять під статус-бар:
+          // Екрани з фото на всю висоту (body.shell--photo-top) заходять під статус-бар:
           // він стає прозорим і білим поверх фото.
           var phoneScreen = wireframeFrame.closest(".phone-screen");
           function syncImmersive() {
             var doc = wireframeDocument();
-            var immersive = !!(doc && doc.body && doc.body.classList.contains("photo-top"));
+            var immersive = !!(doc && doc.body && doc.body.classList.contains("shell--photo-top"));
             if (phoneScreen) {
               phoneScreen.classList.toggle("is-immersive", immersive);
               // Світлий фон під статус-баром (скелетон) — статус лишається темним.
@@ -2782,7 +2797,7 @@
             if (doc && !immersive && !doc.getElementById("hub-cap")) {
               var cap = doc.createElement("style");
               cap.id = "hub-cap";
-              cap.textContent = "html{padding-top:22px}.appbar{top:22px}";
+              cap.textContent = "html{padding-top:22px}.topbar{top:22px}";
               doc.head.appendChild(cap);
             }
             // Відкрита шторка затемнює й статус-бар мокапа, як на справжньому телефоні.

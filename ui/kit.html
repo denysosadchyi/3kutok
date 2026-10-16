@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Кіт компонентів — Куток</title>
+<script>if (new URLSearchParams(location.search).get("embed") === "1") document.documentElement.classList.add("embed");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="kit.css">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<style>
+  /* Стилі самої вітрини (не кіт): сторінка, підписи, сцени.
+     Класи .is-hover / .is-focus / .is-active лише показують стан нерухомо —
+     у продукті стани дає CSS кіта (:hover, :focus-visible, :active). */
+  .vt { max-width: 1040px; margin: 0 auto; padding: var(--space-7) var(--gutter) calc(var(--space-7) * 2); }
+  html.embed .vt { padding-top: var(--space-7); }
+  .vt-skip { position: absolute; left: var(--space-2); top: calc(var(--space-7) * -1); padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); background: var(--color-ink); color: var(--color-on-ink); }
+  .vt-skip:focus { top: var(--space-2); }
+  html.embed .vt-skip { display: none; }
+
+  .vt-hero { display: grid; gap: var(--space-3); max-width: 64ch; padding-bottom: var(--space-6); }
+  .vt-hero h1 { font-size: 1.75rem; font-weight: var(--weight-bold); letter-spacing: var(--tracking-head); line-height: var(--leading-tight); }
+  .vt-hero p { color: var(--color-muted); }
+  .vt-files { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); font-size: var(--text-sm); }
+  .vt a.vt-link { color: var(--color-link); text-underline-offset: 3px; }
+  .vt code { padding: 0 var(--space-1); border-radius: var(--radius-tag); background: var(--color-surface); font-size: 0.875em; }
+
+  .vt-role { padding-top: var(--space-7); scroll-margin-top: var(--space-5); }
+  .vt-role > h2 { padding-bottom: var(--space-1); font-size: var(--text-xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-head); }
+  .vt-role > .vt-lead { max-width: 64ch; color: var(--color-muted); }
+
+  .vt-comp { display: grid; gap: var(--space-3); padding: var(--space-6) 0; box-shadow: var(--hairline-top); margin-top: var(--space-5); }
+  .vt-comp-head { display: grid; gap: var(--space-1); max-width: 72ch; }
+  .vt-comp-head h3 { font-size: var(--text-lg); font-weight: var(--weight-bold); }
+  .vt-comp-head p { color: var(--color-muted); font-size: var(--text-sm); }
+  .vt-comp-head .vt-api { color: var(--color-ink); }
+
+  .vt-states { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: flex-start; }
+  .vt-spec { margin: 0; display: grid; gap: var(--space-2); align-content: start; }
+  .vt-spec > figcaption { color: var(--color-muted); font-size: var(--text-xs); }
+  .vt-stage { padding: var(--space-4); border: var(--border) solid var(--color-line); border-radius: var(--radius-card); background: var(--color-bg); }
+  .vt-stage--phone { width: min(360px, 100%); }
+  .vt-stage--flush { padding: 0; overflow: hidden; }
+  .vt-spec--phone { width: min(360px, 100%); }
+
+  /* Сцена-екран: fixed-пояси кіта прив'язуються до неї, а не до вікна */
+  .vt-screen {
+    position: relative;
+    width: min(360px, 100%);
+    height: 300px;
+    overflow: hidden;
+    border: var(--border) solid var(--color-line);
+    border-radius: var(--radius-card);
+    background: var(--color-bg);
+    transform: translateZ(0);
+  }
+  .vt-screen--tall { height: 560px; }
+  .vt-screen .shell { min-height: 100%; }
+  .vt-screen .shell__main:has(> .state) { min-height: 0; }
+
+  .vt-shell-frame { width: min(390px, 100%); height: 720px; border: var(--border) solid var(--color-line); border-radius: var(--radius-card); background: var(--color-bg); }
+
+  .vt-list { display: grid; gap: var(--space-2); max-width: 72ch; margin: 0; padding-left: var(--space-5); }
+  .vt-list li::marker { color: var(--color-muted); }
+
+  .is-hover.button--primary, .is-hover.composer__send { background: var(--color-accent-hover); }
+  .is-hover.button--secondary { background: var(--color-line); }
+  .is-hover.input { border-color: var(--color-muted); }
+  .is-active.button { transform: scale(var(--press)); }
+  .is-focus { outline: var(--stroke) solid var(--color-focus); outline-offset: var(--stroke); }
+  .is-focus.listing-card__link { outline: none; }
+  .is-focus.listing-card__link::after { outline: var(--stroke) solid var(--color-focus); outline-offset: var(--space-1); }
+</style>
+</head>
+<body>
+<a class="vt-skip" href="#shell">До компонентів</a>
+<div class="vt">
+
+<header class="vt-hero" id="overview">
+  <h1>Кіт компонентів Кутка</h1>
+  <p>Усі компоненти, що повторюються на двох і більше сторінках вайрфреймів, з усіма станами, які є в макетах. Значення — зі змінних <code>:root</code> у <code>kit.css</code>; тексти — з <code>microcopy.md</code> (колонка «Стало»). Пофарбовані компоненти мають збігатися з еталоном у <code>wireframes/</code>.</p>
+  <p class="vt-files">
+    <a class="vt-link" href="kit.css">ui/kit.css</a>
+    <a class="vt-link" href="shell.html">ui/shell.html</a>
+    <a class="vt-link" href="inventory.md">ui/inventory.md</a>
+    <a class="vt-link" href="../DESIGN.md">DESIGN.md</a>
+  </p>
+</header>
+
+<!-- ═════════════ Оболонка ═════════════ -->
+<section class="vt-role" id="shell" aria-labelledby="shell-h">
+  <h2 id="shell-h">Оболонка</h2>
+  <p class="vt-lead">Розмітка з <code>shell.html</code>: двошарова шапка (заголовок + смуга чипів) і нижнє меню. Новий екран копіює файл і заповнює <code>.shell__main</code>. Інші поєднання верху й низу — нижче, їхня розмітка лежить у <code>&lt;template&gt;</code> того самого файла.</p>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Двошарова шапка + меню</h3><p class="vt-api"><code>body.shell.shell--header.shell--tabbar</code> · <code>.header__top</code> / <code>.header__bar</code> · <code>.tabbar</code></p><p>Екрани: listings, listings-loading, listings-empty, listings-error. Чип «Фільтри · 3» відкриває шторку.</p></div>
+    <iframe class="vt-shell-frame" src="shell.html" title="Оболонка: двошарова шапка і нижнє меню"></iframe>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Інші варіанти оболонки</h3><p>Компактна шапка + панель дії (profile*), шапка поверх фото + панель дії (listing*), шапка з людиною + поле чату (chat*).</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec">
+        <div class="vt-screen"><div class="shell shell--actionbar">
+          <header class="topbar"><a class="topbar__back" href="#" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><h4 class="topbar__title">Профіль Ірини</h4><span></span></header>
+          <div class="shell__main"></div>
+          <div class="actionbar"><a class="button button--primary" href="#">Написати Ірині</a></div>
+        </div></div>
+        <figcaption>shell--actionbar · #topbar-title + #actionbar</figcaption>
+      </figure>
+      <figure class="vt-spec">
+        <div class="vt-screen"><div class="shell shell--photo-top shell--actionbar" style="--frame-status: 0px">
+          <header class="topbar topbar--over-photo"><a class="topbar__back" href="#" aria-label="Назад до результатів"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span></span><span></span></header>
+          <div class="shell__main"><div class="hero-photo"><img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=720&q=70&auto=format&fit=crop" alt="Світла спальня з ліжком, тумбою і настінною лампою"></div></div>
+          <div class="actionbar"><a class="button button--primary" href="#">Написати Ірині</a></div>
+        </div></div>
+        <figcaption>shell--photo-top · #topbar-photo + #actionbar</figcaption>
+      </figure>
+      <figure class="vt-spec">
+        <div class="vt-screen"><div class="shell shell--composer">
+          <header class="topbar topbar--person"><a class="topbar__back" href="#" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a class="topbar__person" href="#"><span class="avatar"><img src="../assets/people/iryna.jpg" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></a><button class="topbar__action" type="button" aria-label="Заблокувати або поскаржитися"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="4.5" cy="10" r="1.6" fill="currentColor"/><circle cx="10" cy="10" r="1.6" fill="currentColor"/><circle cx="15.5" cy="10" r="1.6" fill="currentColor"/></svg></button></header>
+          <div class="shell__main"></div>
+          <form class="composer"><label class="sr-only" for="msg-shell">Повідомлення Ірині</label><textarea class="composer__input" id="msg-shell" rows="1" placeholder="Повідомлення"></textarea><a class="composer__send" href="#" aria-label="Надіслати"><iconify-icon icon="solar:plain-2-linear" aria-hidden="true"></iconify-icon></a></form>
+        </div></div>
+        <figcaption>shell--composer · #topbar-person + #composer</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ Навігація ═════════════ -->
+<section class="vt-role" id="navigation" aria-labelledby="nav-h">
+  <h2 id="nav-h">Навігація</h2>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>App bar компактний</h3><p class="vt-api"><code>.topbar</code> · <code>__back</code> <code>__title</code> <code>__action</code> · <code>--person</code> <code>--over-photo</code></p><p>Екрани: listing*, profile*, chat* (12 сторінок). Кнопка «Назад» має фокус і круглий варіант поверх фото.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage vt-stage--flush">
+        <header class="topbar" style="position:static"><a class="topbar__back" href="#" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><h4 class="topbar__title">Профіль Ірини</h4><span></span></header>
+      </div><figcaption>із заголовком</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage vt-stage--flush">
+        <header class="topbar" style="position:static"><a class="topbar__back is-focus" href="#" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><h4 class="topbar__title">Профіль Ірини</h4><span></span></header>
+      </div><figcaption>«Назад» у фокусі</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage vt-stage--flush">
+        <header class="topbar topbar--person" style="position:static"><a class="topbar__back" href="#" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a class="topbar__person" href="#"><span class="avatar"><img src="../assets/people/iryna.jpg" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></a><button class="topbar__action" type="button" aria-label="Заблокувати або поскаржитися"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="4.5" cy="10" r="1.6" fill="currentColor"/><circle cx="10" cy="10" r="1.6" fill="currentColor"/><circle cx="15.5" cy="10" r="1.6" fill="currentColor"/></svg></button></header>
+      </div><figcaption>з людиною і ⋯ «Заблокувати або поскаржитися»</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage vt-stage--flush" style="position:relative">
+        <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=720&q=70&auto=format&fit=crop" alt="" style="width:100%;aspect-ratio:var(--ratio-photo);object-fit:cover">
+        <header class="topbar topbar--over-photo" style="--frame-status:0px"><a class="topbar__back" href="#" aria-label="Назад до результатів"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span></span><span></span></header>
+      </div><figcaption>поверх фото</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Велика шапка екрана</h3><p class="vt-api"><code>.header__top</code> · <code>.header__title</code> <code>.header__subtitle</code></p><p>Екрани: listings*. Перший шар двошарової шапки; станів немає.</p></div>
+    <figure class="vt-spec vt-spec--phone"><div class="vt-stage vt-stage--flush"><div class="header__top"><h4 class="header__title">Результати пошуку</h4><p class="header__subtitle">Київ · кімнати та співмешканці</p></div></div></figure>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Нижнє меню</h3><p class="vt-api"><code>.tabbar</code> · <code>__list</code> <code>__item</code> · активний — <code>aria-current="page"</code></p><p>Екрани: listings*. Активний пункт — колір посилання, 700, без підкладки. «Профіль» у вайрфреймах не посилання (екрана ще немає).</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec"><div class="vt-screen" style="height:120px"><nav class="tabbar" aria-label="Приклад: активний Пошук"><ul class="tabbar__list">
+        <li><a class="tabbar__item" href="#" aria-current="page"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon><span>Пошук</span></a></li>
+        <li><a class="tabbar__item" href="#"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li>
+        <li><span class="tabbar__item"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></span></li>
+      </ul></nav></div><figcaption>активний «Пошук», неактивні «Чати» і «Профіль»</figcaption></figure>
+      <figure class="vt-spec"><div class="vt-screen" style="height:120px"><nav class="tabbar" aria-label="Приклад: активні Чати"><ul class="tabbar__list">
+        <li><a class="tabbar__item" href="#"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon><span>Пошук</span></a></li>
+        <li><a class="tabbar__item" href="#" aria-current="page"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li>
+        <li><span class="tabbar__item"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></span></li>
+      </ul></nav></div><figcaption>активні «Чати»</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Панель дії внизу</h3><p class="vt-api"><code>.actionbar</code> — усередині одна <code>.button--primary</code></p><p>Екрани: listing, listing-loading, profile, profile-loading, profile-empty. Рядки-скелетони при завантаженні — ті самі <code>.group__row</code>, тому мають висоту рядка 48px.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec"><div class="vt-screen" style="height:120px"><div class="actionbar"><a class="button button--primary" href="#">Написати Ірині</a></div></div><figcaption>звичайна</figcaption></figure>
+      <figure class="vt-spec"><div class="vt-screen" style="height:120px"><div class="actionbar" aria-hidden="true"><div class="skeleton skeleton--button"></div></div></div><figcaption>завантаження</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Шторка знизу</h3><p class="vt-api"><code>details.sheet</code> · <code>__panel</code> <code>__grabber</code> <code>__head</code> <code>__title</code> <code>__body</code> <code>__foot</code></p><p>Екрани: listings*. Відкрита — із затемненням; закривається «Скасувати», тапом поза шторкою й Esc.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec"><div class="vt-screen vt-screen--tall">
+        <div class="shell__main"><details class="sheet" open>
+          <summary class="chip chip--selected"><iconify-icon icon="solar:tuning-2-linear" aria-hidden="true"></iconify-icon>Фільтри · 3</summary>
+          <section class="sheet__panel" aria-labelledby="sheet-demo-title">
+            <div class="sheet__grabber" aria-hidden="true"></div>
+            <div class="sheet__head"><h4 class="sheet__title" id="sheet-demo-title">Фільтри</h4><a class="button button--text" href="#">Скасувати</a></div>
+            <form class="sheet__body" action="#"><fieldset>
+              <legend class="sr-only">Базові умови кімнати</legend>
+              <div class="field"><label class="field__label" for="d-district">Район Києва</label><select class="input" id="d-district"><option>Усі райони</option><option selected>Шевченківський</option><option>Подільський</option><option>Голосіївський</option><option>Дніпровський</option></select></div>
+              <div class="field"><label class="field__label" for="d-budget">Бюджет до, грн/місяць</label><input class="input" id="d-budget" type="number" inputmode="numeric" min="1000" step="500" value="12000"></div>
+              <div class="field"><label class="field__label" for="d-move">Дата заїзду</label><input class="input" id="d-move" type="text" inputmode="none" readonly value="з 1 жовтня 2026"></div>
+            </fieldset></form>
+            <div class="sheet__foot"><a class="button button--primary button--block" href="#">Застосувати фільтри</a></div>
+          </section>
+        </details></div>
+      </div><figcaption>відкрита · закрийте «Скасувати» і відкрийте знову чипом</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ Картки й списки ═════════════ -->
+<section class="vt-role" id="cards" aria-labelledby="cards-h">
+  <h2 id="cards-h">Картки й списки</h2>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Картка оголошення + бирка з ціною</h3><p class="vt-api"><code>.listing-card</code> · <code>__photo</code> <code>__body</code> <code>__title</code> <code>__link</code> <code>__meta</code> · <code>.price-tag</code> · список — <code>.card-list</code></p><p>Екрани: listings, listings-loading, profile, profile-empty. Уся картка — одне посилання; бирка лежить на фото. Пігулка автора на фото є лише в listings — у кіт не входить.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><ul class="card-list"><li class="listing-card">
+        <div class="listing-card__photo"><img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=720&q=70&auto=format&fit=crop" alt="Світла спальня з ліжком, тумбою і настінною лампою"><p class="price-tag">10 500 грн/міс</p></div>
+        <div class="listing-card__body"><h4 class="listing-card__title"><a class="listing-card__link" href="#">Кімната біля Лук’янівської</a></h4><p class="listing-card__meta">Шевченківський · 2 співмешканці · з 1 жовтня</p></div>
+      </li></ul></div><figcaption>звичайна (стрічка)</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><ul class="card-list"><li class="listing-card">
+        <div class="listing-card__photo"><img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=720&q=70&auto=format&fit=crop" alt="Світла кімната з чорним диваном, комодом, торшером і рослиною"><p class="price-tag">9 800 грн/міс</p></div>
+        <div class="listing-card__body"><h4 class="listing-card__title"><a class="listing-card__link is-focus" href="#">Світла кімната на Татарці</a></h4><p class="listing-card__meta">з 5 жовтня</p></div>
+      </li></ul></div><figcaption>у фокусі · коротка мета (профіль)</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><ul class="card-list" aria-hidden="true"><li class="listing-card"><div class="skeleton skeleton--photo"></div><div class="listing-card__body"><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--line skeleton--w60"></div></div></li></ul></div><figcaption>завантаження</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Аватар і позначка перевірки</h3><p class="vt-api"><code>.avatar</code> <code>--md</code> <code>--lg</code> · <code>.avatar__mark</code></p><p>Екрани: listings, listing, profile, profile-empty. Позначка — 16px на малих аватарах, 24px на великому. На сірій поверхні обвідка позначки сіра (<code>--avatar-ring</code>).</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec"><div class="vt-stage"><span class="avatar"><img src="../assets/people/iryna.jpg" alt="Ірина"><span class="avatar__mark" aria-label="Номер підтверджено"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon></span></span></div><figcaption>28 · на білому</figcaption></figure>
+      <figure class="vt-spec"><div class="vt-stage" style="background:var(--color-surface)"><span class="avatar avatar--md" style="--avatar-ring:var(--color-surface)"><img src="../assets/people/iryna.jpg" alt="Ірина"><span class="avatar__mark" aria-label="Номер підтверджено"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon></span></span></div><figcaption>48 · у сірому списку</figcaption></figure>
+      <figure class="vt-spec"><div class="vt-stage"><span class="avatar avatar--lg"><img src="../assets/people/iryna.jpg" alt="Ірина"><span class="avatar__mark" aria-label="Номер підтверджено"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon></span></span></div><figcaption>84 · профіль</figcaption></figure>
+      <figure class="vt-spec"><div class="vt-stage"><span class="avatar"><img src="../assets/people/iryna.jpg" alt="Ірина"></span></div><figcaption>без позначки (шапка чату)</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Шапка профілю</h3><p class="vt-api"><code>.profile-head</code> · <code>__name</code> <code>__caption</code></p><p>Екрани: profile, profile-loading, profile-empty.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><div class="profile-head"><span class="avatar avatar--lg"><img src="../assets/people/iryna.jpg" alt="Фото профілю Ірини"><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon></span></span><h4 class="profile-head__name">Ірина, 29 років</h4><p class="profile-head__caption">Здає кімнату біля Лук’янівської</p></div></div><figcaption>повна</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><div class="profile-head"><span class="avatar avatar--lg"><img src="../assets/people/iryna.jpg" alt="Фото профілю Ірини"><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon></span></span><h4 class="profile-head__name">Ірина</h4><p class="profile-head__caption">Здає кімнату біля Лук’янівської</p></div></div><figcaption>неповний профіль — без віку</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><div class="profile-head" aria-hidden="true"><div class="skeleton skeleton--avatar-lg"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--line skeleton--w60"></div></div></div><figcaption>завантаження</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Заголовок секції + згрупований список</h3><p class="vt-api"><code>.section-title</code> · <code>.group</code> <code>__row</code> <code>__label</code> <code>__value</code> · <code>--padded</code></p><p>Екрани: listing, listing-loading, profile, profile-loading, profile-empty. Рядки-скелетони при завантаженні — ті самі <code>.group__row</code>, тому мають висоту рядка 48px.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><h4 class="section-title" style="padding-top:0">Спосіб життя</h4><dl class="group" style="margin-top:var(--space-3)">
+        <div class="group__row"><dt class="group__label">Розпорядок дня</dt><dd class="group__value">будні, 9:00–18:00</dd></div>
+        <div class="group__row"><dt class="group__label">Куріння</dt><dd class="group__value">не курить</dd></div>
+        <div class="group__row"><dt class="group__label">Тварини</dt><dd class="group__value">кіт у квартирі</dd></div>
+        <div class="group__row"><dt class="group__label">Гості</dt><dd class="group__value">за домовленістю</dd></div>
+        <div class="group__row"><dt class="group__label">Тиша ввечері</dt><dd class="group__value">після 23:00</dd></div>
+      </dl></div><figcaption>заповнений (профіль)</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><dl class="group">
+        <div class="group__row"><dt class="group__label">Співмешканці</dt><dd class="group__value">2 людини</dd></div>
+        <div class="group__row"><dt class="group__label">Квартира</dt><dd class="group__value">3 кімнати</dd></div>
+        <div class="group__row"><dt class="group__label">Комунальні</dt><dd class="group__value">окремо</dd></div>
+      </dl></div><figcaption>заповнений (оголошення)</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><div class="group group--padded skeleton-stack" aria-hidden="true"><div class="skeleton skeleton--line group__row"></div><div class="skeleton skeleton--line skeleton--w60 group__row"></div><div class="skeleton skeleton--line group__row"></div><div class="skeleton skeleton--line skeleton--w40 group__row"></div></div></div><figcaption>завантаження</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Рядок перевірки</h3><p class="vt-api"><code>.group__row.verified-note</code> · <code>__icon</code> <code>__text</code> <code>__title</code> <code>__limit</code></p><p>Екрани: listing, profile, profile-empty. Завжди з межею перевірки поруч.</p></div>
+    <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><ul class="group"><li class="group__row verified-note"><span class="verified-note__icon"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon></span><span class="verified-note__text"><strong class="verified-note__title">Номер підтверджено 12 вересня</strong><br><span class="verified-note__limit">Це означає лише, що людина має доступ до цього номера.</span></span></li></ul></div></figure>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Рядок людини</h3><p class="vt-api"><code>.person-row</code> · <code>__text</code> <code>__name</code> <code>__caption</code> — усередині <code>.group__row</code></p><p>Екрани: listing, listing-loading. Веде в профіль.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><ul class="group">
+        <li class="group__row"><a class="person-row" href="#" aria-label="Відкрити профіль Ірини"><span class="avatar avatar--md"><img src="../assets/people/iryna.jpg" alt="Фото профілю Ірини"><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon></span></span><span class="person-row__text"><strong class="person-row__name">Ірина, 29 років</strong><span class="person-row__caption">Живе з одним співмешканцем</span></span><svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3.5 4.5 4.5L6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+        <li class="group__row verified-note"><span class="verified-note__icon"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon></span><span class="verified-note__text"><strong class="verified-note__title">Номер підтверджено 12 вересня</strong><br><span class="verified-note__limit">Це означає лише, що людина має доступ до цього номера.</span></span></li>
+      </ul></div><figcaption>«Хто живе в квартирі»</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><div class="group group--padded skeleton-person" aria-hidden="true"><div class="skeleton skeleton--avatar group__row"></div><div class="group__row skeleton-person__text"><div class="skeleton skeleton--line skeleton--w60"></div><div class="skeleton skeleton--line skeleton--w40"></div></div></div></div><figcaption>завантаження</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Головне фото, карусель, назва й ціна</h3><p class="vt-api"><code>.hero-photo</code> · <code>.gallery</code> <code>__item</code> · <code>.listing-title</code> <code>__name</code> <code>__price</code> <code>__meta</code></p><p>Екрани: listing, listing-loading. Фото на всю ширину й під статус-бар; лічильник «1 / 5» — разовий, у кіт не входить.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage vt-stage--flush"><div class="shell__main" style="padding-top:0">
+        <div class="hero-photo"><img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=720&q=70&auto=format&fit=crop" alt="Світла спальня з ліжком, тумбою і настінною лампою"></div>
+        <ul class="gallery" aria-label="Інші фото квартири"><li class="gallery__item"><img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=400&q=70&auto=format&fit=crop" alt="Спільна вітальня з синім диваном і рослинами"></li><li class="gallery__item"><img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&q=70&auto=format&fit=crop" alt="Кухня з білими шафами й острівцем"></li><li class="gallery__item"><img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&q=70&auto=format&fit=crop" alt="Куточок вітальні з диваном і книжковою полицею"></li><li class="gallery__item"><img src="https://images.unsplash.com/photo-1554995207-c18c203602cb?w=400&q=70&auto=format&fit=crop" alt="Вітальня з коричневим диваном і подушками"></li></ul>
+        <div class="listing-title"><h4 class="listing-title__name">Кімната біля Лук’янівської</h4><p class="listing-title__price">10 500 грн/міс</p><p class="listing-title__meta">Шевченківський район · з 1 жовтня</p></div>
+      </div></div><figcaption>заповнені</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage vt-stage--flush"><div class="shell__main" style="padding-top:0" aria-hidden="true">
+        <div class="hero-photo"><div class="skeleton"></div></div>
+        <ul class="gallery"><li class="gallery__item"><div class="skeleton"></div></li><li class="gallery__item"><div class="skeleton"></div></li><li class="gallery__item"><div class="skeleton"></div></li><li class="gallery__item"><div class="skeleton"></div></li></ul>
+        <div class="listing-title skeleton-stack"><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--line skeleton--w40"></div></div>
+      </div></div><figcaption>завантаження</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Рядок під фільтрами</h3><p class="vt-api"><code>.results-meta</code></p><p>Екрани: listings*. Один рядок — чотири стани.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec"><div class="vt-stage"><div class="results-meta"><span>12 оголошень</span></div></div><figcaption>результати</figcaption></figure>
+      <figure class="vt-spec"><div class="vt-stage"><div class="results-meta"><span>0 оголошень</span></div></div><figcaption>порожньо</figcaption></figure>
+      <figure class="vt-spec"><div class="vt-stage"><div class="results-meta"><span role="status">Завантажуємо оголошення</span></div></div><figcaption>завантаження</figcaption></figure>
+      <figure class="vt-spec"><div class="vt-stage"><div class="results-meta"><span>Фільтри збережено</span></div></div><figcaption>помилка</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ Форми ═════════════ -->
+<section class="vt-role" id="forms" aria-labelledby="forms-h">
+  <h2 id="forms-h">Форми</h2>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Кнопка основна</h3><p class="vt-api"><code>.button.button--primary</code> · <code>--block</code></p><p>Екрани: 11 сторінок. Одна на екран. Тексти: «Написати Ірині», «Застосувати фільтри», «Змінити фільтри», «Спробувати ще», «Назад до результатів».</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec"><a class="button button--primary" href="#">Написати Ірині</a><figcaption>звичайна</figcaption></figure>
+      <figure class="vt-spec"><a class="button button--primary is-hover" href="#">Написати Ірині</a><figcaption>під курсором</figcaption></figure>
+      <figure class="vt-spec"><a class="button button--primary is-active" href="#">Написати Ірині</a><figcaption>натиснута (0.98)</figcaption></figure>
+      <figure class="vt-spec"><a class="button button--primary is-focus" href="#">Написати Ірині</a><figcaption>фокус</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><a class="button button--primary button--block" href="#">Застосувати фільтри</a><figcaption>на всю ширину</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Кнопка вторинна</h3><p class="vt-api"><code>.button.button--secondary</code></p><p>Екрани: listing-error, profile-error — друга дія під кораловою.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec"><a class="button button--secondary" href="#">Назад до оголошення</a><figcaption>звичайна</figcaption></figure>
+      <figure class="vt-spec"><a class="button button--secondary is-hover" href="#">Назад до оголошення</a><figcaption>під курсором</figcaption></figure>
+      <figure class="vt-spec"><a class="button button--secondary is-active" href="#">Назад до оголошення</a><figcaption>натиснута</figcaption></figure>
+      <figure class="vt-spec"><a class="button button--secondary is-focus" href="#">Назад до оголошення</a><figcaption>фокус</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Кнопка-посилання</h3><p class="vt-api"><code>.button.button--text</code></p><p>Екрани: listings* — «Скасувати» в шторці.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec"><a class="button button--text" href="#">Скасувати</a><figcaption>звичайна</figcaption></figure>
+      <figure class="vt-spec"><a class="button button--text is-focus" href="#">Скасувати</a><figcaption>фокус</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Чипи</h3><p class="vt-api"><code>.chip</code> · <code>--selected</code> · ряд — <code>.chip-row</code> &gt; <code>__track</code></p><p>Екрани: listings*. Вибраний (чорнильний) — лише «Фільтри · N», відкриває шторку; решта показують значення. Ряд скролиться, правий край згасає.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec"><span class="chip chip--selected"><iconify-icon icon="solar:tuning-2-linear" aria-hidden="true"></iconify-icon>Фільтри · 3</span><figcaption>вибраний</figcaption></figure>
+      <figure class="vt-spec"><span class="chip">Шевченківський</span><figcaption>значення</figcaption></figure>
+      <figure class="vt-spec"><span class="chip chip--selected is-focus"><iconify-icon icon="solar:tuning-2-linear" aria-hidden="true"></iconify-icon>Фільтри · 3</span><figcaption>фокус</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage" style="overflow:hidden"><div class="chip-row"><div class="chip-row__track"><span class="chip chip--selected"><iconify-icon icon="solar:tuning-2-linear" aria-hidden="true"></iconify-icon>Фільтри · 3</span><span class="chip">Шевченківський</span><span class="chip">до 12 000 грн</span><span class="chip">з 1 жовтня</span></div></div></div><figcaption>ряд із згасанням</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Поле з підписом</h3><p class="vt-api"><code>.field</code> · <code>__label</code> · <code>.input</code> на <code>select</code> / <code>input</code></p><p>Екрани: listings* (у шторці фільтрів). Типи: список, число, дата тільки для читання.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec" style="width:min(300px,100%)"><div class="field"><label class="field__label" for="f1">Район Києва</label><select class="input" id="f1"><option>Усі райони</option><option selected>Шевченківський</option><option>Подільський</option></select></div><figcaption>список</figcaption></figure>
+      <figure class="vt-spec" style="width:min(300px,100%)"><div class="field"><label class="field__label" for="f2">Бюджет до, грн/місяць</label><input class="input" id="f2" type="number" inputmode="numeric" value="12000"></div><figcaption>число</figcaption></figure>
+      <figure class="vt-spec" style="width:min(300px,100%)"><div class="field"><label class="field__label" for="f3">Дата заїзду</label><input class="input" id="f3" type="text" inputmode="none" readonly value="з 1 жовтня 2026"></div><figcaption>дата, тільки для читання</figcaption></figure>
+      <figure class="vt-spec" style="width:min(300px,100%)"><div class="field"><label class="field__label" for="f4">Бюджет до, грн/місяць</label><input class="input is-hover" id="f4" type="number" value="12000"></div><figcaption>під курсором</figcaption></figure>
+      <figure class="vt-spec" style="width:min(300px,100%)"><div class="field"><label class="field__label" for="f5">Бюджет до, грн/місяць</label><input class="input is-focus" id="f5" type="number" value="12000"></div><figcaption>фокус</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ Зворотний зв'язок ═════════════ -->
+<section class="vt-role" id="feedback" aria-labelledby="fb-h">
+  <h2 id="fb-h">Зворотний зв'язок</h2>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Стан по центру</h3><p class="vt-api"><code>.state</code> · <code>--error</code> · <code>__icon</code> <code>__title</code> <code>__text</code> <code>__actions</code></p><p>Екрани: listings-empty, listings-error, listing-empty, listing-error, profile-error, chat-empty, chat-error. Мальована іконка 72px; у помилці червона й <code>role="alert"</code>.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><section class="state"><div class="state__icon"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon></div><h4 class="state__title">За цими умовами оголошень немає</h4><p class="state__text">Зміни бюджет, район або дату заїзду.</p><div class="state__actions"><a class="button button--primary" href="#">Змінити фільтри</a></div></section></div><figcaption>порожньо · listings-empty</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><section class="state"><div class="state__icon"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon></div><h4 class="state__title">Повідомлень з Іриною ще немає</h4><p class="state__text">Представся й запитай, чи кімната ще вільна і коли можна прийти на перегляд.</p></section></div><figcaption>порожньо без кнопки · chat-empty</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><section class="state"><div class="state__icon"><iconify-icon icon="streamline-freehand:home" aria-hidden="true"></iconify-icon></div><h4 class="state__title">Оголошення зняли</h4><p class="state__text">Кімната вже недоступна. Інші оголошення — в результатах пошуку.</p><div class="state__actions"><a class="button button--primary" href="#">Назад до результатів</a></div></section></div><figcaption>знято · listing-empty</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><section class="state state--error" role="alert"><div class="state__icon"><iconify-icon icon="streamline-freehand:alerts-warning-triangle" aria-hidden="true"></iconify-icon></div><h4 class="state__title">Не вдалося завантажити повідомлення</h4><p class="state__text">Перевір з’єднання й спробуй ще. Чернетку збережено — її не надіслано.</p><div class="state__actions"><a class="button button--primary" href="#">Спробувати ще</a></div></section></div><figcaption>помилка, одна дія · chat-error</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><section class="state state--error" role="alert"><div class="state__icon"><iconify-icon icon="streamline-freehand:alerts-warning-triangle" aria-hidden="true"></iconify-icon></div><h4 class="state__title">Не вдалося завантажити профіль</h4><p class="state__text">Перевір з’єднання й спробуй ще.</p><div class="state__actions"><a class="button button--primary" href="#">Спробувати ще</a><a class="button button--secondary" href="#">Назад до оголошення</a></div></section></div><figcaption>помилка, дві дії · profile-error</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Скелетон</h3><p class="vt-api"><code>.skeleton</code> · <code>--title</code> <code>--line</code> <code>--w60</code> <code>--w40</code> <code>--photo</code> <code>--button</code> <code>--avatar</code> <code>--avatar-lg</code> <code>--bubble</code> · <code>.skeleton-stack</code> <code>.skeleton-person</code></p><p>Екрани: listings-loading, listing-loading, profile-loading, chat-loading. На білому — колір поверхні, у сірому списку — на тон темніший. Поруч — невидимий для очей статус <code>role="status"</code> («Завантажуємо оголошення / профіль / повідомлення»).</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage skeleton-stack" aria-hidden="true"><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--line"></div><div class="skeleton skeleton--line skeleton--w60"></div><div class="skeleton skeleton--line skeleton--w40"></div><div class="skeleton skeleton--button"></div></div><figcaption>рядки й кнопка на білому</figcaption></figure>
+      <figure class="vt-spec"><div class="vt-stage" style="display:flex;gap:var(--space-3);align-items:center" aria-hidden="true"><div class="skeleton skeleton--avatar"></div><div class="skeleton skeleton--avatar-lg"></div></div><figcaption>аватари</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><div class="group group--padded skeleton-stack" aria-hidden="true"><div class="skeleton skeleton--line group__row"></div><div class="skeleton skeleton--line skeleton--w60 group__row"></div></div></div><figcaption>у сірому списку</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ Чат ═════════════ -->
+<section class="vt-role" id="chat" aria-labelledby="chat-h">
+  <h2 id="chat-h">Чат</h2>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Картка контексту кімнати</h3><p class="vt-api"><code>.chat-context</code> · <code>__thumb</code> <code>__text</code> <code>__title</code> <code>__meta</code></p><p>Екрани: chat, chat-loading, chat-empty, chat-error. Веде на оголошення.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec vt-spec--phone"><a class="chat-context" href="#"><img class="chat-context__thumb" src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=120&q=70&auto=format&fit=crop" alt="Фото кімнати"><span class="chat-context__text"><strong class="chat-context__title">Кімната біля Лук’янівської</strong><span class="chat-context__meta">10 500 грн/міс · з 1 жовтня</span></span><svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3.5 4.5 4.5L6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a><figcaption>звичайна</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><a class="chat-context is-focus" href="#"><img class="chat-context__thumb" src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=120&q=70&auto=format&fit=crop" alt="Фото кімнати"><span class="chat-context__text"><strong class="chat-context__title">Кімната біля Лук’янівської</strong><span class="chat-context__meta">10 500 грн/міс · з 1 жовтня</span></span><svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3.5 4.5 4.5L6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a><figcaption>фокус</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Бульбашка повідомлення</h3><p class="vt-api"><code>.messages</code> &gt; <code>.bubble</code> · <code>--mine</code> · <code>__time</code></p><p>Екрани: chat; chat-loading — скелетон. Мої — чорнило, чужі — поверхня; «хвостик» 4px біля автора.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><ol class="messages">
+        <li class="bubble bubble--mine"><p>Вітаю! Чи актуальна кімната і чи можна подивитися її цього тижня?</p><time class="bubble__time" datetime="2026-09-18T18:12">18:12</time></li>
+        <li class="bubble"><p>Так, актуальна. Можу показати в суботу після 12:00. У квартирі живемо вдвох і є кіт.</p><time class="bubble__time" datetime="2026-09-18T18:24">18:24</time></li>
+        <li class="bubble bubble--mine"><p>Субота о 13:00 підходить. Домовилися?</p><time class="bubble__time" datetime="2026-09-18T18:27">18:27</time></li>
+        <li class="bubble"><p>Так, домовилися. Напишу адресу в суботу зранку.</p><time class="bubble__time" datetime="2026-09-18T18:31">18:31</time></li>
+      </ol></div><figcaption>моя / чужа</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage skeleton-stack" aria-hidden="true"><div class="skeleton skeleton--bubble skeleton--mine"></div><div class="skeleton skeleton--bubble skeleton--bubble-tall"></div><div class="skeleton skeleton--bubble skeleton--bubble-short skeleton--mine"></div></div><figcaption>завантаження</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Поле повідомлення + «Надіслати»</h3><p class="vt-api"><code>.composer</code> · <code>__input</code> <code>__send</code></p><p>Екрани: chat, chat-loading, chat-empty, chat-error. Поле росте з текстом до 112px.</p></div>
+    <div class="vt-states">
+      <figure class="vt-spec"><div class="vt-screen" style="height:110px"><form class="composer"><label class="sr-only" for="c1">Повідомлення Ірині</label><textarea class="composer__input" id="c1" rows="1" placeholder="Повідомлення"></textarea><a class="composer__send" href="#" aria-label="Надіслати"><iconify-icon icon="solar:plain-2-linear" aria-hidden="true"></iconify-icon></a></form></div><figcaption>порожнє</figcaption></figure>
+      <figure class="vt-spec"><div class="vt-screen" style="height:110px"><form class="composer"><label class="sr-only" for="c2">Повідомлення Ірині</label><textarea class="composer__input is-focus" id="c2" rows="1">Чи можна подивитися кімнату в суботу?</textarea><a class="composer__send is-hover" href="#" aria-label="Надіслати"><iconify-icon icon="solar:plain-2-linear" aria-hidden="true"></iconify-icon></a></form></div><figcaption>з текстом, фокус · «Надіслати» під курсором</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ Поза кітом ═════════════ -->
+<section class="vt-role" id="gaps" aria-labelledby="gaps-h">
+  <h2 id="gaps-h">Поза кітом</h2>
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Немає у вайрфреймах</h3><p>Поля коду верифікації, чекбокса й банера немає в жодному <code>wireframes/*.html</code>, тому в кіті їх нема. Вони з'являться разом з екранами з <code>sitemap.md</code>, яких ще не намальовано.</p></div>
+    <ul class="vt-list">
+      <li>Підтвердження номера телефону — поле коду.</li>
+      <li>Створення / редагування оголошення.</li>
+      <li>Заповнення / редагування власного профілю — імовірно, чекбокси анкети.</li>
+      <li>Перелік розмов.</li>
+      <li>Клас <code>.banner</code> був у старих стилях вайрфреймів, але жоден екран його не використовував.</li>
+    </ul>
+  </div>
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Разове — у кіт не тягнемо</h3><p>Стоїть лише на одній сторінці (див. <code>ui/inventory.md</code>).</p></div>
+    <ul class="vt-list">
+      <li>Шторка сортування з варіантами — listings.</li>
+      <li>Пігулка автора на фото картки — listings.</li>
+      <li>Лічильник фото «1 / 5» — listing.</li>
+      <li>Абзац опису на сірій поверхні — listing.</li>
+      <li>Компактний стан усередині секції — profile-empty.</li>
+      <li>Розділювач дня в чаті — chat.</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+<script>
+/* Шторки: закрити «Скасувати», тапом поза панеллю або Esc; посилання-заглушки нікуди не ведуть */
+document.addEventListener("click", function (e) {
+  var dismiss = e.target.closest('.sheet__panel a[href="#"]');
+  if (dismiss) { e.preventDefault(); dismiss.closest("details.sheet").open = false; return; }
+  if (e.target.closest('a[href="#"]')) e.preventDefault();
+  var sheet = e.target.closest("details.sheet[open]");
+  if (sheet && !e.target.closest(".sheet__panel, summary")) sheet.open = false;
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+  document.querySelectorAll("details.sheet[open]").forEach(function (d) { d.open = false; });
+});
+/* Хаб уроків: повідомити, яку секцію видно */
+(function () {
+  if (window.parent === window || !("IntersectionObserver" in window)) return;
+  var sections = [].slice.call(document.querySelectorAll("#overview, .vt-role"));
+  var observer = new IntersectionObserver(function (entries) {
+    var visible = entries.filter(function (e) { return e.isIntersecting; })[0];
+    if (visible) window.parent.postMessage({ type: "lesson-section", id: visible.target.id }, location.origin);
+  }, { rootMargin: "-15% 0px -70% 0px" });
+  sections.forEach(function (s) { observer.observe(s); });
+})();
+</script>
+</body>
+</html>

@@ -5,30 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="wireframe-job" content="Related 4 — перевести придатний варіант у взаємну домовленість">
 <title>Чат з Іриною — Куток</title>
-<link rel="stylesheet" href="listings-states.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="concept-skin.css">
+<link rel="stylesheet" href="../ui/kit.css">
+<link rel="stylesheet" href="screens.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 </head>
-<body class="has-composer skin">
-<header class="appbar"><a class="appbar-back" href="listing.html" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a class="appbar-person" href="profile.html"><span class="avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=96&q=70&auto=format&fit=crop&crop=faces" alt="Фото профілю Ірини"></span><strong>Ірина</strong><span class="verified-mark" title="Номер підтверджено"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></a><button class="appbar-action" type="button" aria-label="Заблокувати або поскаржитися"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="4.5" cy="10" r="1.6" fill="currentColor"/><circle cx="10" cy="10" r="1.6" fill="currentColor"/><circle cx="15.5" cy="10" r="1.6" fill="currentColor"/></svg></button></header>
-<main id="content">
-<a class="chat-context" href="listing.html"><img class="thumb" src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=160&q=70&auto=format&fit=crop" alt="Фото кімнати"><span class="grow"><strong>Кімната біля Лук’янівської</strong><span>10 500 грн/міс · з 1 жовтня</span></span><svg class="chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m6 3.5 4.5 4.5L6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-<p class="day">18 вересня</p>
+<body class="shell shell--composer">
+<header class="topbar topbar--person"><a class="topbar__back" href="listing.html" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a class="topbar__person" href="profile.html"><span class="avatar"><img src="../assets/people/iryna.jpg" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></a><button class="topbar__action" type="button" aria-label="Заблокувати або поскаржитися"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="4.5" cy="10" r="1.6" fill="currentColor"/><circle cx="10" cy="10" r="1.6" fill="currentColor"/><circle cx="15.5" cy="10" r="1.6" fill="currentColor"/></svg></button></header>
+<main class="shell__main" id="content">
+<a class="chat-context" href="listing.html"><img class="chat-context__thumb" src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=160&q=70&auto=format&fit=crop" alt="Фото кімнати"><span class="chat-context__text"><strong class="chat-context__title">Кімната біля Лук’янівської</strong><span class="chat-context__meta">10 500 грн/міс · з 1 жовтня</span></span><svg class="chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m6 3.5 4.5 4.5L6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+<p class="chat-day">18 вересня</p>
 <ol class="messages">
-  <li class="msg mine"><p>Вітаю! Чи актуальна кімната і чи можна подивитися її цього тижня?</p><time datetime="2026-09-18T18:12">18:12</time></li>
-  <li class="msg"><p>Так, актуальна. Можу показати в суботу після 12:00. У квартирі живемо вдвох і є кіт.</p><time datetime="2026-09-18T18:24">18:24</time></li>
-  <li class="msg mine"><p>Субота о 13:00 підходить. Домовилися?</p><time datetime="2026-09-18T18:27">18:27</time></li>
-  <li class="msg"><p>Так, домовилися. Напишу адресу в суботу зранку.</p><time datetime="2026-09-18T18:31">18:31</time></li>
+  <li class="bubble bubble--mine"><p>Вітаю! Чи актуальна кімната і чи можна подивитися її цього тижня?</p><time class="bubble__time" datetime="2026-09-18T18:12">18:12</time></li>
+  <li class="bubble"><p>Так, актуальна. Можу показати в суботу після 12:00. У квартирі живемо вдвох і є кіт.</p><time class="bubble__time" datetime="2026-09-18T18:24">18:24</time></li>
+  <li class="bubble bubble--mine"><p>Субота о 13:00 підходить. Домовилися?</p><time class="bubble__time" datetime="2026-09-18T18:27">18:27</time></li>
+  <li class="bubble"><p>Так, домовилися. Напишу адресу в суботу зранку.</p><time class="bubble__time" datetime="2026-09-18T18:31">18:31</time></li>
 </ol>
 </main>
-<form class="composer"><label class="sr-only" for="message">Повідомлення Ірині</label><textarea id="message" name="message" rows="1" placeholder="Повідомлення"></textarea><a class="send" href="chat.html" aria-label="Надіслати"><iconify-icon icon="solar:plain-2-linear" aria-hidden="true"></iconify-icon></a></form>
+<form class="composer"><label class="sr-only" for="message">Повідомлення Ірині</label><textarea class="composer__input" id="message" name="message" rows="1" placeholder="Повідомлення"></textarea><a class="composer__send" href="chat.html" aria-label="Надіслати"><iconify-icon icon="solar:plain-2-linear" aria-hidden="true"></iconify-icon></a></form>
 <script>
 document.addEventListener("click", function (e) {
   var sheet = e.target.closest("details.sheet[open]");
-  if (sheet && !e.target.closest(".sheet-panel, summary")) sheet.open = false;
+  if (sheet && !e.target.closest(".sheet__panel, summary")) sheet.open = false;
 });
 document.addEventListener("keydown", function (e) {
   if (e.key !== "Escape") return;

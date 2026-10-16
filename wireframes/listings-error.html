@@ -5,32 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="wireframe-job" content="Related 1 — звузити пошук до прийнятних варіантів">
 <title>Результати пошуку — помилка</title>
-<link rel="stylesheet" href="listings-states.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="concept-skin.css">
+<link rel="stylesheet" href="../ui/kit.css">
+<link rel="stylesheet" href="screens.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 </head>
-<body class="has-tabbar skin">
-<header class="appbar-large"><h1>Результати пошуку</h1><p>Київ · кімнати та співмешканці</p></header>
-<main id="content">
+<body class="shell shell--tabbar">
+<header class="header"><div class="header__top"><h1 class="header__title">Результати пошуку</h1><p class="header__subtitle">Київ · кімнати та співмешканці</p></div></header>
+<main class="shell__main" id="content">
 
-<div class="filters"><div class="filter-row">
+<div class="chip-row"><div class="chip-row__track">
   <details class="sheet">
-    <summary class="chip chip-strong"><iconify-icon icon="solar:tuning-2-linear" aria-hidden="true"></iconify-icon>Фільтри · 3</summary>
-    <section class="sheet-panel" aria-labelledby="filters-title">
-      <div class="sheet-grabber" aria-hidden="true"></div>
-      <div class="sheet-head"><h2 id="filters-title">Фільтри</h2><a class="btn btn-plain" href="listings.html">Скасувати</a></div>
-      <form class="sheet-body" action="listings.html" method="get">
+    <summary class="chip chip--selected"><iconify-icon icon="solar:tuning-2-linear" aria-hidden="true"></iconify-icon>Фільтри · 3</summary>
+    <section class="sheet__panel" aria-labelledby="filters-title">
+      <div class="sheet__grabber" aria-hidden="true"></div>
+      <div class="sheet__head"><h2 class="sheet__title" id="filters-title">Фільтри</h2><a class="button button--text" href="listings.html">Скасувати</a></div>
+      <form class="sheet__body" action="listings.html" method="get">
         <fieldset>
           <legend class="sr-only">Базові умови кімнати</legend>
-          <div class="field"><label for="district">Район Києва</label><select id="district" name="district"><option>Усі райони</option><option selected>Шевченківський</option><option>Подільський</option><option>Голосіївський</option><option>Дніпровський</option></select></div>
-          <div class="field"><label for="budget">Бюджет до, грн/місяць</label><input id="budget" name="budget" type="number" inputmode="numeric" min="1000" step="500" value="12000"></div>
-          <div class="field"><label for="move-in">Дата заїзду</label><input id="move-in" name="move-in" type="text" inputmode="none" readonly value="з 1 жовтня 2026"></div>
+          <div class="field"><label class="field__label" for="district">Район Києва</label><select class="input" id="district" name="district"><option>Усі райони</option><option selected>Шевченківський</option><option>Подільський</option><option>Голосіївський</option><option>Дніпровський</option></select></div>
+          <div class="field"><label class="field__label" for="budget">Бюджет до, грн/місяць</label><input class="input" id="budget" name="budget" type="number" inputmode="numeric" min="1000" step="500" value="12000"></div>
+          <div class="field"><label class="field__label" for="move-in">Дата заїзду</label><input class="input" id="move-in" name="move-in" type="text" inputmode="none" readonly value="з 1 жовтня 2026"></div>
         </fieldset>
       </form>
-      <div class="sheet-foot"><a class="btn btn-primary btn-block" href="listings.html">Застосувати фільтри</a></div>
+      <div class="sheet__foot"><a class="button button--primary button--block" href="listings.html">Застосувати фільтри</a></div>
     </section>
   </details>
   <span class="chip">Шевченківський</span>
@@ -38,18 +37,18 @@
   <span class="chip">з 1 жовтня</span>
 </div></div>
 <div class="results-meta"><span>Фільтри збережено</span></div>
-<section class="state state-error" role="alert">
-  <div class="state-icon"><iconify-icon icon="streamline-freehand:alerts-warning-triangle" aria-hidden="true"></iconify-icon></div>
-  <h2>Не вдалося завантажити оголошення</h2>
-  <p>Перевір з’єднання й спробуй ще.</p>
-  <div class="actions"><a class="btn btn-primary" href="listings.html">Спробувати ще</a></div>
+<section class="state state--error" role="alert">
+  <div class="state__icon"><iconify-icon icon="streamline-freehand:alerts-warning-triangle" aria-hidden="true"></iconify-icon></div>
+  <h2 class="state__title">Не вдалося завантажити оголошення</h2>
+  <p class="state__text">Перевір з’єднання й спробуй ще.</p>
+  <div class="state__actions"><a class="button button--primary" href="listings.html">Спробувати ще</a></div>
 </section>
 </main>
-<nav class="tabbar" aria-label="Головна навігація"><ul><li><a href="listings.html" aria-current="page"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon><span>Пошук</span></a></li><li><a href="chat.html"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li><li><span class="tab"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></span></li></ul></nav>
+<nav class="tabbar" aria-label="Головна навігація"><ul class="tabbar__list"><li><a class="tabbar__item" href="listings.html" aria-current="page"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon><span>Пошук</span></a></li><li><a class="tabbar__item" href="chat.html"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li><li><span class="tabbar__item"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></span></li></ul></nav>
 <script>
 document.addEventListener("click", function (e) {
   var sheet = e.target.closest("details.sheet[open]");
-  if (sheet && !e.target.closest(".sheet-panel, summary")) sheet.open = false;
+  if (sheet && !e.target.closest(".sheet__panel, summary")) sheet.open = false;
 });
 document.addEventListener("keydown", function (e) {
   if (e.key !== "Escape") return;

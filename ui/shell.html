@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Оболонка — Куток</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="kit.css">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+</head>
+<!--
+  Оболонка «Кутка» як розмітка. Новий екран копіює цей файл і заповнює
+  .shell__main. Верхній шар і нижній пояс міняються разом із модифікаторами
+  на <body>:
+
+  верх          | нижній пояс | клас body
+  --------------+-------------+--------------------------------------------
+  двошарова     | меню        | shell shell--header shell--tabbar   (цей файл)
+  компактний    | панель дії  | shell shell--actionbar              (#topbar-title + #actionbar)
+  поверх фото   | панель дії  | shell shell--photo-top shell--actionbar (#topbar-photo + #actionbar)
+  з людиною     | поле чату   | shell shell--composer               (#topbar-person + #composer)
+
+  Варіанти лежать у <template> внизу файла — розмітку беремо звідти.
+-->
+<body class="shell shell--header shell--tabbar">
+
+<header class="header">
+  <div class="header__top">
+    <h1 class="header__title">Результати пошуку</h1>
+    <p class="header__subtitle">Київ · кімнати та співмешканці</p>
+  </div>
+  <div class="header__bar">
+    <div class="chip-row"><div class="chip-row__track">
+      <details class="sheet">
+        <summary class="chip chip--selected"><iconify-icon icon="solar:tuning-2-linear" aria-hidden="true"></iconify-icon>Фільтри · 3</summary>
+        <section class="sheet__panel" aria-labelledby="filters-title">
+          <div class="sheet__grabber" aria-hidden="true"></div>
+          <div class="sheet__head"><h2 class="sheet__title" id="filters-title">Фільтри</h2><a class="button button--text" href="#">Скасувати</a></div>
+          <form class="sheet__body" action="#" method="get">
+            <fieldset>
+              <legend class="sr-only">Базові умови кімнати</legend>
+              <div class="field"><label class="field__label" for="district">Район Києва</label><select class="input" id="district" name="district"><option>Усі райони</option><option selected>Шевченківський</option><option>Подільський</option><option>Голосіївський</option><option>Дніпровський</option></select></div>
+              <div class="field"><label class="field__label" for="budget">Бюджет до, грн/місяць</label><input class="input" id="budget" name="budget" type="number" inputmode="numeric" min="1000" step="500" value="12000"></div>
+              <div class="field"><label class="field__label" for="move-in">Дата заїзду</label><input class="input" id="move-in" name="move-in" type="text" inputmode="none" readonly value="з 1 жовтня 2026"></div>
+            </fieldset>
+          </form>
+          <div class="sheet__foot"><a class="button button--primary button--block" href="#">Застосувати фільтри</a></div>
+        </section>
+      </details>
+      <span class="chip">Шевченківський</span>
+      <span class="chip">до 12 000 грн</span>
+      <span class="chip">з 1 жовтня</span>
+    </div></div>
+  </div>
+</header>
+
+<main class="shell__main" id="content">
+  <!-- Контент екрана -->
+</main>
+
+<nav class="tabbar" aria-label="Головна навігація">
+  <ul class="tabbar__list">
+    <li><a class="tabbar__item" href="#" aria-current="page"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon><span>Пошук</span></a></li>
+    <li><a class="tabbar__item" href="#"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li>
+    <li><a class="tabbar__item" href="#"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></a></li>
+  </ul>
+</nav>
+
+<!-- ═══ Варіанти верхнього шару ═══ -->
+
+<template id="topbar-title">
+  <header class="topbar">
+    <a class="topbar__back" href="#" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <h1 class="topbar__title">Профіль Ірини</h1>
+    <span></span>
+  </header>
+</template>
+
+<template id="topbar-photo">
+  <header class="topbar topbar--over-photo">
+    <a class="topbar__back" href="#" aria-label="Назад до результатів"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <span></span><span></span>
+  </header>
+</template>
+
+<template id="topbar-person">
+  <header class="topbar topbar--person">
+    <a class="topbar__back" href="#" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <a class="topbar__person" href="#"><span class="avatar"><img src="../assets/people/iryna.jpg" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></a>
+    <button class="topbar__action" type="button" aria-label="Заблокувати або поскаржитися"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="4.5" cy="10" r="1.6" fill="currentColor"/><circle cx="10" cy="10" r="1.6" fill="currentColor"/><circle cx="15.5" cy="10" r="1.6" fill="currentColor"/></svg></button>
+  </header>
+</template>
+
+<!-- ═══ Варіанти нижнього поясу ═══ -->
+
+<template id="actionbar">
+  <div class="actionbar"><a class="button button--primary" href="#">Написати Ірині</a></div>
+</template>
+
+<template id="composer">
+  <form class="composer"><label class="sr-only" for="message">Повідомлення Ірині</label><textarea class="composer__input" id="message" name="message" rows="1" placeholder="Повідомлення"></textarea><a class="composer__send" href="#" aria-label="Надіслати"><iconify-icon icon="solar:plain-2-linear" aria-hidden="true"></iconify-icon></a></form>
+</template>
+
+<script>
+/* Шторка: закрити тапом поза панеллю або Esc */
+document.addEventListener("click", function (e) {
+  var dismiss = e.target.closest('.sheet__panel a[href="#"]');
+  if (dismiss) { e.preventDefault(); dismiss.closest("details.sheet").open = false; return; }
+  var sheet = e.target.closest("details.sheet[open]");
+  if (sheet && !e.target.closest(".sheet__panel, summary")) sheet.open = false;
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+  document.querySelectorAll("details.sheet[open]").forEach(function (d) { d.open = false; });
+});
+</script>
+</body>
+</html>

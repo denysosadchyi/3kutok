@@ -5,25 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="wireframe-job" content="Related 2–3 — оцінка іншої сторони та побутової сумісності">
 <title>Профіль Ірини — завантаження</title>
-<link rel="stylesheet" href="listings-states.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="concept-skin.css">
+<link rel="stylesheet" href="../ui/kit.css">
+<link rel="stylesheet" href="screens.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 </head>
-<body class="has-actionbar skin">
-<header class="appbar"><a class="appbar-back" href="listing.html" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><h1 class="appbar-title">Профіль Ірини</h1><span></span></header>
-<main id="content" aria-busy="true">
+<body class="shell shell--actionbar">
+<header class="topbar"><a class="topbar__back" href="listing.html" aria-label="Назад до оголошення"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><h1 class="topbar__title">Профіль Ірини</h1><span></span></header>
+<main class="shell__main" id="content" aria-busy="true">
 <p class="sr-only" role="status">Завантажуємо профіль</p>
-<div class="profile-head" aria-hidden="true"><div class="skeleton ph-avatar-lg"></div><div class="skeleton sk-title w-40"></div><div class="skeleton sk-line w-60"></div></div>
-<div class="list stack-8 list-pad" aria-hidden="true"><div class="skeleton sk-line"></div><div class="skeleton sk-line w-60"></div><div class="skeleton sk-line"></div><div class="skeleton sk-line w-40"></div></div>
+<div class="profile-head" aria-hidden="true"><div class="skeleton skeleton--avatar-lg"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--line skeleton--w60"></div></div>
+<div class="group group--padded skeleton-stack" aria-hidden="true"><div class="skeleton skeleton--line group__row"></div><div class="skeleton skeleton--line skeleton--w60 group__row"></div><div class="skeleton skeleton--line group__row"></div><div class="skeleton skeleton--line skeleton--w40 group__row"></div></div>
 </main>
-<div class="actionbar" aria-hidden="true"><div class="skeleton sk-btn"></div></div>
+<div class="actionbar" aria-hidden="true"><div class="skeleton skeleton--button"></div></div>
 <script>
 document.addEventListener("click", function (e) {
   var sheet = e.target.closest("details.sheet[open]");
-  if (sheet && !e.target.closest(".sheet-panel, summary")) sheet.open = false;
+  if (sheet && !e.target.closest(".sheet__panel, summary")) sheet.open = false;
 });
 document.addEventListener("keydown", function (e) {
   if (e.key !== "Escape") return;
