@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="../components/index.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 <script>
-/* Темна тема — експеримент (tokens.css, [data-theme="dark"]), не рішення продукту */
+/* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23 */
 (function () {
   var KEY = "kutok-theme", root = document.documentElement;
   function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
@@ -143,7 +143,7 @@
 <section class="vt-role" id="decision" aria-labelledby="decision-h">
   <h2 id="decision-h">Що відкрито</h2>
   <ul class="vt-list">
-    <li>Темна тема поки експеримент: стрес-тест semantic-шару, а не фіча. Лишати її в продукті чи ні — окреме продуктове рішення. До нього нових екранів під темну тему не проєктуємо.</li>
+    <li>Темну тему залишено в продукті (2026-10-23). Вона починалась як стрес-тест semantic-шару і його пройшла: <code>components/</code> не правились, усі пари в обох темах проходять AA. Тепер кожен новий екран і роль кольору проєктуються в обох темах.</li>
     <li>Відкладено як P3: дрейф D1, D2, D5, D8 і D9; ручка шторки у світлій темі (1.09:1); злиття <code>--color-state-icon</code> з <code>--color-text</code> і <code>--color-action-disabled</code> з <code>--color-control</code>; висота чипів 36px.</li>
     <li>Ролі фокусу й стани компонентів розберемо на уроці 9, одразу для обох тем.</li>
   </ul>

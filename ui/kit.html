@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="../components/index.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 <script>
-/* Темна тема — експеримент (tokens.css, [data-theme="dark"]), не рішення продукту */
+/* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23 */
 (function () {
   var KEY = "kutok-theme", root = document.documentElement;
   function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
@@ -44,7 +44,7 @@
   .vt-skip { position: absolute; left: var(--space-2); top: calc(var(--space-7) * -1); padding: var(--space-2) var(--space-3); border-radius: var(--radius-14); background: var(--color-inverted); color: var(--color-text-on-inverted); }
   .vt-skip:focus { top: var(--space-2); }
   html.embed .vt-skip { display: none; }
-  /* ЕКСПЕРИМЕНТ: перемикач темної теми (tokens.css, [data-theme="dark"]) — у полі над шапкою вітрини, не зсуває її */
+  /* Перемикач темної теми (tokens.css, [data-theme="dark"]) — у полі над шапкою вітрини, не зсуває її */
   .vt-theme { position: absolute; top: var(--space-2); right: var(--space-4); }
 
   .vt-hero { display: grid; gap: var(--space-3); max-width: 64ch; padding-bottom: var(--space-6); }

@@ -83,10 +83,9 @@
 /* chat — розділювач дня */
 .chat-day { color: var(--color-text-secondary); font-size: var(--text-xs); text-align: center; }
 
-/* ── ЕКСПЕРИМЕНТ: перемикач темної теми — не рішення продукту ──
-   Стрес-тест semantic-шару (tokens.css, [data-theme="dark"]). Кнопка —
-   наявний .topbar__action, тут лише її розміщення в навпанелях. Прибрати
-   разом із темою, якщо продукт її не лишить. */
+/* ── Перемикач темної теми (частина продукту з 2026-10-23) ──
+   tokens.css, [data-theme="dark"]. Кнопка — наявний .topbar__action, тут
+   лише її розміщення в навпанелях. */
 /* App bar з дією ⋯: кнопка теми ліворуч від неї, права комірка сітки та сама */
 .theme-slot { display: flex; justify-self: end; }
 .topbar--over-photo .theme-slot { gap: var(--space-2); }

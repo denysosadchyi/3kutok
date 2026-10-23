@@ -9,13 +9,13 @@ from pathlib import Path
 
 OUT = Path(__file__).resolve().parent
 
-# Темна тема — ЕКСПЕРИМЕНТ, стрес-тест semantic-шару, не рішення продукту
+# Темна тема — частина продукту з 2026-10-23
 # (tokens.css, блок [data-theme="dark"]). Скрипт стоїть у <head>: ставить
 # data-theme на <html> до першого рендера (без блимання), пам'ятає вибір у
 # localStorage і синхронізує кнопки .theme-toggle (aria-pressed, іконка).
 # Той самий текст скрипта — у ui/kit.html і ui/shell.html.
 THEME_SCRIPT = """<script>
-/* Темна тема — експеримент (tokens.css, [data-theme="dark"]), не рішення продукту */
+/* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23 */
 (function () {
   var KEY = "kutok-theme", root = document.documentElement;
   function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
