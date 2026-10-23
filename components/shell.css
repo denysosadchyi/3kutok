@@ -1,0 +1,25 @@
+/* Оболонка — модифікатор називає нижній пояс екрана
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.shell { min-height: var(--viewport-height); }
+.shell--tabbar { padding-bottom: calc(var(--size-56) + var(--safe-bottom)); }
+.shell--actionbar { padding-bottom: calc(var(--size-68) + var(--space-3) + var(--safe-bottom)); }
+.shell--composer { padding-bottom: var(--size-76); }
+.shell__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4) var(--space-5);
+}
+.shell--header .shell__main { padding-top: var(--space-3); }
+.shell--photo-top .shell__main { padding-top: 0; }
+
+/* Стан на весь вільний екран: заповнює висоту між поясами */
+.shell__main:has(> .state) {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(var(--viewport-height) - var(--size-48) - var(--size-56) - var(--safe-bottom));
+}
+/* [D8] віднімає --size-48 + --space-6 = 80, а не резерв --size-76 з padding вище;
+   зведення — рішення критики кроку 06 */
+.shell--composer .shell__main:has(> .state) { min-height: calc(var(--viewport-height) - var(--size-48) - var(--size-48) - var(--space-6)); }

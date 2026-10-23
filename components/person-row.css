@@ -1,0 +1,14 @@
+/* Рядок людини — аватар + ім'я + підпис, посилання на профіль
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.person-row {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-48);
+  text-decoration: none;
+}
+.person-row__text { display: grid; flex: 1; gap: var(--space-px); min-width: 0; }
+.person-row__name { font-weight: var(--weight-bold); }
+.person-row__caption { color: var(--color-text-secondary); font-size: var(--text-sm); }

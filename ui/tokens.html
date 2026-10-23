@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Токени — Куток</title>
+<script>if (new URLSearchParams(location.search).get("embed") === "1") document.documentElement.classList.add("embed");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/index.css">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<script>
+/* Темна тема — експеримент (tokens.css, [data-theme="dark"]), не рішення продукту */
+(function () {
+  var KEY = "kutok-theme", root = document.documentElement;
+  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function apply(dark) {
+    if (dark) root.setAttribute("data-theme", "dark"); else root.removeAttribute("data-theme");
+    document.querySelectorAll(".theme-toggle").forEach(function (b) {
+      b.setAttribute("aria-pressed", dark ? "true" : "false");
+      var i = b.querySelector("iconify-icon");
+      if (i) i.setAttribute("icon", dark ? "solar:sun-2-linear" : "solar:moon-linear");
+    });
+  }
+  apply(saved() === "dark");
+  document.addEventListener("DOMContentLoaded", function () { apply(saved() === "dark"); });
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest(".theme-toggle");
+    if (!b) return;
+    var dark = root.getAttribute("data-theme") !== "dark";
+    apply(dark);
+    try { localStorage.setItem(KEY, dark ? "dark" : "light"); } catch (err) {}
+  });
+  window.addEventListener("storage", function (e) { if (e.key === KEY) apply(e.newValue === "dark"); });
+})();
+</script>
+<style>
+  /* Стилі самої сторінки токенів (не кіт). Таблиці читають tokens.css
+     наживо: що в файлі — те й на сторінці. */
+  .vt { max-width: 1040px; margin: 0 auto; padding: var(--space-7) var(--space-4) calc(var(--space-7) * 2); }
+  .vt-theme { position: absolute; top: var(--space-2); right: var(--space-4); }
+
+  .vt-hero { display: grid; gap: var(--space-3); max-width: 64ch; padding-bottom: var(--space-6); }
+  .vt-hero h1 { font-size: 1.75rem; font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); line-height: var(--leading-1-25); }
+  .vt-hero p { color: var(--color-text-secondary); }
+  .vt-files { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); font-size: var(--text-sm); }
+  .vt a.vt-link { color: var(--color-current); text-underline-offset: 3px; }
+  .vt code { padding: 0 var(--space-1); border-radius: var(--radius-8); background: var(--color-card); font-size: 0.875em; }
+
+  .vt-role { padding-top: var(--space-7); scroll-margin-top: var(--space-5); }
+  .vt-role > h2 { padding-bottom: var(--space-1); font-size: var(--text-xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); }
+  .vt-lead { max-width: 64ch; color: var(--color-text-secondary); }
+  .vt-role h3 { padding: var(--space-5) 0 var(--space-2); font-size: var(--text-lg); font-weight: var(--weight-bold); }
+
+  .tk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); margin-top: var(--space-3); }
+  .tk-swatch { display: grid; gap: var(--space-1); padding: var(--space-3); border-radius: var(--radius-14); background: var(--color-card); font-size: var(--text-sm); }
+  .tk-chip { height: var(--size-48); border-radius: var(--radius-8); box-shadow: inset 0 0 0 var(--stroke-1) var(--color-divider); }
+  .tk-name { font-weight: var(--weight-medium); }
+  .tk-note { color: var(--color-text-secondary); font-size: var(--text-xs); }
+  .tk-new { color: var(--color-current); font-weight: var(--weight-medium); }
+
+  .tk-scroll { overflow-x: auto; margin-top: var(--space-3); }
+  .tk-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+  .tk-table th, .tk-table td { padding: var(--space-2) var(--space-3) var(--space-2) 0; text-align: left; vertical-align: middle; box-shadow: inset 0 calc(var(--stroke-1) * -1) 0 var(--color-divider); }
+  .tk-table th { color: var(--color-text-secondary); font-weight: var(--weight-medium); }
+  .tk-table td:first-child code { white-space: nowrap; }
+  .tk-table td.tk-num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tk-pair { display: inline-flex; align-items: center; gap: var(--space-2); white-space: nowrap; }
+  .tk-dot { display: inline-block; width: var(--size-20); height: var(--size-20); border-radius: var(--radius-round); box-shadow: inset 0 0 0 var(--stroke-1) var(--color-divider); }
+  .tk-sample { display: inline-grid; place-items: center; min-width: var(--size-48); height: var(--size-28); padding: 0 var(--space-2); border-radius: var(--radius-8); font-weight: var(--weight-bold); }
+  .tk-pass { color: var(--color-verified); font-weight: var(--weight-medium); }
+  .tk-fail { color: var(--color-error); font-weight: var(--weight-bold); }
+
+  .tk-bar { height: var(--size-12); border-radius: var(--radius-3); background: var(--color-action); }
+  .tk-box { width: var(--size-48); height: var(--size-48); background: var(--color-card); box-shadow: inset 0 0 0 var(--stroke-1) var(--color-field-edge); }
+
+  .vt-list { display: grid; gap: var(--space-2); max-width: 72ch; margin: var(--space-3) 0 0; padding-left: var(--space-5); }
+  .vt-list li::marker { color: var(--color-text-secondary); }
+  .tk-error { margin-top: var(--space-3); color: var(--color-text-secondary); }
+</style>
+</head>
+<body>
+<div class="vt">
+
+<header class="vt-hero" id="overview">
+  <button class="chip theme-toggle vt-theme" type="button" aria-pressed="false"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon>Темна тема</button>
+  <h1>Токени Кутка</h1>
+  <p>Урок 8. Плаский <code>ui/kit.css</code> розколото на <code>tokens.css</code> з двох рівнів і <code>components/</code>. PRIMITIVE — сирі значення без ролей. SEMANTIC — лише ролі кольору, кожна посилається на primitive. Колір компонент бере тільки через роль, геометрію — з primitive напряму.</p>
+  <p>Таблиці нижче читають <code>tokens.css</code> наживо. Контраст рахується тут же, для обох тем.</p>
+  <p class="vt-files">
+    <a class="vt-link" href="../tokens.css">tokens.css</a>
+    <a class="vt-link" href="../tokens-audit.md">tokens-audit.md</a>
+    <a class="vt-link" href="../components/README.md">components/</a>
+    <a class="vt-link" href="kit.html">ui/kit.html</a>
+    <a class="vt-link" href="../DESIGN.md">DESIGN.md</a>
+  </p>
+</header>
+
+<section class="vt-role" id="primitive" aria-labelledby="primitive-h">
+  <h2 id="primitive-h">Primitive: колір</h2>
+  <p class="vt-lead">Що це за колір, а не де він стоїть. Позначка «крок 06» — чотири primitive, яких вимагав стрес-тест темною темою; у світлій темі їх не вжито.</p>
+  <div class="tk-grid" data-slot="colors"></div>
+</section>
+
+<section class="vt-role" id="scales" aria-labelledby="scales-h">
+  <h2 id="scales-h">Primitive: геометрія</h2>
+  <p class="vt-lead">Відступи, радіуси, розміри й інтерліньяж. Окремого semantic-рівня в геометрії немає — компонент читає ці значення напряму.</p>
+  <h3>Відступи</h3>
+  <div class="tk-scroll"><table class="tk-table" data-slot="space"></table></div>
+  <h3>Радіуси</h3>
+  <div class="tk-grid" data-slot="radius"></div>
+  <h3>Кегль та інтерліньяж</h3>
+  <div class="tk-scroll"><table class="tk-table" data-slot="type"></table></div>
+</section>
+
+<section class="vt-role" id="semantic" aria-labelledby="semantic-h">
+  <h2 id="semantic-h">Semantic: ролі кольору</h2>
+  <p class="vt-lead">Кожна роль виросла з вживань у <code>tokens-audit.md</code>. Темна тема перевизначає тільки цей рівень. Порожня клітинка в колонці «Темна» означає, що значення те саме, що у світлій.</p>
+  <div data-slot="semantic"></div>
+</section>
+
+<section class="vt-role" id="contrast" aria-labelledby="contrast-h">
+  <h2 id="contrast-h">Контраст за WCAG AA</h2>
+  <p class="vt-lead">Поріг 4.5:1 для тексту і 3:1 для іконок, великого тексту й меж контролів. Напівпрозорі кольори змішано з фоном. Ті самі пари записано коментарями в <code>tokens.css</code>.</p>
+  <div class="tk-scroll"><table class="tk-table" data-slot="contrast"></table></div>
+</section>
+
+<section class="vt-role" id="fixes" aria-labelledby="fixes-h">
+  <h2 id="fixes-h">Що виправила перевірка</h2>
+  <p class="vt-lead">Кроки 1–5 нічого не змінили на вигляд: обчислені стилі звірено з <code>kit.css</code> піксель у піксель. Таблиця дефектів кроку 06 внесла свідомі зміни. Причини записано в <code>DESIGN.md</code>, розділ «Правки уроку 8».</p>
+  <ul class="vt-list">
+    <li>Кнопки шапки й <code>.person-row</code> стали 48px замість 44 (D3). Тепер ціль дотику однакова у всіх.</li>
+    <li>Нижні пояси (<code>.actionbar</code>, <code>.composer</code>, <code>.sheet__foot</code>) мають однакові поля по 12px (D6/D7). Раніше було 10, 12 і 20.</li>
+    <li>Інтерліньяжів лишилося два: 1.25 для назв і 1.45 для тексту (D10). Раніше їх було п'ять.</li>
+    <li>Текст довіри в темній темі отримав <code>--green-light</code>: контраст зріс із 3.45 до 5.13:1.</li>
+    <li>У темній темі картка й контрол лежать на <code>--grey-900</code>, а наведення — на <code>--grey-800</code>. Раніше картка відрізнялася від сторінки лише на 1.17:1.</li>
+    <li>Поточний пункт у темній темі став <code>--coral-light</code>, тому вибраний чип більше не схожий на головну кнопку.</li>
+    <li><code>--color-error</code>, <code>--color-sheet</code> і <code>--color-sheet-scrim</code> перейшли з «одиничних» у групи «Небезпека» і «Шар над сторінкою». Для кожного одиничного токена записано вердикт.</li>
+  </ul>
+</section>
+
+<section class="vt-role" id="decision" aria-labelledby="decision-h">
+  <h2 id="decision-h">Що відкрито</h2>
+  <ul class="vt-list">
+    <li>Темна тема поки експеримент: стрес-тест semantic-шару, а не фіча. Лишати її в продукті чи ні — окреме продуктове рішення. До нього нових екранів під темну тему не проєктуємо.</li>
+    <li>Відкладено як P3: дрейф D1, D2, D5, D8 і D9; ручка шторки у світлій темі (1.09:1); злиття <code>--color-state-icon</code> з <code>--color-text</code> і <code>--color-action-disabled</code> з <code>--color-control</code>; висота чипів 36px.</li>
+    <li>Ролі фокусу й стани компонентів розберемо на уроці 9, одразу для обох тем.</li>
+  </ul>
+</section>
+
+</div>
+<script>
+/* Читає tokens.css і будує таблиці: перший :root — primitive + світлий
+   semantic, :root[data-theme="dark"] — темні перевизначення. */
+(function () {
+  function slot(name) { return document.querySelector('[data-slot="' + name + '"]'); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  function parseBlock(css, start) {
+    var open = css.indexOf("{", start), depth = 1, i = open + 1;
+    while (depth && i < css.length) { if (css[i] === "{") depth++; else if (css[i] === "}") depth--; i++; }
+    // Коментар з'їдається цілим, тож «--primary» усередині коментаря не стане токеном
+    // Примітка — коментар у тому ж рядку після токена, а якщо його нема — коментар над ним
+    var body = css.slice(open + 1, i - 1), out = [], group = "", last = null, above = "", re = /(\/\*[\s\S]*?\*\/)|(--[a-z0-9-]+)\s*:\s*([^;]+);([ \t]*)/g, m;
+    function clean(c) { return c.slice(2, -2).replace(/\s+/g, " ").trim(); }
+    while ((m = re.exec(body))) {
+      if (m[1]) {
+        var head = m[1].match(/^\/\*\s*──\s*([^─*]+?)\s*──/);
+        if (head) { group = head[1]; above = ""; }
+        else if (last && last.end === m.index) { last.note = clean(m[1]); above = ""; }
+        else above = clean(m[1]);
+        last = null;
+        continue;
+      }
+      last = { name: m[2], value: m[3].trim(), group: group, note: above, end: re.lastIndex };
+      above = "";
+      out.push(last);
+    }
+    return out;
+  }
+
+  function hexToRgb(h) {
+    h = h.slice(1); if (h.length === 3) h = h.replace(/./g, "$&$&");
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16), 1];
+  }
+  function parseColor(v) {
+    if (!v) return null;
+    if (v[0] === "#") return hexToRgb(v);
+    var m = v.match(/rgba?\(\s*([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)(?:\s*[\/,]\s*([\d.]+))?/);
+    if (m) return [+m[1], +m[2], +m[3], m[4] ? +m[4] : 1];
+    return null;
+  }
+  function over(fg, bg) {
+    var a = fg[3];
+    return [fg[0] * a + bg[0] * (1 - a), fg[1] * a + bg[1] * (1 - a), fg[2] * a + bg[2] * (1 - a), 1];
+  }
+  function lum(c) {
+    var ch = c.slice(0, 3).map(function (x) { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); });
+    return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+  }
+  function ratio(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+
+  function render(css) {
+    var rootAt = css.indexOf(":root {"), darkAt = css.indexOf(':root[data-theme="dark"]');
+    var all = parseBlock(css, rootAt), dark = parseBlock(css, darkAt);
+    var semAt = all.findIndex(function (t) { return t.name.indexOf("--color-") === 0; });
+    var prim = all.slice(0, semAt), sem = all.slice(semAt);
+    var light = {}, darkMap = {};
+    all.forEach(function (t) { light[t.name] = t.value; darkMap[t.name] = t.value; });
+    dark.forEach(function (t) { darkMap[t.name] = t.value; });
+    function ref(v) { var m = v && v.match(/^var\((--[a-z0-9-]+)\)$/); return m && m[1]; }
+    function resolve(name, map) { var v = map[name], r; while ((r = ref(v))) v = map[r]; return v; }
+    function rgb(name, map) { return parseColor(resolve(name, map)); }
+
+    // Primitive: колір
+    slot("colors").innerHTML = prim.filter(function (t) { return t.group === "Колір" || /^--(ink|black)-\d/.test(t.name); })
+      .filter(function (t) { return parseColor(t.value); })
+      .map(function (t) {
+        var isNew = t.note.indexOf("[крок 06]") === 0;
+        return '<div class="tk-swatch"><div class="tk-chip" style="background:' + esc(t.value) + '"></div>' +
+          '<span class="tk-name">' + esc(t.name) + (isNew ? ' <span class="tk-new">· крок 06</span>' : "") + "</span>" +
+          '<span class="tk-note">' + esc(t.value) + (t.note ? " — " + esc(t.note.replace("[крок 06] ", "")) : "") + "</span></div>";
+      }).join("");
+
+    // Primitive: геометрія
+    slot("space").innerHTML = "<tr><th>Токен</th><th>Значення</th><th>Шкала</th></tr>" + prim.filter(function (t) { return t.name.indexOf("--space-") === 0; })
+      .map(function (t) { return '<tr><td><code>' + esc(t.name) + '</code></td><td class="tk-num">' + esc(t.value) + '</td><td style="width:60%"><div class="tk-bar" style="width:var(' + t.name + ')"></div></td></tr>'; }).join("");
+    slot("radius").innerHTML = prim.filter(function (t) { return t.name.indexOf("--radius-") === 0; })
+      .map(function (t) { return '<div class="tk-swatch"><div class="tk-box" style="border-radius:var(' + t.name + ')"></div><span class="tk-name">' + esc(t.name) + '</span><span class="tk-note">' + esc(t.value) + "</span></div>"; }).join("");
+    slot("type").innerHTML = "<tr><th>Токен</th><th>Значення</th><th>Зразок</th></tr>" + prim.filter(function (t) { return /^--(text|leading)-/.test(t.name); })
+      .map(function (t) {
+        var style = t.name.indexOf("--text-") === 0 ? "font-size:var(" + t.name + ")" : "line-height:var(" + t.name + ");max-width:36ch";
+        var sample = t.name.indexOf("--text-") === 0 ? "Кімната біля метро Лук'янівська" : "Тиха кімната з балконом, поруч метро. Шукаю співмешканку, яка не курить і рано встає.";
+        return '<tr><td><code>' + esc(t.name) + '</code></td><td class="tk-num">' + esc(t.value) + '</td><td><div style="' + style + '">' + sample + "</div></td></tr>";
+      }).join("");
+
+    // Semantic
+    var groups = [];
+    sem.forEach(function (t) { var g = groups[groups.length - 1]; if (!g || g.name !== t.group) groups.push(g = { name: t.group, items: [] }); g.items.push(t); });
+    var darkSet = {}; dark.forEach(function (t) { darkSet[t.name] = t.value; });
+    function cell(value, name, map) {
+      var r = ref(value) || value, c = resolve(name, map);
+      return '<span class="tk-pair"><span class="tk-dot" style="background:' + esc(c) + '"></span><code>' + esc(r) + "</code></span>";
+    }
+    slot("semantic").innerHTML = groups.map(function (g) {
+      return "<h3>" + esc(g.name) + '</h3><div class="tk-scroll"><table class="tk-table"><tr><th>Роль</th><th>Світла</th><th>Темна</th><th>Звідки</th></tr>' +
+        g.items.map(function (t) {
+          return '<tr><td><code>' + esc(t.name) + "</code></td><td>" + cell(t.value, t.name, light) + "</td><td>" +
+            (darkSet[t.name] && darkSet[t.name] !== t.value ? cell(darkSet[t.name], t.name, darkMap) : "") + '</td><td class="tk-note">' + esc(t.note) + "</td></tr>";
+        }).join("") + "</table></div>";
+    }).join("");
+
+    // Контраст
+    var pairs = [
+      ["--color-text", "--color-page", 4.5], ["--color-text", "--color-card", 4.5], ["--color-text", "--color-control-hover", 4.5],
+      ["--color-text-secondary", "--color-page", 4.5], ["--color-text-secondary", "--color-card", 4.5], ["--color-inactive", "--color-page", 4.5],
+      ["--color-text-on-inverted", "--color-inverted", 4.5], ["--color-text-secondary-on-inverted", "--color-inverted", 4.5],
+      ["--color-text-on-action", "--color-action", 4.5], ["--color-text-on-action", "--color-action-hover", 4.5],
+      ["--color-current", "--color-page", 4.5], ["--color-current", "--color-sheet", 4.5], ["--color-text-on-current", "--color-current", 4.5],
+      ["--color-action-text", "--color-sheet", 4.5], ["--color-verified", "--color-page", 4.5], ["--color-verified", "--color-card", 4.5],
+      ["--color-text-on-photo", "--color-over-photo-dim", 4.5, "дим над білим фото"],
+      ["--color-text-on-verified", "--color-verified", 3], ["--color-error", "--color-page", 3], ["--color-state-icon", "--color-page", 3],
+      ["--color-inactive", "--color-action-disabled", 3], ["--color-field-edge", "--color-control", 3], ["--color-field-edge", "--color-page", 3],
+      ["--color-field-edge-hover", "--color-control", 3], ["--color-focus", "--color-page", 3], ["--color-focus", "--color-card", 3],
+      ["--color-tag-hole-edge", "--color-over-photo", 3]
+    ];
+    var white = [255, 255, 255, 1];
+    function measure(p, map) {
+      var fg = rgb(p[0], map), bg = rgb(p[1], map);
+      if (!fg || !bg) return null;
+      var base = p[3] ? white : rgb("--color-page", map);
+      bg = over(bg, base); fg = over(fg, bg);
+      return { r: ratio(fg, bg), fg: fg, bg: bg };
+    }
+    function show(m, min) {
+      if (!m) return "<td>—</td>";
+      var css = function (c) { return "rgb(" + c.slice(0, 3).map(Math.round).join(" ") + ")"; };
+      return '<td class="tk-num"><span class="tk-pair"><span class="tk-sample" style="color:' + css(m.fg) + ";background:" + css(m.bg) + '">Аа</span>' +
+        m.r.toFixed(2) + ' <span class="' + (m.r >= min ? "tk-pass\">так" : "tk-fail\">ні") + "</span></span></td>";
+    }
+    slot("contrast").innerHTML = "<tr><th>Пара</th><th>Поріг</th><th>Світла</th><th>Темна</th></tr>" + pairs.map(function (p) {
+      return '<tr><td><code>' + esc(p[0]) + "</code> / <code>" + esc(p[1]) + "</code>" + (p[3] ? ' <span class="tk-note">' + esc(p[3]) + "</span>" : "") +
+        '</td><td class="tk-num">' + p[2] + "</td>" + show(measure(p, light), p[2]) + show(measure(p, darkMap), p[2]) + "</tr>";
+    }).join("");
+  }
+
+  fetch("../tokens.css").then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(render).catch(function () {
+    document.querySelectorAll("[data-slot]").forEach(function (el) {
+      el.outerHTML = '<p class="tk-error">Таблиці будуються з tokens.css і потребують сервера: відкрий сторінку через <code>python3 -m http.server</code> або на 3kutok.vercel.app.</p>';
+    });
+  });
+})();
+/* Хаб уроків: повідомити, яку секцію видно */
+(function () {
+  if (window.parent === window || !("IntersectionObserver" in window)) return;
+  var sections = [].slice.call(document.querySelectorAll("#overview, .vt-role"));
+  var observer = new IntersectionObserver(function (entries) {
+    var visible = entries.filter(function (e) { return e.isIntersecting; })[0];
+    if (visible) window.parent.postMessage({ type: "lesson-section", id: visible.target.id }, location.origin);
+  }, { rootMargin: "-15% 0px -70% 0px" });
+  sections.forEach(function (s) { observer.observe(s); });
+})();
+</script>
+</body>
+</html>

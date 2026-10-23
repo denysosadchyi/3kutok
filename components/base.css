@@ -1,0 +1,40 @@
+/* База — скидання, типографіка документа, фокус, службові класи
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+/* color-scheme задає тема в tokens.css (світла — light, [data-theme="dark"] — dark) */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { max-width: 100%; overflow-x: clip; }
+body {
+  margin: 0;
+  font-family: var(--font-onest);
+  font-size: var(--text-md);
+  line-height: var(--leading-1-45);
+  color: var(--color-text);
+  background: var(--color-page);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, p { margin: 0; }
+h2, h3 { text-wrap: balance; }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+img { display: block; max-width: 100%; }
+iconify-icon { display: inline-block; flex: none; }
+:where(a, button, input, select, textarea, summary):focus-visible {
+  outline: var(--stroke-2) solid var(--color-focus);
+  outline-offset: var(--stroke-2);
+}
+.sr-only {
+  position: absolute;
+  width: var(--stroke-1);
+  height: var(--stroke-1);
+  margin: calc(var(--stroke-1) * -1);
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.muted { color: var(--color-text-secondary); }
+.chevron { flex: none; color: var(--color-inactive); font-size: var(--size-16); }
+::placeholder { color: var(--color-text-secondary); opacity: 1; }

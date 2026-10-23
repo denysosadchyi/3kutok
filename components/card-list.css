@@ -1,0 +1,4 @@
+/* Список карток — стрічка оголошень
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.card-list { display: grid; gap: var(--space-6); margin: 0; padding: 0; list-style: none; }

@@ -1,0 +1,13 @@
+/* Шапка — двошарова: великий заголовок + смуга керування (чипи)
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.header { background: var(--color-page); }
+.header__top { padding: var(--space-4) var(--space-4) var(--space-1); }
+.header__title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-1-25);
+}
+.header__subtitle { margin-top: var(--space-1); color: var(--color-text-secondary); font-size: var(--text-sm); }
+.header__bar { padding: var(--space-2) var(--space-4) 0; }

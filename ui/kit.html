@@ -7,39 +7,67 @@
 <script>if (new URLSearchParams(location.search).get("embed") === "1") document.documentElement.classList.add("embed");</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="kit.css">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/index.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<script>
+/* Темна тема — експеримент (tokens.css, [data-theme="dark"]), не рішення продукту */
+(function () {
+  var KEY = "kutok-theme", root = document.documentElement;
+  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function apply(dark) {
+    if (dark) root.setAttribute("data-theme", "dark"); else root.removeAttribute("data-theme");
+    document.querySelectorAll(".theme-toggle").forEach(function (b) {
+      b.setAttribute("aria-pressed", dark ? "true" : "false");
+      var i = b.querySelector("iconify-icon");
+      if (i) i.setAttribute("icon", dark ? "solar:sun-2-linear" : "solar:moon-linear");
+    });
+  }
+  apply(saved() === "dark");
+  document.addEventListener("DOMContentLoaded", function () { apply(saved() === "dark"); });
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest(".theme-toggle");
+    if (!b) return;
+    var dark = root.getAttribute("data-theme") !== "dark";
+    apply(dark);
+    try { localStorage.setItem(KEY, dark ? "dark" : "light"); } catch (err) {}
+  });
+  window.addEventListener("storage", function (e) { if (e.key === KEY) apply(e.newValue === "dark"); });
+})();
+</script>
 <style>
   /* Стилі самої вітрини (не кіт): сторінка, підписи, сцени.
      Класи .is-hover / .is-focus / .is-active лише показують стан нерухомо —
      у продукті стани дає CSS кіта (:hover, :focus-visible, :active). */
-  .vt { max-width: 1040px; margin: 0 auto; padding: var(--space-7) var(--gutter) calc(var(--space-7) * 2); }
+  .vt { max-width: 1040px; margin: 0 auto; padding: var(--space-7) var(--space-4) calc(var(--space-7) * 2); }
   html.embed .vt { padding-top: var(--space-7); }
-  .vt-skip { position: absolute; left: var(--space-2); top: calc(var(--space-7) * -1); padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); background: var(--color-ink); color: var(--color-on-ink); }
+  .vt-skip { position: absolute; left: var(--space-2); top: calc(var(--space-7) * -1); padding: var(--space-2) var(--space-3); border-radius: var(--radius-14); background: var(--color-inverted); color: var(--color-text-on-inverted); }
   .vt-skip:focus { top: var(--space-2); }
   html.embed .vt-skip { display: none; }
+  /* ЕКСПЕРИМЕНТ: перемикач темної теми (tokens.css, [data-theme="dark"]) — у полі над шапкою вітрини, не зсуває її */
+  .vt-theme { position: absolute; top: var(--space-2); right: var(--space-4); }
 
   .vt-hero { display: grid; gap: var(--space-3); max-width: 64ch; padding-bottom: var(--space-6); }
-  .vt-hero h1 { font-size: 1.75rem; font-weight: var(--weight-bold); letter-spacing: var(--tracking-head); line-height: var(--leading-tight); }
-  .vt-hero p { color: var(--color-muted); }
+  .vt-hero h1 { font-size: 1.75rem; font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); line-height: var(--leading-1-25); }
+  .vt-hero p { color: var(--color-text-secondary); }
   .vt-files { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); font-size: var(--text-sm); }
-  .vt a.vt-link { color: var(--color-link); text-underline-offset: 3px; }
-  .vt code { padding: 0 var(--space-1); border-radius: var(--radius-tag); background: var(--color-surface); font-size: 0.875em; }
+  .vt a.vt-link { color: var(--color-current); text-underline-offset: 3px; }
+  .vt code { padding: 0 var(--space-1); border-radius: var(--radius-8); background: var(--color-card); font-size: 0.875em; }
 
   .vt-role { padding-top: var(--space-7); scroll-margin-top: var(--space-5); }
-  .vt-role > h2 { padding-bottom: var(--space-1); font-size: var(--text-xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-head); }
-  .vt-role > .vt-lead { max-width: 64ch; color: var(--color-muted); }
+  .vt-role > h2 { padding-bottom: var(--space-1); font-size: var(--text-xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); }
+  .vt-role > .vt-lead { max-width: 64ch; color: var(--color-text-secondary); }
 
-  .vt-comp { display: grid; gap: var(--space-3); padding: var(--space-6) 0; box-shadow: var(--hairline-top); margin-top: var(--space-5); }
+  .vt-comp { display: grid; gap: var(--space-3); padding: var(--space-6) 0; box-shadow: 0 calc(var(--stroke-1) * -1) 0 var(--color-divider); margin-top: var(--space-5); }
   .vt-comp-head { display: grid; gap: var(--space-1); max-width: 72ch; }
   .vt-comp-head h3 { font-size: var(--text-lg); font-weight: var(--weight-bold); }
-  .vt-comp-head p { color: var(--color-muted); font-size: var(--text-sm); }
-  .vt-comp-head .vt-api { color: var(--color-ink); }
+  .vt-comp-head p { color: var(--color-text-secondary); font-size: var(--text-sm); }
+  .vt-comp-head .vt-api { color: var(--color-text); }
 
   .vt-states { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: flex-start; }
   .vt-spec { margin: 0; display: grid; gap: var(--space-2); align-content: start; }
-  .vt-spec > figcaption { color: var(--color-muted); font-size: var(--text-xs); }
-  .vt-stage { padding: var(--space-4); border: var(--border) solid var(--color-line); border-radius: var(--radius-card); background: var(--color-bg); }
+  .vt-spec > figcaption { color: var(--color-text-secondary); font-size: var(--text-xs); }
+  .vt-stage { padding: var(--space-4); border: var(--stroke-1) solid var(--color-divider); border-radius: var(--radius-18); background: var(--color-page); }
   .vt-stage--phone { width: min(360px, 100%); }
   .vt-stage--flush { padding: 0; overflow: hidden; }
   .vt-spec--phone { width: min(360px, 100%); }
@@ -50,27 +78,27 @@
     width: min(360px, 100%);
     height: 300px;
     overflow: hidden;
-    border: var(--border) solid var(--color-line);
-    border-radius: var(--radius-card);
-    background: var(--color-bg);
+    border: var(--stroke-1) solid var(--color-divider);
+    border-radius: var(--radius-18);
+    background: var(--color-page);
     transform: translateZ(0);
   }
   .vt-screen--tall { height: 560px; }
   .vt-screen .shell { min-height: 100%; }
   .vt-screen .shell__main:has(> .state) { min-height: 0; }
 
-  .vt-shell-frame { width: min(390px, 100%); height: 720px; border: var(--border) solid var(--color-line); border-radius: var(--radius-card); background: var(--color-bg); }
+  .vt-shell-frame { width: min(390px, 100%); height: 720px; border: var(--stroke-1) solid var(--color-divider); border-radius: var(--radius-18); background: var(--color-page); }
 
   .vt-list { display: grid; gap: var(--space-2); max-width: 72ch; margin: 0; padding-left: var(--space-5); }
-  .vt-list li::marker { color: var(--color-muted); }
+  .vt-list li::marker { color: var(--color-text-secondary); }
 
-  .is-hover.button--primary, .is-hover.composer__send { background: var(--color-accent-hover); }
-  .is-hover.button--secondary { background: var(--color-line); }
-  .is-hover.input { border-color: var(--color-muted); }
-  .is-active.button { transform: scale(var(--press)); }
-  .is-focus { outline: var(--stroke) solid var(--color-focus); outline-offset: var(--stroke); }
+  .is-hover.button--primary, .is-hover.composer__send { background: var(--color-action-hover); }
+  .is-hover.button--secondary { background: var(--color-control-hover); }
+  .is-hover.input { border-color: var(--color-field-edge-hover); }
+  .is-active.button { transform: scale(var(--scale-98)); }
+  .is-focus { outline: var(--stroke-2) solid var(--color-focus); outline-offset: var(--stroke-2); }
   .is-focus.listing-card__link { outline: none; }
-  .is-focus.listing-card__link::after { outline: var(--stroke) solid var(--color-focus); outline-offset: var(--space-1); }
+  .is-focus.listing-card__link::after { outline: var(--stroke-2) solid var(--color-focus); outline-offset: var(--space-1); }
 </style>
 </head>
 <body>
@@ -78,10 +106,12 @@
 <div class="vt">
 
 <header class="vt-hero" id="overview">
+  <button class="chip theme-toggle vt-theme" type="button" aria-pressed="false"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon>Темна тема</button>
   <h1>Кіт компонентів Кутка</h1>
-  <p>Усі компоненти, що повторюються на двох і більше сторінках вайрфреймів, з усіма станами, які є в макетах. Значення — зі змінних <code>:root</code> у <code>kit.css</code>; тексти — з <code>microcopy.md</code> (колонка «Стало»). Пофарбовані компоненти мають збігатися з еталоном у <code>wireframes/</code>.</p>
+  <p>Усі компоненти, що повторюються на двох і більше сторінках вайрфреймів, з усіма станами, які є в макетах. Значення — з <code>tokens.css</code> (primitive → semantic), класи — з <code>components/</code>; тексти — з <code>microcopy.md</code> (колонка «Стало»). Пофарбовані компоненти мають збігатися з еталоном у <code>wireframes/</code>.</p>
   <p class="vt-files">
-    <a class="vt-link" href="kit.css">ui/kit.css</a>
+    <a class="vt-link" href="../tokens.css">tokens.css</a>
+    <a class="vt-link" href="../components/index.css">components/index.css</a>
     <a class="vt-link" href="shell.html">ui/shell.html</a>
     <a class="vt-link" href="inventory.md">ui/inventory.md</a>
     <a class="vt-link" href="../DESIGN.md">DESIGN.md</a>
@@ -146,7 +176,7 @@
         <header class="topbar topbar--person" style="position:static"><a class="topbar__back" href="#" aria-label="Назад до оголошення"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><a class="topbar__person" href="#"><span class="avatar"><img src="../visuals/person-iryna.jpg" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено 12 вересня"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></a><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button></header>
       </div><figcaption>з людиною і ⋯ «Заблокувати чи поскаржитися»</figcaption></figure>
       <figure class="vt-spec vt-spec--phone"><div class="vt-stage vt-stage--flush" style="position:relative">
-        <img src="../visuals/room-lukianivska-bedroom.jpg" alt="" style="width:100%;aspect-ratio:var(--ratio-photo);object-fit:cover">
+        <img src="../visuals/room-lukianivska-bedroom.jpg" alt="" style="width:100%;aspect-ratio:var(--ratio-4-3);object-fit:cover">
         <header class="topbar topbar--over-photo" style="--frame-status:0px"><a class="topbar__back" href="#" aria-label="Назад до результатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><span></span><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button></header>
       </div><figcaption>поверх фото</figcaption></figure>
     </div>
@@ -227,7 +257,7 @@
     <div class="vt-comp-head"><h3>Аватар і позначка перевірки</h3><p class="vt-api"><code>.avatar</code> <code>--md</code> <code>--lg</code> · <code>.avatar__mark</code></p><p>Екрани: listings, listing, profile, profile-empty. Позначка — 16px на малих аватарах, 24px на великому. На сірій поверхні обвідка позначки сіра (<code>--avatar-ring</code>).</p></div>
     <div class="vt-states">
       <figure class="vt-spec"><div class="vt-stage"><span class="avatar"><img src="../visuals/person-iryna.jpg" alt="Ірина"><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span></div><figcaption>28 · на білому</figcaption></figure>
-      <figure class="vt-spec"><div class="vt-stage" style="background:var(--color-surface)"><span class="avatar avatar--md" style="--avatar-ring:var(--color-surface)"><img src="../visuals/person-iryna.jpg" alt="Ірина"><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span></div><figcaption>48 · у сірому списку</figcaption></figure>
+      <figure class="vt-spec"><div class="vt-stage" style="background:var(--color-card)"><span class="avatar avatar--md" style="--avatar-ring:var(--color-card)"><img src="../visuals/person-iryna.jpg" alt="Ірина"><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span></div><figcaption>48 · у сірому списку</figcaption></figure>
       <figure class="vt-spec"><div class="vt-stage"><span class="avatar avatar--lg"><img src="../visuals/person-iryna.jpg" alt="Ірина"><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span></div><figcaption>84 · профіль</figcaption></figure>
       <figure class="vt-spec"><div class="vt-stage"><span class="avatar"><img src="../visuals/person-iryna.jpg" alt="Ірина"></span></div><figcaption>без позначки (шапка чату)</figcaption></figure>
     </div>
@@ -338,7 +368,7 @@
   </div>
 
   <div class="vt-comp">
-    <div class="vt-comp-head"><h3>Чипи</h3><p class="vt-api"><code>.chip</code> · <code>--selected</code> · ряд — <code>.chip-row</code> &gt; <code>__track</code></p><p>Екрани: listings*. Вибраний (чорнильний) — лише «Фільтри · N», відкриває шторку; решта показують значення. Ряд скролиться, правий край згасає.</p></div>
+    <div class="vt-comp-head"><h3>Чипи</h3><p class="vt-api"><code>.chip</code> · <code>--selected</code> · ряд — <code>.chip-row</code> &gt; <code>__track</code></p><p>Екрани: listings*. Вибраний (корал-чорнило) — лише «Фільтри · N», відкриває шторку; решта показують значення. Ряд скролиться, правий край згасає.</p></div>
     <div class="vt-states">
       <figure class="vt-spec"><span class="chip chip--selected"><iconify-icon icon="solar:tuning-2-linear" aria-hidden="true"></iconify-icon>Фільтри · 3</span><figcaption>вибраний</figcaption></figure>
       <figure class="vt-spec"><span class="chip">Шевченківський</span><figcaption>значення</figcaption></figure>

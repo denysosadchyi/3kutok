@@ -1,0 +1,4 @@
+/* Заголовок секції
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.section-title { padding-top: var(--space-4); font-size: var(--text-lg); font-weight: var(--weight-bold); }

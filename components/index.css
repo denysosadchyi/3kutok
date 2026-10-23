@@ -1,0 +1,47 @@
+/* Компоненти «Кутка» — збірка.
+   Підключати після tokens.css (він дає значення і шрифт Onest):
+     <link rel="stylesheet" href="tokens.css">
+     <link rel="stylesheet" href="components/index.css">
+   Порядок — як у колишньому ui/kit.css: від нього залежить каскад
+   однакових за специфічністю правил (напр. .verified-note після .group__row). */
+
+/* База */
+@import url("base.css");
+
+/* Навігація */
+@import url("shell.css");
+@import url("header.css");
+@import url("topbar.css");
+@import url("tabbar.css");
+@import url("actionbar.css");
+@import url("sheet.css");
+
+/* Картки й списки */
+@import url("card-list.css");
+@import url("listing-card.css");
+@import url("price-tag.css");
+@import url("avatar.css");
+@import url("profile-head.css");
+@import url("section-title.css");
+@import url("group.css");
+@import url("verified-note.css");
+@import url("person-row.css");
+@import url("hero-photo.css");
+@import url("gallery.css");
+@import url("listing-title.css");
+@import url("results-meta.css");
+
+/* Форми */
+@import url("button.css");
+@import url("chip-row.css");
+@import url("chip.css");
+@import url("field.css");
+
+/* Зворотний зв'язок */
+@import url("state.css");
+@import url("skeleton.css");
+
+/* Чат */
+@import url("chat-context.css");
+@import url("bubble.css");
+@import url("composer.css");

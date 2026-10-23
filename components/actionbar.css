@@ -1,0 +1,17 @@
+/* Панель дії — внизу, одна кнопка на всю ширину
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.actionbar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--z-3);
+  display: flex;
+  gap: var(--space-2);
+  /* Поля нижнього поясу — 12 зверху й знизу, як у .composer і .sheet__foot (D6/D7) */
+  padding: var(--space-3) var(--space-4) calc(var(--space-3) + var(--safe-bottom));
+  background: var(--color-page);
+  box-shadow: 0 calc(var(--stroke-1) * -1) 0 var(--color-divider);
+}
+.actionbar > * { flex: 1; }

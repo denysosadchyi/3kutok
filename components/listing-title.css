@@ -1,0 +1,11 @@
+/* Назва оголошення — блок назви й ціни
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.listing-title { display: grid; gap: var(--space-0-5); padding: var(--space-0-5) 0; }
+.listing-title__name {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-1-25);
+}
+.listing-title__meta { color: var(--color-text-secondary); font-size: var(--text-sm); text-wrap: pretty; }

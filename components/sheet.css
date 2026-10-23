@@ -1,0 +1,53 @@
+/* Шторка знизу — на <details>: затемнення, панель, ручка, голова, тіло, підвал
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.sheet { flex: none; }
+.sheet > summary { list-style: none; }
+.sheet > summary::-webkit-details-marker { display: none; }
+.sheet[open]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-5);
+  background: var(--color-sheet-scrim);
+}
+.sheet__panel {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--z-6);
+  display: flex;
+  flex-direction: column;
+  max-height: var(--pct-86);
+  border-radius: var(--radius-18) var(--radius-18) 0 0;
+  background: var(--color-sheet);
+  box-shadow: var(--shadow-far);
+}
+.sheet__grabber {
+  width: var(--size-36);
+  height: var(--size-5);
+  margin: var(--space-2) auto 0;
+  border-radius: var(--radius-3);
+  background: var(--color-grabber);
+}
+.sheet__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  padding: var(--space-2) var(--space-2) 0 var(--space-4);
+}
+.sheet__title { color: var(--color-text); font-size: var(--text-lg); font-weight: var(--weight-bold); text-align: left; }
+.sheet__head .button--text { justify-self: end; }
+.sheet__body {
+  display: grid;
+  gap: var(--space-3-5);
+  padding: var(--space-2) var(--space-4) var(--space-4);
+  overflow-y: auto;
+}
+.sheet__body fieldset { display: grid; gap: var(--space-3-5); margin: 0; padding: 0; border: 0; }
+/* Поля нижнього поясу — 12, як у .actionbar і .composer (D6/D7) */
+.sheet__foot {
+  padding: var(--space-3) var(--space-4) calc(var(--space-3) + var(--safe-bottom));
+  box-shadow: 0 calc(var(--stroke-1) * -1) 0 var(--color-divider);
+}

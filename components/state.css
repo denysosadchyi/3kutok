@@ -1,0 +1,17 @@
+/* Стан — по центру: порожньо / знято / помилка
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.state {
+  display: grid;
+  flex: 1;
+  align-content: center;
+  justify-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+.state__icon { display: grid; place-items: center; margin-bottom: var(--space-2); color: var(--color-state-icon); font-size: var(--size-72); }
+.state--error .state__icon { color: var(--color-error); }
+.state__title { max-width: var(--measure-26); font-size: var(--text-lg); font-weight: var(--weight-bold); text-wrap: balance; }
+.state__text { max-width: var(--measure-30); color: var(--color-text-secondary); text-wrap: pretty; }
+.state__actions { display: grid; gap: var(--space-2); width: 100%; margin-top: var(--space-2); }

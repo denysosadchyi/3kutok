@@ -6,8 +6,40 @@
 <title>Оболонка — Куток</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="kit.css">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/index.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<script>
+/* Темна тема — експеримент (tokens.css, [data-theme="dark"]), не рішення продукту */
+(function () {
+  var KEY = "kutok-theme", root = document.documentElement;
+  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function apply(dark) {
+    if (dark) root.setAttribute("data-theme", "dark"); else root.removeAttribute("data-theme");
+    document.querySelectorAll(".theme-toggle").forEach(function (b) {
+      b.setAttribute("aria-pressed", dark ? "true" : "false");
+      var i = b.querySelector("iconify-icon");
+      if (i) i.setAttribute("icon", dark ? "solar:sun-2-linear" : "solar:moon-linear");
+    });
+  }
+  apply(saved() === "dark");
+  document.addEventListener("DOMContentLoaded", function () { apply(saved() === "dark"); });
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest(".theme-toggle");
+    if (!b) return;
+    var dark = root.getAttribute("data-theme") !== "dark";
+    apply(dark);
+    try { localStorage.setItem(KEY, dark ? "dark" : "light"); } catch (err) {}
+  });
+  window.addEventListener("storage", function (e) { if (e.key === KEY) apply(e.newValue === "dark"); });
+})();
+</script>
+<style>
+/* ЕКСПЕРИМЕНТ: перемикач темної теми — не рішення продукту, у новий екран не
+   копіювати. Те саме розміщення, що в wireframes/screens.css. */
+.header__top:has(> .theme-toggle) { position: relative; }
+.header__top > .theme-toggle { position: absolute; top: var(--space-2); right: var(--space-2); }
+</style>
 </head>
 <!--
   Оболонка «Кутка» як розмітка. Новий екран копіює цей файл і заповнює
@@ -27,6 +59,7 @@
 
 <header class="header">
   <div class="header__top">
+    <button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button>
     <h1 class="header__title">Результати пошуку</h1>
     <p class="header__subtitle">Київ · кімнати та співмешканці</p>
   </div>

@@ -1,0 +1,17 @@
+/* Поле з підписом — список, число, дата тільки для читання
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.field { display: grid; gap: var(--space-1); }
+.field__label { color: var(--color-text); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+.input {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--size-48);
+  padding: 0 var(--space-4);
+  border: var(--stroke-1) solid var(--color-field-edge);
+  border-radius: var(--radius-14);
+  background: var(--color-control);
+  color: var(--color-text);
+}
+select.input { appearance: none; }
+.input:hover { border-color: var(--color-field-edge-hover); }

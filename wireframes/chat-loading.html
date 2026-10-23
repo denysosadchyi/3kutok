@@ -7,12 +7,38 @@
 <title>Чат з Іриною — завантаження</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="../ui/kit.css">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/index.css">
 <link rel="stylesheet" href="screens.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<script>
+/* Темна тема — експеримент (tokens.css, [data-theme="dark"]), не рішення продукту */
+(function () {
+  var KEY = "kutok-theme", root = document.documentElement;
+  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function apply(dark) {
+    if (dark) root.setAttribute("data-theme", "dark"); else root.removeAttribute("data-theme");
+    document.querySelectorAll(".theme-toggle").forEach(function (b) {
+      b.setAttribute("aria-pressed", dark ? "true" : "false");
+      var i = b.querySelector("iconify-icon");
+      if (i) i.setAttribute("icon", dark ? "solar:sun-2-linear" : "solar:moon-linear");
+    });
+  }
+  apply(saved() === "dark");
+  document.addEventListener("DOMContentLoaded", function () { apply(saved() === "dark"); });
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest(".theme-toggle");
+    if (!b) return;
+    var dark = root.getAttribute("data-theme") !== "dark";
+    apply(dark);
+    try { localStorage.setItem(KEY, dark ? "dark" : "light"); } catch (err) {}
+  });
+  window.addEventListener("storage", function (e) { if (e.key === KEY) apply(e.newValue === "dark"); });
+})();
+</script>
 </head>
 <body class="shell shell--composer">
-<header class="topbar topbar--person"><a class="topbar__back" href="listing.html" aria-label="Назад до оголошення"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><a class="topbar__person" href="profile.html"><span class="avatar"><img src="../visuals/person-iryna.jpg" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено 12 вересня"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено 12 вересня</span></span></a><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button></header>
+<header class="topbar topbar--person"><a class="topbar__back" href="listing.html" aria-label="Назад до оголошення"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><a class="topbar__person" href="profile.html"><span class="avatar"><img src="../visuals/person-iryna.jpg" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено 12 вересня"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено 12 вересня</span></span></a><span class="theme-slot"><button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button></span></header>
 <h1 class="sr-only">Чат з Іриною</h1>
 <main class="shell__main" id="content" aria-busy="true">
 <a class="chat-context" href="listing.html"><img class="chat-context__thumb" src="../visuals/room-lukianivska-bedroom.jpg" alt="Фото кімнати"><span class="chat-context__text"><strong class="chat-context__title">Кімната біля Лук’янівської</strong><span class="chat-context__meta">10 500 грн/міс · з 1 жовтня · номер підтверджено 12 вересня</span></span><iconify-icon class="chevron" icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></a>

@@ -1,7 +1,8 @@
 /* Разові блоки екранів «Кутка» — те, що стоїть лише на одній сторінці
    (ui/inventory.md, розділ «Разове») і тому не входить у кіт.
-   Усі компоненти, що повторюються, — у ../ui/kit.css; значення тут теж
-   беремо тільки зі змінних кіта. */
+   Усі компоненти, що повторюються, — у ../components/; значення тут теж
+   беремо тільки з ../tokens.css: колір — semantic (--color-*), геометрія —
+   primitive напряму. */
 
 /* listings — пігулка автора на фото картки */
 .card-author {
@@ -14,11 +15,11 @@
   margin: 0;
   padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
   border-radius: var(--radius-round);
-  background: var(--color-bg);
-  color: var(--color-ink);
+  background: var(--color-over-photo);
+  color: var(--color-text);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
-  box-shadow: var(--shadow-tag);
+  box-shadow: var(--shadow-near);
 }
 
 /* listings — сортування: кнопка в рядку під фільтрами + шторка з варіантами */
@@ -26,27 +27,27 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  min-height: var(--touch);
-  color: var(--color-ink);
+  min-height: var(--size-48);
+  color: var(--color-text);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   cursor: pointer;
 }
-.sort svg { width: var(--icon-sm); height: var(--icon-sm); }
-.sort-options { margin: 0; padding: var(--space-2) var(--gutter) calc(var(--space-5) + var(--safe-bottom)); list-style: none; }
+.sort svg { width: var(--size-16); height: var(--size-16); }
+.sort-options { margin: 0; padding: var(--space-2) var(--space-4) calc(var(--space-5) + var(--safe-bottom)); list-style: none; }
 .sort-options a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: var(--touch);
+  min-height: var(--size-48);
   padding: var(--space-3) 0;
-  color: var(--color-ink);
+  color: var(--color-text);
   font-size: var(--text-md);
   text-decoration: none;
 }
-.sort-options li + li a { box-shadow: var(--hairline-top); }
+.sort-options li + li a { box-shadow: 0 calc(var(--stroke-1) * -1) 0 var(--color-divider); }
 .sort-options a[aria-current] { font-weight: var(--weight-bold); }
-.sort-options iconify-icon { font-size: var(--icon-md); color: var(--color-link); }
+.sort-options iconify-icon { font-size: var(--size-20); color: var(--color-current); }
 
 /* listing — лічильник фото на головному фото */
 .photo-count {
@@ -55,8 +56,8 @@
   bottom: var(--space-3);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-round);
-  background: var(--color-scrim-photo);
-  color: var(--color-on-ink);
+  background: var(--color-over-photo-dim);
+  color: var(--color-text-on-photo);
   font-size: var(--text-xs);
   font-weight: var(--weight-medium);
 }
@@ -64,8 +65,8 @@
 /* listing — абзац опису на сірій поверхні */
 .listing-description {
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-card);
-  background: var(--color-surface);
+  border-radius: var(--radius-18);
+  background: var(--color-card);
 }
 
 /* profile-empty — компактний стан усередині секції */
@@ -73,11 +74,22 @@
   display: grid;
   gap: var(--space-2);
   padding: var(--space-5);
-  border-radius: var(--radius-card);
-  background: var(--color-surface);
+  border-radius: var(--radius-18);
+  background: var(--color-card);
 }
-.state-note__title { max-width: var(--measure-state-title); font-size: var(--text-md); font-weight: var(--weight-bold); }
-.state-note__text { max-width: var(--measure-state-text); color: var(--color-muted); text-wrap: pretty; }
+.state-note__title { max-width: var(--measure-26); font-size: var(--text-md); font-weight: var(--weight-bold); }
+.state-note__text { max-width: var(--measure-30); color: var(--color-text-secondary); text-wrap: pretty; }
 
 /* chat — розділювач дня */
-.chat-day { color: var(--color-muted); font-size: var(--text-xs); text-align: center; }
+.chat-day { color: var(--color-text-secondary); font-size: var(--text-xs); text-align: center; }
+
+/* ── ЕКСПЕРИМЕНТ: перемикач темної теми — не рішення продукту ──
+   Стрес-тест semantic-шару (tokens.css, [data-theme="dark"]). Кнопка —
+   наявний .topbar__action, тут лише її розміщення в навпанелях. Прибрати
+   разом із темою, якщо продукт її не лишить. */
+/* App bar з дією ⋯: кнопка теми ліворуч від неї, права комірка сітки та сама */
+.theme-slot { display: flex; justify-self: end; }
+.topbar--over-photo .theme-slot { gap: var(--space-2); }
+/* Шапка listings*: у правому верхньому куті, по центру першого рядка заголовка */
+.header__top:has(> .theme-toggle) { position: relative; }
+.header__top > .theme-toggle { position: absolute; top: var(--space-2); right: var(--space-2); }

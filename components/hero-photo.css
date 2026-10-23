@@ -1,0 +1,8 @@
+/* Головне фото — оголошення на всю ширину, під статус-бар
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.hero-photo { position: relative; margin: 0 calc(var(--space-4) * -1); }
+.hero-photo > img,
+.hero-photo > .skeleton { width: 100%; aspect-ratio: var(--ratio-4-3-6); border-radius: 0; object-fit: cover; }
+/* Бирка на головному фото — знизу ліворуч: верх зайнятий кнопками шапки */
+.hero-photo > .price-tag { top: auto; bottom: var(--space-4); left: var(--space-4); }

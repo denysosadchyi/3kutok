@@ -1,0 +1,19 @@
+/* Карусель — фото квартири, горизонтальний скрол зі snap
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.gallery {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0 calc(var(--space-4) * -1);
+  padding: 0 var(--space-4) var(--space-1);
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--space-4);
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.gallery::-webkit-scrollbar { display: none; }
+.gallery__item { flex: 0 0 var(--pct-42); scroll-snap-align: start; }
+.gallery__item > img,
+.gallery__item > .skeleton { width: 100%; aspect-ratio: var(--ratio-4-3); border-radius: var(--radius-14); object-fit: cover; }

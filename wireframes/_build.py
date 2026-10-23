@@ -9,15 +9,57 @@ from pathlib import Path
 
 OUT = Path(__file__).resolve().parent
 
-# Усі екрани зібрані з кіта компонентів (урок 7): ../ui/kit.css — компоненти
-# й змінні, screens.css — разові блоки. Іконки — iconify (Streamline Freehand
+# Темна тема — ЕКСПЕРИМЕНТ, стрес-тест semantic-шару, не рішення продукту
+# (tokens.css, блок [data-theme="dark"]). Скрипт стоїть у <head>: ставить
+# data-theme на <html> до першого рендера (без блимання), пам'ятає вибір у
+# localStorage і синхронізує кнопки .theme-toggle (aria-pressed, іконка).
+# Той самий текст скрипта — у ui/kit.html і ui/shell.html.
+THEME_SCRIPT = """<script>
+/* Темна тема — експеримент (tokens.css, [data-theme="dark"]), не рішення продукту */
+(function () {
+  var KEY = "kutok-theme", root = document.documentElement;
+  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function apply(dark) {
+    if (dark) root.setAttribute("data-theme", "dark"); else root.removeAttribute("data-theme");
+    document.querySelectorAll(".theme-toggle").forEach(function (b) {
+      b.setAttribute("aria-pressed", dark ? "true" : "false");
+      var i = b.querySelector("iconify-icon");
+      if (i) i.setAttribute("icon", dark ? "solar:sun-2-linear" : "solar:moon-linear");
+    });
+  }
+  apply(saved() === "dark");
+  document.addEventListener("DOMContentLoaded", function () { apply(saved() === "dark"); });
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest(".theme-toggle");
+    if (!b) return;
+    var dark = root.getAttribute("data-theme") !== "dark";
+    apply(dark);
+    try { localStorage.setItem(KEY, dark ? "dark" : "light"); } catch (err) {}
+  });
+  window.addEventListener("storage", function (e) { if (e.key === KEY) apply(e.newValue === "dark"); });
+})();
+</script>"""
+# Кнопка теми — наявний клас кіта .topbar__action (поверх фото — кругла на
+# затемненні, як ⋯), без нового компонента. Розміщення — у screens.css.
+THEME = '<button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button>'
+
+
+def end_slot(action=""):
+    """Права комірка app bar: кнопка теми, а за нею — наявна дія (⋯), якщо є."""
+    return f'<span class="theme-slot">{THEME}{action}</span>' if action else THEME
+
+
+# Усі екрани зібрані з кіта компонентів (урок 7): ../tokens.css — змінні
+# (primitive + semantic), ../components/index.css — компоненти, screens.css —
+# разові блоки. Іконки — iconify (Streamline Freehand
 # і Solar linear).
 HEAD = """
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="../ui/kit.css">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/index.css">
 <link rel="stylesheet" href="screens.css">
-<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>"""
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>""" + "\n" + THEME_SCRIPT
 # Класи вайрфреймів → модифікатори оболонки кіта. status-dark — лише позначка
 # для хабу уроків (темний статус-бар над світлим скелетоном), стилів не має.
 SHELL = {"has-tabbar": "shell--tabbar", "has-actionbar": "shell--actionbar", "has-composer": "shell--composer", "photo-top": "shell--photo-top", "status-dark": "status-dark"}
@@ -106,7 +148,7 @@ def appbar(title, back_href=None, back_label="Назад", action="", over_photo
     tag = "h1" if heading else "p"
     head = f'<{tag} class="topbar__title">{title}</{tag}>' if title else "<span></span>"
     mod = " topbar--over-photo" if over_photo else ""
-    return f'<header class="topbar{mod}">{back}{head}{action or "<span></span>"}</header>'
+    return f'<header class="topbar{mod}">{back}{head}{end_slot(action)}</header>'
 
 
 # ---------- Результати пошуку ----------
@@ -145,7 +187,7 @@ def filters(district, budget, date, date_label):
 
 
 def search_head(sub):
-    return f'<header class="header"><div class="header__top"><h1 class="header__title">Результати пошуку</h1><p class="header__subtitle">{sub}</p></div></header>'
+    return f'<header class="header"><div class="header__top">{THEME}<h1 class="header__title">Результати пошуку</h1><p class="header__subtitle">{sub}</p></div></header>'
 
 
 def card(title, price, meta, photo, href="listing.html", author=None):
@@ -464,7 +506,7 @@ page(
 # ---------- Чат ----------
 
 JOB_CHAT = "Related 4 — перевести придатний варіант у взаємну домовленість"
-CHAT_BAR = f"""<header class="topbar topbar--person"><a class="topbar__back" href="listing.html" aria-label="Назад до оголошення">{CHEVRON_LEFT}</a><a class="topbar__person" href="profile.html"><span class="avatar"><img src="{AUTHORS[0][1]}" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено 12 вересня">{lin("shield-check")}<span class="sr-only">Номер підтверджено 12 вересня</span></span></a>{REPORT}</header>
+CHAT_BAR = f"""<header class="topbar topbar--person"><a class="topbar__back" href="listing.html" aria-label="Назад до оголошення">{CHEVRON_LEFT}</a><a class="topbar__person" href="profile.html"><span class="avatar"><img src="{AUTHORS[0][1]}" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено 12 вересня">{lin("shield-check")}<span class="sr-only">Номер підтверджено 12 вересня</span></span></a>{end_slot(REPORT)}</header>
 <h1 class="sr-only">Чат з Іриною</h1>"""
 CHAT_CONTEXT = f"""<a class="chat-context" href="listing.html"><img class="chat-context__thumb" src="{ROOM_PHOTOS[0][0]}" alt="Фото кімнати"><span class="chat-context__text"><strong class="chat-context__title">Кімната біля Лук’янівської</strong><span class="chat-context__meta">10\u00a0500\u00a0грн/міс · з\u00a01\u00a0жовтня · номер\u00a0підтверджено 12\u00a0вересня</span></span>{CHEVRON_RIGHT}</a>"""
 

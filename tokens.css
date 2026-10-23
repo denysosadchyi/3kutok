@@ -1,0 +1,558 @@
+@import url("https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&display=swap");
+
+/* Токени «Кутка» — два рівні.
+
+   PRIMITIVE — сирі значення без ролей: що це за колір чи довжина, а не
+   де вона стоїть. Сюди переїхали всі значення з :root у ui/kit.css (і
+   літерали з його класів, L2–L9 з tokens-audit.md). Однакові значення
+   під різними іменами злито в одне; поруч — «було …», щоб міграція кіта
+   була механічною. Дрейф D1–D10 НЕ зведено: це рефакторинг без зміни
+   вигляду, обчислені стилі мусять збігатися з ui/kit.css. Розбіжні
+   значення лишено окремими primitive з позначкою «[Dn]». Критика кроку
+   06 (2026-10-23) звела D3, D6, D7 і D10 — свідома зміна вигляду,
+   причини в DESIGN.md; D11 зведено ще на кроці 2, D12 — не в токенах
+   (див. зведення в кінці файлу).
+
+   SEMANTIC — лише ролі кольору. Кожен токен — var() на primitive, у
+   коментарі — вживання з tokens-audit.md (розділи 1.1 і 3), з яких роль
+   виросла. Правила:
+   — геометрія (відступ, радіус, розмір, тінь) semantic-токена не має:
+     компонент бере її з primitive напряму;
+   — імена — зі словника tokens-audit.md і DESIGN.md;
+   — колір, що стоїть рівно в одному класі, повноцінною роллю не стає —
+     він в окремому блоці «Одиничні» і в списку «До критики кроку 06».
+
+   Нових значень немає: кожен колір і розмір був у ui/kit.css. Виняток —
+   чотири primitive з позначкою «[крок 06]»: їх вимагав стрес-тест темною
+   темою, у світлій темі вони не вжиті.
+
+   Підключають: wireframes/*.html, ui/kit.html, ui/shell.html (разом з
+   components/index.css). Темна тема — експеримент, блок після semantic. */
+
+:root {
+  /* ═══════════════════════ PRIMITIVE ═══════════════════════ */
+
+  /* ── Колір ── */
+  --white: #ffffff;              /* було --color-bg і --color-on-ink */
+  --grey-50: #f4f5f6;            /* було --color-surface */
+  --grey-100: #e6e8eb;           /* було --color-line */
+  --grey-400: #868c94;           /* було --color-field-edge; 3.1:1 до --grey-50 */
+  --grey-600: #596069;           /* було --color-muted */
+  --grey-800: #2b2f34;           /* [крок 06] темна тема: наведення на контрол, заглушка на картці */
+  --grey-900: #202327;           /* [крок 06] темна тема: картка, контрол, шторка — 1.33:1 до --black */
+  --ink: #15171a;                /* було --color-ink і --color-on-accent */
+  --coral: #ff9b85;              /* було --color-accent */
+  --coral-deep: #ff8a75;         /* було --color-accent-hover */
+  --coral-dark: #b94a40;         /* було --color-link; 5.10:1 на --white */
+  --coral-light: #ffd0c4;        /* [крок 06] темна тема: поточний пункт і текстова дія; 15.07:1 на --black,
+                                    1.47:1 до --coral — вибраний чип більше не збігається з кнопкою */
+  --green: #0a7d45;              /* було --color-verified і --color-focus */
+  --green-light: #16a865;        /* [крок 06] темна тема: довіра; 5.13:1 на --grey-900, 6.82:1 на --black */
+  --red: #b42318;                /* було --color-error */
+  --black: #000000;              /* [D1] колір тіней (rgb(0 0 0 / …) у --shadow-tag, --shadow-float) */
+  --transparent: transparent;    /* було --color-transparent */
+
+  /* Чорнило з прозорістю = --ink (21 23 26) з альфою. Записано rgb(), а
+     не color-mix(… var(--ink) …): color-mix і rgb(from …) обчислюються
+     в color(srgb …), а kit.css дає rgba(21, 23, 26, …) — обчислені стилі
+     мусять збігатися. [D2] Тож rgb(21 23 26) лишається переписаним
+     вручну; не зведено — рефакторинг без зміни вигляду. */
+  --ink-38: rgb(21 23 26 / 0.38); /* було --color-scrim */
+  --ink-60: rgb(21 23 26 / 0.6);  /* було --color-scrim-photo; ≥4.5:1 під білим */
+
+  /* Чорний з прозорістю = --black з альфою — для тіней (rgb(), а не
+     color-mix — з тієї ж причини, що й вище). [D1] Тіні в kit.css на
+     чистому чорному, а не на чорнилі; не зведено — рефакторинг без зміни
+     вигляду, зведення — рішення критики кроку 06. */
+  --black-12: rgb(0 0 0 / 0.12); /* було в --shadow-float */
+  --black-14: rgb(0 0 0 / 0.14); /* було в --shadow-tag */
+
+  /* ── Шрифт ── */
+  --font-onest: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif; /* було --font-ui */
+  --weight-regular: 400;         /* у кіті не вжито (аудит 2.1) — лишено як значення шкали */
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --tracking-tight: -0.01em;     /* було --tracking-head */
+  --text-xs: 0.75rem;            /* 12 */
+  --text-sm: 0.875rem;           /* 14 */
+  --text-md: 1rem;               /* 16 */
+  --text-lg: 1.1875rem;          /* 19 */
+  --text-xl: 1.4375rem;          /* 23 */
+  /* [D10] Зведено на кроці 06 до двох з ієрархії DESIGN.md: 1.25 —
+     назви (було й 1.2 у .topbar__name, .topbar__verified), 1.45 — текст
+     (було й 1.35 у .verified-note__text, 1.4 у .composer__input). */
+  --leading-1-25: 1.25;          /* було --leading-tight, --leading-name */
+  --leading-1-45: 1.45;          /* було --leading-body, --leading-note, --leading-input */
+  --measure-26: 26ch;            /* було --measure-state-title */
+  --measure-30: 30ch;            /* було --measure-state-text */
+
+  /* ── Відступи (крок 4 + половинки) ── */
+  --space-px: 1px;
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-1-5: 6px;
+  --space-2: 8px;
+  /* [D6/D7] Зведено на кроці 06: поля нижніх поясів (.actionbar,
+     .composer, .sheet__foot) — --space-3 зверху й знизу; було 10 / 12 / 20. */
+  --space-3: 12px;
+  --space-3-5: 14px;
+  --space-4: 16px;               /* також було --gutter (бічне поле екрана) */
+  --space-5: 24px;
+  --space-6: 32px;               /* також було --fade (згасання ряду чипів) */
+  --space-7: 48px;
+
+  /* ── Радіуси ── */
+  --radius-3: 3px;               /* було --radius-grabber */
+  --radius-4: 4px;               /* було --radius-tail */
+  --radius-8: 8px;               /* було --radius-tag */
+  --radius-14: 14px;             /* було --radius-control */
+  --radius-18: 18px;             /* було --radius-card. [D5] .chat-context — картка на
+                                    сірому, але на --radius-14, а не 18, як .group;
+                                    не зведено — рішення критики кроку 06 */
+  --radius-round: 999px;
+  /* [D4] Кути фото 18 / 14 / 8 / 0 не зведено: DESIGN.md «Shapes» прямо
+     ставить радіус за розміром кадру — 18 фото в картці, 14 плитка
+     каруселі, 8 мініатюра 48px у чаті, 0 фото на всю ширину. Це рішення,
+     а не дрейф; якщо ні — питання до критики. */
+
+  /* ── Лінії ── */
+  --stroke-1: 1px;               /* було --border */
+  --stroke-2: 2px;               /* було --stroke */
+
+  /* ── Розміри ── */
+  --size-5: 5px;                 /* було --grabber-height */
+  --size-8: 8px;                 /* було --tag-hole, --blur-photo */
+  --size-10: 10px;               /* було --tag-hole-x */
+  --size-12: 12px;               /* було --icon-xs (не вжито), --tag-notch. [D9] іконка
+                                    малої позначки .avatar__mark — на кеглі --text-xs,
+                                    не на розмірі; не зведено — рішення критики кроку 06 */
+  --size-16: 16px;               /* було --icon-sm, --mark-sm */
+  --size-18: 18px;               /* було --tabbar-wave-height */
+  --size-20: 20px;               /* було --icon-md */
+  --size-22: 22px;               /* було --icon-nav */
+  --size-24: 24px;               /* було --icon-lg, --mark-lg */
+  --size-28: 28px;               /* було --avatar-sm, --meta-height, --tag-pad-left */
+  --size-36: 36px;               /* було --chip-height, --grabber-width */
+  --size-48: 48px;               /* було --touch, --appbar, --avatar-md, --hit. [D3] зведено
+                                    на кроці 06: кнопки шапки і .person-row теж 48 */
+  --size-56: 56px;               /* було --tabbar; і ширина капсули вкладки (24 + 32) */
+  --size-68: 68px;               /* було --actionbar */
+  --size-72: 72px;               /* було --icon-state */
+  --size-76: 76px;               /* було --composer-reserve. [D8] висота стану в чаті
+                                    віднімає не 76, а --size-48 + --space-6 = 80;
+                                    не зведено — рішення критики кроку 06 */
+  --size-84: 84px;               /* було --avatar-lg */
+  --size-112: 112px;             /* було --composer-max */
+  --size-220: 220px;             /* було --title-max */
+
+  /* Частки й пропорції */
+  --pct-40: 40%;                 /* було --sk-w40 */
+  --pct-42: 42%;                 /* було --gallery-item */
+  --pct-50: 50%;                 /* [L5] літерал у .price-tag і .price-tag::before */
+  --pct-52: 52%;                 /* було --sk-bubble-short */
+  --pct-60: 60%;                 /* було --sk-w60 */
+  --pct-70: 70%;                 /* було --sk-title, --sk-bubble */
+  --pct-76: 76%;                 /* було --sk-bubble-tall */
+  --pct-78: 78%;                 /* було --bubble-max */
+  --pct-86: 86%;                 /* було --sheet-max */
+  --ratio-4-3: 4 / 3;            /* було --ratio-photo */
+  --ratio-4-3-6: 4 / 3.6;        /* було --ratio-hero */
+  --scale-98: 0.98;              /* було --press */
+  --tilt-4: -4deg;               /* було --tag-tilt */
+  --viewport-height: 100dvh;     /* [L7] літерал у .shell і висоті стану */
+
+  /* Безпечні зони */
+  --safe-top: env(safe-area-inset-top);       /* [L2] був літералом-фолбеком у .topbar--over-photo */
+  --safe-bottom: env(safe-area-inset-bottom);
+
+  /* Шари */
+  --z-1: 1;                      /* [L4] літерал у .tabbar__item */
+  --z-3: 3;                      /* було --z-bar */
+  --z-4: 4;                      /* було --z-nav */
+  --z-5: 5;                      /* було --z-scrim */
+  --z-6: 6;                      /* було --z-sheet */
+
+  /* Тіні — геометрія + колір, тож лишаються primitive (див. [D1]) */
+  --shadow-near: 0 4px 10px var(--black-14);  /* було --shadow-tag */
+  --shadow-far: 0 8px 24px var(--black-12);   /* було --shadow-float */
+  /* --hairline-top прибрано: це геометрія + роль. [D11] Компонент
+     збирає лінію сам — 0 ∓--stroke-1 0 var(--color-divider) — однаково
+     зверху (.actionbar, .composer…) і знизу (.topbar--person). */
+
+  /* Хвиля над нижнім меню: лише маска, колір дає фон */
+  --wave-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20390%2018%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M0%2018%20V14%20H18%20C40%2014%2038%201%2065%201%20C92%201%2090%2014%20112%2014%20H148%20C170%2014%20168%201%20195%201%20C222%201%20220%2014%20242%2014%20H278%20C300%2014%20298%201%20325%201%20C352%201%20350%2014%20372%2014%20H390%20V18%20Z%22/%3E%3C/svg%3E"); /* було --tabbar-wave */
+
+  /* Рух */
+  --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+  --duration-180: 180ms;         /* було --duration */
+
+  /* Похідні з kit.css не переносяться як значення — компонент рахує сам:
+     --tab-icon-box-w = --size-24 + --space-6 (= --size-56),
+     --tab-icon-box-h = --size-24 + --space-2, --tab-lift = −--space-4,
+     --tab-icon-drop = --space-1. Локальні --avatar-ring і --frame-status
+     — змінні компонентів, лишаються в кіті. */
+
+
+  /* ═══════════════════════ SEMANTIC (лише колір) ═══════════════════════ */
+
+  /* ── Фони ── */
+
+  /* Фон сторінки. body; закріплені смуги .header, .topbar, .tabbar
+     (+ ::after хвиля), .actionbar, .composer; кінець згасання
+     .chip-row::after; кільце .avatar__mark поза групою. */
+  --color-page: var(--white);
+
+  /* Фон картки на сторінці. .group, .listing-description, .state-note,
+     .chat-context, чужа .bubble; кільце .avatar__mark усередині .group
+     (--avatar-ring). */
+  --color-card: var(--grey-50);
+
+  /* Фон контролу. .button--secondary, .chip, .input, .composer__input. */
+  --color-control: var(--grey-50);
+
+  /* Заглушка на місці вмісту. .skeleton (усі *-loading), фото, що не
+     завантажилось: .listing-card__photo, .avatar > img. */
+  --color-stub: var(--grey-50);
+
+  /* Біла річ поверх фото. .price-tag (бирка), .card-author (пігулка автора). */
+  --color-over-photo: var(--white);
+
+  /* Затемнення під текстом чи іконкою на фото. Кнопки .topbar--over-photo,
+     .photo-count. */
+  --color-over-photo-dim: var(--ink-60);
+
+  /* Інверсія: темний фон «мого». .bubble--mine. До правки 2026-10-16 тут був
+     і .chip--selected — тепер він на --color-current, тож роль тримається
+     одним класом (див. «До критики кроку 06»). */
+  --color-inverted: var(--ink);
+
+  /* ── Межі ── */
+
+  /* Тонкий розділювач. Колишній --hairline-top: .actionbar, .sheet__foot,
+     .composer, .group__row + .group__row, .sort-options li + li;
+     лінія під .topbar--person. */
+  --color-divider: var(--grey-100);
+
+  /* Межа поля. .input, .composer__input. */
+  --color-field-edge: var(--grey-400);
+
+  /* ── Текст ── */
+
+  /* Текст основний. body і все, що успадковує; явно — .sheet__title,
+     .field__label, .chip, .price-tag, .card-author, .sort, .sort-options a,
+     .bubble, .input, .button--secondary. */
+  --color-text: var(--ink);
+
+  /* Текст другорядний. Усі __meta, __caption, .header__subtitle,
+     .group__label, .state__text, .state-note__text, .verified-note__limit,
+     .results-meta, .bubble__time, .chat-day; ::placeholder. */
+  --color-text-secondary: var(--grey-600);
+
+  /* Неактивне. .tabbar__item (не поточна вкладка), .chevron, іконка
+     .composer__send[aria-disabled]. Збігається з другорядним текстом —
+     аудит M7: клікабельна вкладка виглядає як вимкнена дія. */
+  --color-inactive: var(--grey-600);
+
+  /* Текст на інверсії. .bubble--mine (див. --color-inverted). */
+  --color-text-on-inverted: var(--white);
+
+  /* Текст на фото. Кнопки .topbar--over-photo, .photo-count. */
+  --color-text-on-photo: var(--white);
+
+  /* ── Дія ── */
+
+  /* Головна дія. .button--primary, .composer__send. */
+  --color-action: var(--coral);
+
+  /* Головна дія під курсором. .button--primary:hover, .composer__send:hover. */
+  --color-action-hover: var(--coral-deep);
+
+  /* Текст на головній дії. .button--primary, .composer__send. */
+  --color-text-on-action: var(--ink);
+
+  /* Поточний пункт. .tabbar__item[aria-current] (вкладка), галочка
+     .sort-options (вибране сортування), заливка .chip--selected
+     («Фільтри · N», правка в макеті 2026-10-16, DESIGN.md «Chips»). Аудит M1: виросло з --color-link,
+     яке жодне посилання не бере. «Скасувати» (.button--text) на тому ж
+     коралі, але стоїть сам — див. «До критики кроку 06». */
+  --color-current: var(--coral-dark);
+
+  /* ── Довіра ── */
+
+  /* Номер підтверджено. .avatar__mark (фон), .topbar__verified,
+     .verified-note__icon, .verified-note__title. */
+  --color-verified: var(--green);
+
+  /* Кільце фокусу. :focus-visible, .listing-card__link:focus-visible::after.
+     Той самий --green, що й довіра (аудит M3) — нового кольору тут не
+     вигадано; див. «До критики кроку 06». */
+  --color-focus: var(--green);
+
+  /* ── Небезпека ── */
+
+  /* Помилка. .state--error .state__icon. Одна адреса, але роль справжня —
+     наступні вжитки: report і block (рішення критики кроку 06). */
+  --color-error: var(--red);
+
+  /* ── Шар над сторінкою ── */
+
+  /* Шторка і затемнення під нею. .sheet__panel, .sheet[open]::before.
+     У світлій --color-sheet = --color-page, темна тема їх розводить. */
+  --color-sheet: var(--white);
+  --color-sheet-scrim: var(--ink-38);
+
+  /* ── Одиничні ──
+     Колір, що в tokens-audit.md стоїть рівно в одному класі. Критика
+     кроку 06 визнала кожен окремою роллю, яку виправдовує тема (вердикти
+     — у блоці «Рішення критики кроку 06» внизу). */
+  --color-action-text: var(--coral-dark);             /* .button--text («Скасувати») */
+  --color-grabber: var(--grey-50);                    /* .sheet__grabber */
+  --color-text-on-verified: var(--white);             /* .avatar__mark (галочка) */
+  --color-action-disabled: var(--grey-50);            /* .composer__send[aria-disabled] (фон) */
+  --color-tag-hole: var(--grey-50);                   /* .price-tag::before (отвір) */
+  --color-tag-hole-edge: var(--ink);                  /* .price-tag::before (обвідка) */
+  --color-state-icon: var(--ink);                     /* .state__icon */
+  --color-field-edge-hover: var(--ink);               /* .input:hover */
+  --color-control-hover: var(--grey-100);             /* .button--secondary:hover */
+  --color-stub-on-card: var(--grey-100);              /* .group .skeleton */
+  --color-text-secondary-on-inverted: var(--grey-100); /* .bubble--mine .bubble__time */
+  --color-text-on-current: var(--white);              /* .chip--selected (текст, 5.10:1) */
+}
+
+/* Схема кольору для нативних частин браузера (скролбар, список <select>,
+   автозаповнення). Стояла в components/base.css як color-scheme: light —
+   це діра стрес-тесту: компонент сам вирішував тему. Тепер її задає тема. */
+:root { color-scheme: light; }
+
+/* ── Контраст світлих пар (WCAG 2.x; ті самі пороги, що й у темній темі
+      нижче: 4.5 текст, 3 великий текст / іконки / межі контролів). ──
+
+   Текст
+   --color-text / --color-page, -sheet, -over-photo  ink / white     17.96  AA так
+   --color-text / --color-card, -control             ink / grey-50   16.45  AA так
+   --color-text / --color-control-hover              ink / grey-100  14.63  AA так
+   --color-text-secondary / --color-page             grey-600 / white 6.36  AA так
+   --color-text-secondary / --color-card, -control   grey-600 / grey-50 5.83 AA так
+   --color-inactive / --color-page (вкладка)         grey-600 / white 6.36  AA так
+   --color-text-on-inverted / --color-inverted       white / ink     17.96  AA так
+   --color-text-secondary-on-inverted / -inverted    grey-100 / ink  14.63  AA так
+   --color-text-on-action / --color-action           ink / coral      8.79  AA так
+   --color-text-on-action / --color-action-hover     ink / coral-deep 7.82  AA так
+   --color-current / --color-page, -sheet            coral-dark / white 5.10 AA так
+   --color-text-on-current / --color-current         white / coral-dark 5.10 AA так
+   --color-action-text / --color-sheet               coral-dark / white 5.10 AA так
+   --color-verified / --color-page                   green / white    5.21  AA так
+   --color-verified / --color-card (.verified-note__title) green / grey-50 4.77 AA так
+   --color-text-on-photo / --color-over-photo-dim    white / ink-60·white 4.70 AA так
+
+   Іконки й межі (3:1)
+   --color-text-on-verified / --color-verified       white / green    5.21  так
+   --color-error / --color-page                      red / white      6.57  так
+   --color-state-icon / --color-page                 ink / white     17.96  так
+   --color-inactive / --color-action-disabled        grey-600 / grey-50 5.83 так
+   --color-field-edge / --color-control              grey-400 / grey-50 3.11 так (на межі)
+   --color-field-edge / --color-page                 grey-400 / white 3.39  так
+   --color-field-edge-hover / --color-control        ink / grey-50   16.45  так
+   --color-focus / --color-page                      green / white    5.21  так
+   --color-focus / --color-card                      green / grey-50  4.77  так
+   --color-tag-hole-edge / --color-over-photo        ink / white     17.96  так
+
+   Декоративні (1.4.11 не вимагає)
+   --color-divider / --color-page, -card             grey-100 / white, grey-50  1.23 / 1.12
+   --color-card / --color-page (край картки)         grey-50 / white  1.09
+   --color-grabber / --color-sheet (ручка шторки)    grey-50 / white  1.09  — ручку майже не видно,
+                                                     див. таблицю дефектів кроку 06 */
+
+
+/* ═══════════ ТЕМНА ТЕМА — ЕКСПЕРИМЕНТ, СТРЕС-ТЕСТ, НЕ РІШЕННЯ ПРОДУКТУ ═══════════
+
+   Мета — довести, що semantic-шар тримає тему: блок перевизначає ЛИШЕ
+   semantic-токени (фони, текст, межі, дія, одиничні), кожен — var() на
+   primitive. components/ теми не знають. Чи лишати темну тему в продукті
+   — окреме продуктове рішення після перегляду дизайнером.
+
+   Вмикає: data-theme="dark" на <html> — кнопка-місяць у навпанелі кожного
+   екрана, ui/kit.html і ui/shell.html; вибір пам'ятає localStorage
+   (kutok-theme). Без атрибута — світла тема, як і була.
+
+   Не перевизначено (те саме значення працює і в темряві):
+   --color-over-photo-dim (--ink-60), --color-text-on-photo (--white) —
+   лежать на фото, а не на сторінці.
+
+   ── Контраст темних пар (WCAG 2.x, відносна яскравість; напівпрозорі
+      змішано з фоном). Пороги: 4.5 текст, 3 великий текст / іконки /
+      межі контролів (1.4.11). Перераховано після кроку 06. ──
+
+   Текст
+   --color-text / --color-page                 grey-50 / black       19.24  AA так
+   --color-text / --color-card, -control,
+     -sheet, -over-photo                       grey-50 / grey-900    14.45  AA так
+   --color-text / --color-control-hover        grey-50 / grey-800    12.34  AA так
+   --color-text-secondary / --color-page       grey-400 / black       6.19  AA так
+   --color-text-secondary / --color-card,
+     ::placeholder / --color-control           grey-400 / grey-900    4.65  AA так
+   --color-inactive / --color-page (вкладка)   grey-400 / black       6.19  AA так
+   --color-text-on-inverted / --color-inverted ink / grey-100        14.63  AA так
+   --color-text-secondary-on-inverted /
+     --color-inverted (час у моїй бульбашці)   grey-600 / grey-100    5.18  AA так
+   --color-text-on-action / --color-action     ink / coral            8.79  AA так
+   --color-text-on-action / --color-action-hover ink / coral-deep     7.82  AA так
+   --color-current / --color-page (вкладка)    coral-light / black   15.07  AA так
+   --color-text-on-current / --color-current   ink / coral-light     12.89  AA так
+   --color-action-text / --color-sheet         coral-light / grey-900 11.32 AA так
+   --color-verified / --color-card
+     (.verified-note__title, текст 16)         green-light / grey-900 5.13  AA так (було 3.45)
+   --color-text-on-photo / --color-over-photo-dim
+     (найгірше: дим над білим фото)            white / ink-60·white   4.70  AA так
+
+   Іконки й великий текст (3:1)
+   --color-verified / --color-page (щит у шапці чату)  green-light / black  6.82  так
+   --color-text-on-verified / --color-verified (галочка) ink / green-light 5.83 так
+   --color-current / --color-sheet (галочка сортування) coral-light / grey-900 11.32 так
+   --color-state-icon / --color-page           grey-50 / black       19.24  так
+   --color-error / --color-page (іконка помилки) red / black          3.19  так
+   --color-inactive / --color-action-disabled  grey-400 / grey-900    4.65  так
+
+   Межі (1.4.11, 3:1)
+   --color-field-edge / --color-control        grey-400 / grey-900    4.65  так
+   --color-field-edge / --color-page           grey-400 / black       6.19  так
+   --color-field-edge-hover / --color-control  grey-100 / grey-900   12.85  так
+   --color-focus / --color-page                green / black          4.03  так
+   --color-focus / --color-card, -sheet        green / grey-900       3.03  так (на межі)
+   --color-tag-hole-edge / --color-over-photo  grey-400 / grey-900    4.65  так
+   --color-grabber / --color-sheet             grey-400 / grey-900    4.65  так
+
+   Декоративні (1.4.11 не вимагає — і в світлій темі вони нижче 3:1)
+   --color-divider / --color-page              grey-600 / black       3.30
+   --color-divider / --color-card              grey-600 / grey-900    2.48
+   --color-card / --color-page (край картки)   grey-900 / black       1.33  (світла: 1.09)
+   --color-control-hover / --color-control     grey-800 / grey-900    1.17
+   --color-sheet / сторінка під затемненням    grey-900 / ink-60·black 1.23
+
+   ── Результат стрес-тесту і що з ним зроблено на кроці 06 ──
+   Стрес-тест показав три дірки палітри — не semantic-шару: кожну закрито
+   новим primitive з позначкою «[крок 06]», без жодної правки components/.
+   1. Текст довіри на картці не проходив AA (--green на --ink 3.45:1) →
+      --green-light (5.13:1). Фокус лишився на --green, тож у темряві
+      фокус і довіра вже різні (M3 — розведено; у світлій ще ні).
+   2. Темна тема мала два «поверхи», картка відрізнялась від сторінки на
+      1.17:1 → --grey-900 (картка, контрол, шторка, бирка; 1.33:1) і
+      --grey-800 (наведення, заглушка на картці).
+   3. Поточний пункт збігався з головною дією (обидва --coral) →
+      --coral-light: вибраний чип «Фільтри · N» і вкладка — світлий
+      корал, кнопка — насичений. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* ── Фони ── */
+  --color-page: var(--black);
+  --color-card: var(--grey-900);
+  --color-control: var(--grey-900);
+  --color-stub: var(--grey-900);
+  --color-over-photo: var(--grey-900); /* бирка й пігулка автора — темні; текст на них — --color-text */
+  --color-inverted: var(--grey-100);   /* «моя» бульбашка — світла на темному */
+
+  /* ── Межі ── */
+  --color-divider: var(--grey-600);
+  --color-field-edge: var(--grey-400);
+
+  /* ── Текст ── */
+  --color-text: var(--grey-50);
+  --color-text-secondary: var(--grey-400);
+  --color-inactive: var(--grey-400);
+  --color-text-on-inverted: var(--ink);
+
+  /* ── Дія ── */
+  --color-action: var(--coral);
+  --color-action-hover: var(--coral-deep);
+  --color-text-on-action: var(--ink);
+  --color-current: var(--coral-light);
+
+  /* ── Довіра ── */
+  --color-verified: var(--green-light);
+  --color-focus: var(--green);
+
+  /* ── Небезпека ── */
+  --color-error: var(--red);
+
+  /* ── Шар над сторінкою ── */
+  --color-sheet: var(--grey-900);
+  --color-sheet-scrim: var(--ink-60); /* --ink-38 над --black майже не видно */
+
+  /* ── Одиничні ── */
+  --color-action-text: var(--coral-light);
+  --color-grabber: var(--grey-400);   /* --grey-600 на --grey-900 — 2.48:1 */
+  --color-text-on-verified: var(--ink); /* --white на --green-light — 3.08:1, впритул */
+  --color-action-disabled: var(--grey-900);
+  --color-tag-hole: var(--black);
+  --color-tag-hole-edge: var(--grey-400);
+  --color-state-icon: var(--grey-50);
+  --color-field-edge-hover: var(--grey-100);
+  --color-control-hover: var(--grey-800);
+  --color-stub-on-card: var(--grey-800);
+  --color-text-secondary-on-inverted: var(--grey-600);
+  --color-text-on-current: var(--ink);
+}
+
+/* ═══════════════════ Рішення критики кроку 06 ═══════════════════
+
+   Кольори, що в tokens-audit.md стояли рівно в одному класі, отримали
+   токен лише тому, що компонент не бере primitive-колір. Критика кроку 06
+   (2026-10-23) пройшла кожен: роль чи випадковість. Вердикт — тут, а
+   сам токен у :root переїхав у свою групу або лишився в «Одиничних».
+
+   Роль — справжня, хоч поки одна адреса (переведено в групу):
+   — --color-error (.state--error .state__icon → --red) → «Небезпека».
+     Report і block (⋯ на D, P, C) — наступні вжитки, коли з'явиться
+     шторка з цими діями.
+   — --color-sheet (.sheet__panel) і --color-sheet-scrim (.sheet[open]::before)
+     → «Шар над сторінкою». У світлій --color-sheet = --color-page, але
+     темна тема їх уже розвела (--grey-900 / --black) — дві ролі.
+
+   Роль — справжня, лишається одиничною (окремий токен виправдано темою):
+   — --color-action-text («Скасувати», .button--text). Сьогодні = --color-current
+     в обох темах, але це різні питання: «що вибрано» і «текстова дія».
+     Можуть розійтися — правило «дві ролі — два токени».
+   — --color-text-on-verified (галочка .avatar__mark). Тема розвела: --white
+     у світлій, --ink у темній.
+   — --color-text-on-current (текст .chip--selected): --white / --ink.
+   — --color-text-secondary-on-inverted (.bubble--mine .bubble__time).
+   — --color-control-hover (.button--secondary:hover), --color-field-edge-hover
+     (.input:hover) — стани; повна система станів — урок 9.
+   — --color-stub-on-card (.group .skeleton) — заглушка мусить бути
+     темнішою/світлішою за свою картку, а не за сторінку.
+   — --color-tag-hole, --color-tag-hole-edge (.price-tag::before) — деталь
+     бирки; у темряві отвір чорний, а не сірий картковий.
+   — --color-grabber (.sheet__grabber). У світлій 1.09:1 до шторки — P3
+     у таблиці дефектів, відкладено.
+
+   Кандидати на злиття (P3 у таблиці дефектів, відкладено):
+   — --color-state-icon = --color-text в обох темах.
+   — --color-action-disabled = --color-control в обох темах (аудит M2).
+
+   Лишилось для дизайнера:
+   — M3: у світлій темі фокус і довіра — один --green.
+   — M7: --color-inactive = --color-text-secondary за значенням.
+   — --color-inverted / --color-text-on-inverted після правки чипа
+     (2026-10-16) тримає лише .bubble--mine (і .vt-skip у вітрині).
+
+   ═══════════════════ Зведення дрейфу ═══════════════════
+
+   «Не зведено» = значення з ui/kit.css збережено як є (окремі
+   primitive). Критика кроку 06 звела те, що розходилося з правилами
+   DESIGN.md (D3, D6, D7, D10); решта (D1, D2, D5, D8, D9) — дрібниці,
+   відкладені свідомо, P3 у таблиці дефектів кроку 06.
+
+   D1  тіні на чорному, не на --ink (--black-12, --black-14)  не зведено — рефакторинг без зміни вигляду
+   D2  scrim як rgb(21 23 26), а не з --ink (--ink-38, -60)   не зведено — color-mix обчислюється в color(srgb …)
+   D3  ціль 44 (шапка, .person-row) / 48                      зведено на кроці 06 → --size-48
+   D4  кути фото 18 / 14 / 8 / 0                              не зведено: DESIGN.md «Shapes»
+   D5  кут картки 14 (.chat-context) / 18                     не зведено — рефакторинг без зміни вигляду
+   D6  низ поясу 10 / 12 / 20                                 зведено на кроці 06 → --space-3
+   D7  верх поясу 10 / 12                                     зведено на кроці 06 → --space-3
+   D8  резерв composer 76 / 80 (--size-48 + --space-6)        не зведено — рефакторинг без зміни вигляду
+   D9  іконка позначки на текстовому кеглі --text-xs          не зведено — рефакторинг без зміни вигляду
+   D10 інтерліньяж ×5 (1.2 / 1.25 / 1.35 / 1.4 / 1.45)        зведено на кроці 06 → 1.25 і 1.45
+   D11 лінія зверху токеном, знизу вручну → один спосіб       зведено (--hairline-top прибрано)
+   D12 тінь бирки: filter vs box-shadow                       не в токенах: це механізм у
+                                                              класах кіта, значення одне */

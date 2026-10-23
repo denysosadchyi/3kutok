@@ -1,0 +1,76 @@
+/* App bar — компактний: назад · заголовок · дія; варіанти з людиною і поверх фото
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-3);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  min-height: var(--size-48);
+  padding: 0 var(--space-2);
+  background: var(--color-page);
+}
+/* Ціль кнопки — 48, як решта (DESIGN.md «Layout»; D3 зведено на кроці 06 уроку 8) */
+.topbar__back,
+.topbar__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--size-48);
+  min-height: var(--size-48);
+  padding: 0;
+  border: 0;
+  background: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+.topbar__back { justify-self: start; }
+.topbar__back iconify-icon { font-size: var(--size-22); }
+.topbar__action { justify-self: end; }
+.topbar__action iconify-icon { font-size: var(--size-20); }
+.topbar__title {
+  max-width: var(--size-220);
+  overflow: hidden;
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Людина в app bar чату — одразу після стрілки */
+/* Тонка лінія знизу: шапка липка, під нею прокручується розмова */
+.topbar--person { grid-template-columns: auto minmax(0, 1fr) auto; box-shadow: 0 var(--stroke-1) 0 var(--color-divider); }
+.topbar__person {
+  display: flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--space-2);
+  min-width: 0;
+  min-height: var(--size-48);
+  text-decoration: none;
+}
+.topbar__name { font-size: var(--text-md); font-weight: var(--weight-bold); line-height: var(--leading-1-25); }
+.topbar__verified { display: inline-flex; color: var(--color-verified); font-size: var(--size-20); line-height: var(--leading-1-25); }
+
+/* App bar поверх фото: прозорий, кругла кнопка на затемненні */
+.topbar--over-photo {
+  position: absolute;
+  top: var(--frame-status, var(--safe-top)); /* хаб уроків задає висоту статус-бару мокапа */
+  right: 0;
+  left: 0;
+  padding: var(--space-2) var(--space-3);
+  background: none;
+}
+.topbar--over-photo .topbar__back,
+.topbar--over-photo .topbar__action {
+  width: var(--size-48);
+  min-width: var(--size-48);
+  height: var(--size-48);
+  border-radius: var(--radius-round);
+  background: var(--color-over-photo-dim);
+  color: var(--color-text-on-photo);
+  backdrop-filter: blur(var(--size-8));
+}

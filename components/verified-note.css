@@ -1,0 +1,17 @@
+/* Рядок перевірки — щит + що підтверджено + межа; стоїть у .group__row
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.verified-note { align-items: flex-start; }
+.verified-note__icon {
+  display: grid;
+  place-items: center;
+  width: var(--size-24);
+  height: var(--size-24);
+  flex: none;
+  margin-top: var(--stroke-1);
+  color: var(--color-verified);
+  font-size: var(--size-24);
+}
+.verified-note__text { line-height: var(--leading-1-45); }
+.verified-note__title { color: var(--color-verified); font-weight: var(--weight-medium); }
+.verified-note__limit { color: var(--color-text-secondary); font-size: var(--text-sm); }
