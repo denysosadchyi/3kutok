@@ -1471,9 +1471,9 @@
                 <li><a href="?lesson=8#decision" data-target="decision">Що відкрито</a></li>
               </ul>
             </li>
-            <li class="ct-lesson" data-status="upcoming">
+            <li class="ct-lesson" data-status="active">
               <div class="ct-row">
-                <a class="ct-link" href="?lesson=9" data-lesson="9" title="09 · Дизайн-система"><span class="ct-glyph" aria-hidden="true">9</span><span class="ct-title">Дизайн-система</span><span class="ct-state">, незабаром</span></a>
+                <a class="ct-link" href="?lesson=9" data-lesson="9" title="09 · Дизайн-система"><span class="ct-glyph" aria-hidden="true">9</span><span class="ct-title">Дизайн-система</span><span class="ct-state">, у роботі</span></a>
               </div>
             </li>
             <li class="ct-lesson" data-status="upcoming">
@@ -2439,6 +2439,9 @@
         <article id="lesson-eight" class="lesson-embed" aria-label="Урок 8 — Design Tokens">
           <iframe class="ia-frame" data-lesson-frame="8" src="about:blank" data-src="../ui/tokens.html?embed=1" title="Токени Кутка"></iframe>
         </article>
+        <article id="lesson-nine" class="lesson-embed hidden" aria-label="Урок 9 — Дизайн-система">
+          <iframe class="ia-frame" data-lesson-frame="9" src="about:blank" data-src="../design-system/docs/index.html" title="Дизайн-система Кутка"></iframe>
+        </article>
         <article id="lesson-four" class="lesson-four" aria-label="Урок 4 — Прототипування і вайрфреймінг">
           <header class="wireframe-nav">
             <h1>Вайрфрейми</h1>
@@ -2581,7 +2584,7 @@
           String(current).padStart(2, "0") +
           " із 12 · " +
           titles[current];
-        if (current >= 3 && current <= 8) {
+        if (current >= 3 && current <= 9) {
           document.body.classList.add(
             current === 4 ? "lesson-four-active" : "lesson-embed-active",
           );
@@ -2590,6 +2593,7 @@
           document.getElementById("lesson-six").classList.toggle("hidden", current !== 6);
           document.getElementById("lesson-seven").classList.toggle("hidden", current !== 7);
           document.getElementById("lesson-eight").classList.toggle("hidden", current !== 8);
+          document.getElementById("lesson-nine").classList.toggle("hidden", current !== 9);
           document.getElementById("lesson-two").classList.add("hidden");
           document.querySelector(".mobile-toc").classList.add("hidden");
         } else if (current !== 2) {

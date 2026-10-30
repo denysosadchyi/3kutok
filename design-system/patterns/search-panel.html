@@ -1,0 +1,49 @@
+<!--
+  Патерн: Панель пошуку (search-panel)
+  Композиція: велика шапка «Результати пошуку» → ряд чипів, перший з яких
+  відкриває шторку фільтрів → підсумок результатів. Під панеллю стоїть те,
+  що знайшлося: стрічка карток (card-feed), стан або скелетони карток.
+  Компоненти: shell (--tabbar), header, chip-row, chip, sheet, field, button,
+  results-meta. Нижнє меню (tabbar) дає оболонка, не патерн.
+  Де стоїть (3+): wireframes/listings, listings-empty, listings-error,
+  listings-loading.
+  Коли брати: екран показує результат пошуку за умовами людини, і умови
+  мають лишатися видимими й змінними, хай би що прийшло нижче — картки,
+  «нічого немає», помилка чи завантаження.
+  Коли — окремі компоненти: потрібна лише шапка без фільтрів, або чипи
+  стоять не над результатами (тоді header, chip-row, sheet окремо).
+  Не входить: сортування «Спершу нові» (.sort, .sort-options) і кнопка
+  теми (.theme-toggle у .header__top) — це разові блоки wireframes/screens.css,
+  екран додає їх сам. Підпис у results-meta міняється зі станом:
+  «12 оголошень», «0 оголошень», «Фільтри збережено»,
+  role="status" «Завантажуємо оголошення».
+  Нових стилів немає: лише класи з design-system/index.css.
+-->
+<div class="shell shell--tabbar">
+  <header class="header"><div class="header__top"><h1 class="header__title">Результати пошуку</h1><p class="header__subtitle">Київ · кімнати та співмешканці</p></div></header>
+  <main class="shell__main">
+    <div class="chip-row"><div class="chip-row__track">
+      <details class="sheet">
+        <summary class="chip chip--selected"><iconify-icon icon="solar:tuning-2-linear" aria-hidden="true"></iconify-icon>Фільтри · 3</summary>
+        <section class="sheet__panel" aria-labelledby="pattern-filters-title">
+          <div class="sheet__grabber" aria-hidden="true"></div>
+          <div class="sheet__head"><h2 class="sheet__title" id="pattern-filters-title">Фільтри</h2><a class="button button--text" href="#">Скасувати</a></div>
+          <form class="sheet__body" action="#">
+            <fieldset>
+              <legend class="sr-only">Базові умови кімнати</legend>
+              <div class="field"><label class="field__label" for="pattern-district">Район Києва</label><select class="input" id="pattern-district"><option>Усі райони</option><option selected>Шевченківський</option><option>Подільський</option><option>Голосіївський</option><option>Дніпровський</option></select></div>
+              <div class="field"><label class="field__label" for="pattern-budget">Бюджет до, грн/місяць</label><input class="input" id="pattern-budget" type="number" inputmode="numeric" min="1000" step="500" value="12000"></div>
+              <div class="field"><label class="field__label" for="pattern-move-in">Дата заїзду</label><input class="input" id="pattern-move-in" type="text" inputmode="none" readonly value="з 1 жовтня 2026"></div>
+            </fieldset>
+          </form>
+          <div class="sheet__foot"><a class="button button--primary button--block" href="#">Застосувати фільтри</a></div>
+        </section>
+      </details>
+      <span class="chip">Шевченківський</span>
+      <span class="chip">до 12 000 грн</span>
+      <span class="chip">з 1 жовтня</span>
+    </div></div>
+    <div class="results-meta"><span>12 оголошень</span></div>
+    <!-- далі: card-feed, .state або скелетони карток -->
+  </main>
+</div>

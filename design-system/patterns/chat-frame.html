@@ -1,0 +1,33 @@
+<!--
+  Патерн: Рамка чату (chat-frame)
+  Композиція: шапка з людиною (аватар, ім’я, щит перевірки, ⋯) → першим
+  рядком вмісту — оголошення, про яке розмова → стрічка повідомлень або стан
+  → закріплене поле повідомлення.
+  Компоненти: shell (--composer), topbar (--person, __person, __verified,
+  __action), avatar, chat-context, composer; посередині — bubble, state або
+  skeleton--bubble.
+  Де стоїть (3+): wireframes/chat, chat-empty, chat-error, chat-loading.
+  Коли брати: будь-який стан розмови з однією людиною про одне оголошення.
+  Рамка не міняється між станами: шапка, контекст і поле лишаються, міняється
+  лише середина. Поле не зникає навіть у помилці — чернетку збережено, а
+  «Надіслати» неактивна (disabled), поки розмова не завантажилась.
+  Коли — окремі компоненти: потрібне лише поле вводу поза чатом або картка
+  оголошення поза розмовою (тоді composer чи card-feed окремо).
+  Не входить: дата над повідомленнями (.chat-day) і список .messages — разові
+  блоки wireframes/screens.css; кнопка теми (.theme-slot).
+  Нових стилів немає: лише класи з design-system/index.css.
+-->
+<div class="shell shell--composer">
+  <header class="topbar topbar--person"><a class="topbar__back" href="#" aria-label="Назад до оголошення"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><a class="topbar__person" href="#"><span class="avatar"><img src="../../visuals/person-iryna.jpg" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено 12 вересня"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено 12 вересня</span></span></a><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button></header>
+  <h1 class="sr-only">Чат з Іриною</h1>
+  <main class="shell__main">
+    <a class="chat-context" href="#"><img class="chat-context__thumb" src="../../visuals/room-lukianivska-bedroom.jpg" alt="Фото кімнати"><span class="chat-context__text"><strong class="chat-context__title">Кімната біля Лук’янівської</strong><span class="chat-context__meta">10&nbsp;500&nbsp;грн/міс · з&nbsp;1&nbsp;жовтня · номер&nbsp;підтверджено 12&nbsp;вересня</span></span><iconify-icon class="chevron" icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></a>
+    <section class="state">
+      <div class="state__icon"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon></div>
+      <h2 class="state__title">Повідомлень з Іриною ще немає</h2>
+      <p class="state__text">Представся й запитай, чи кімната ще вільна і коли можна прийти на перегляд.</p>
+    </section>
+    <!-- або: повідомлення .bubble, стан помилки, skeleton--bubble -->
+  </main>
+  <form class="composer"><label class="sr-only" for="pattern-message">Повідомлення Ірині</label><textarea class="composer__input" id="pattern-message" rows="1" placeholder="Повідомлення"></textarea><button class="composer__send" type="submit" aria-label="Надіслати" disabled><iconify-icon icon="solar:plain-2-linear" aria-hidden="true"></iconify-icon></button></form>
+</div>

@@ -1,0 +1,34 @@
+/* Кнопка — головна (корал), другорядна (сіра), текстова
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--size-48);
+  padding: 0 var(--space-5);
+  border: 0;
+  border-radius: var(--radius-14);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--duration-180) var(--ease-out);
+}
+/* Стани міняють лише фон — без scale і зсуву (урок 9) */
+.button--primary { background: var(--color-action); color: var(--color-text-on-action); }
+.button--primary:hover { background: var(--color-action-hover); }
+.button--primary:active { background: var(--color-action-active); }
+.button--secondary { background: var(--color-control); color: var(--color-text); }
+.button--secondary:hover { background: var(--color-control-hover); }
+.button--secondary:active { background: var(--color-control-active); }
+.button--text { background: none; color: var(--color-action-text); }
+/* :active = :hover: корал на темнішій підложці не тримає 4.5 (tokens.css) */
+.button--text:hover, .button--text:active { background: var(--color-ghost-hover); }
+.button--block { width: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .button { transition: none; }
+}

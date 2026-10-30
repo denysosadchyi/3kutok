@@ -1,7 +1,7 @@
 /* Разові блоки екранів «Кутка» — те, що стоїть лише на одній сторінці
    (ui/inventory.md, розділ «Разове») і тому не входить у кіт.
-   Усі компоненти, що повторюються, — у ../components/; значення тут теж
-   беремо тільки з ../tokens.css: колір — semantic (--color-*), геометрія —
+   Усі компоненти, що повторюються, — у ../design-system/components/; значення
+   тут теж беремо тільки з ../design-system/tokens.css: колір — semantic (--color-*), геометрія —
    primitive напряму. */
 
 /* listings — пігулка автора на фото картки */
@@ -31,8 +31,13 @@
   color: var(--color-text);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
+  padding: 0 var(--space-2);
+  margin-inline: calc(var(--space-2) * -1); /* підложка стану не зсуває текст з колонки */
+  border-radius: var(--radius-14);
   cursor: pointer;
 }
+.sort:hover { background: var(--color-ghost-hover); }
+.sort:active { background: var(--color-ghost-active); }
 .sort svg { width: var(--size-16); height: var(--size-16); }
 .sort-options { margin: 0; padding: var(--space-2) var(--space-4) calc(var(--space-5) + var(--safe-bottom)); list-style: none; }
 .sort-options a {

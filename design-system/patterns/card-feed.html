@@ -1,0 +1,44 @@
+<!--
+  Патерн: Стрічка карток (card-feed)
+  Композиція: список карток оголошень — фото з биркою ціни, назва-посилання
+  на все оголошення, рядок фактів. Та сама картка і в стрічці пошуку, і в
+  профілі автора (урок 6, крок 6).
+  Компоненти: card-list, listing-card, price-tag; у завантаженні — skeleton
+  (skeleton--photo, --title, --line) всередині тієї ж listing-card.
+  Де стоїть (3+): wireframes/listings, listings-loading, profile,
+  profile-empty.
+  Коли брати: показуєш одне або кілька оголошень, і з кожного треба перейти
+  в оголошення (вся картка клікабельна через .listing-card__link).
+  Коли — окремі компоненти: оголошення вже відкрите (hero-photo +
+  listing-title), або оголошення лише згадано як контекст розмови
+  (chat-context у чаті).
+  Не входить: підпис автора на фото (.card-author у стрічці пошуку) — разовий
+  блок wireframes/screens.css.
+  Нових стилів немає: лише класи з design-system/index.css.
+-->
+<ul class="card-list">
+  <li class="listing-card">
+    <div class="listing-card__photo">
+      <img src="../../visuals/room-lukianivska-bedroom.jpg" alt="Світла спальня з ліжком, тумбою і настінною лампою" loading="lazy">
+      <p class="price-tag">10 500 грн/міс</p>
+    </div>
+    <div class="listing-card__body">
+      <h2 class="listing-card__title"><a class="listing-card__link" href="#">Кімната біля Лук’янівської</a></h2>
+      <p class="listing-card__meta">Шевченківський · 2&nbsp;співмешканці · з&nbsp;1&nbsp;жовтня</p>
+    </div>
+  </li>
+  <li class="listing-card">
+    <div class="listing-card__photo">
+      <img src="../../visuals/room-tatarka-sofa.jpg" alt="Світла кімната з диваном, комодом, торшером і рослиною" loading="lazy">
+      <p class="price-tag">9 800 грн/міс</p>
+    </div>
+    <div class="listing-card__body">
+      <h2 class="listing-card__title"><a class="listing-card__link" href="#">Світла кімната на Татарці</a></h2>
+      <p class="listing-card__meta">Шевченківський · 1&nbsp;співмешканка · з&nbsp;5&nbsp;жовтня</p>
+    </div>
+  </li>
+</ul>
+<!-- завантаження: та сама стрічка, картка зі скелетонами -->
+<ul class="card-list" aria-hidden="true">
+  <li class="listing-card"><div class="skeleton skeleton--photo"></div><div class="listing-card__body"><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--line skeleton--w60"></div></div></li>
+</ul>

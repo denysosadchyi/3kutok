@@ -1,0 +1,5 @@
+#!/bin/sh
+# Гейт дизайн-системи: коміт не проходить, якщо дизайн-файли вносять
+# токени, яких немає в design-system/tokens.css, чи сирі значення.
+# Підключення (раз на клон): git config core.hooksPath .githooks
+exec python3 "$(git rev-parse --show-toplevel)/design-system/_gate.py"

@@ -1,0 +1,55 @@
+<!doctype html>
+<!--
+  Приклад: «Скаргу прийнято» — результат SR у flows.md (Related job 5).
+  Патерн screen-state (../patterns/screen-state.html): шапка з «назад» →
+  стан з діями, без нижнього поясу. Лише design-system/index.css, без
+  власних стилів. Скрипт теми — копія з wireframes/_build.py ([B9]).
+-->
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="wireframe-job" content="Related 5 — не втратити контроль під час взаємодії з незнайомою людиною">
+<title>Скаргу прийнято — Куток</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../index.css">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<script>
+/* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23 */
+(function () {
+  var KEY = "kutok-theme", root = document.documentElement;
+  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function apply(dark) {
+    if (dark) root.setAttribute("data-theme", "dark"); else root.removeAttribute("data-theme");
+    document.querySelectorAll(".theme-toggle").forEach(function (b) {
+      b.setAttribute("aria-pressed", dark ? "true" : "false");
+      var i = b.querySelector("iconify-icon");
+      if (i) i.setAttribute("icon", dark ? "solar:sun-2-linear" : "solar:moon-linear");
+    });
+  }
+  apply(saved() === "dark");
+  document.addEventListener("DOMContentLoaded", function () { apply(saved() === "dark"); });
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest(".theme-toggle");
+    if (!b) return;
+    var dark = root.getAttribute("data-theme") !== "dark";
+    apply(dark);
+    try { localStorage.setItem(KEY, dark ? "dark" : "light"); } catch (err) {}
+  });
+  window.addEventListener("storage", function (e) { if (e.key === KEY) apply(e.newValue === "dark"); });
+})();
+</script>
+</head>
+<body class="shell">
+<header class="topbar"><a class="topbar__back" href="../../wireframes/chat.html" aria-label="Назад до чату"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><span></span><button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button></header>
+<main class="shell__main" id="content">
+<section class="state" role="status">
+  <div class="state__icon"><iconify-icon icon="streamline-freehand:form-edition-clipboard-check" aria-hidden="true"></iconify-icon></div>
+  <h1 class="state__title">Скаргу прийнято</h1>
+  <p class="state__text">Рішення модерації ще немає. Статус буде в чаті з Іриною. Скарга не блокує Ірину — це окрема дія.</p>
+  <div class="state__actions"><a class="button button--primary" href="../../wireframes/chat.html">Назад до чату</a><a class="button button--secondary" href="../../wireframes/chat.html">Заблокувати Ірину</a></div>
+</section>
+</main>
+</body>
+</html>

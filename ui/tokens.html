@@ -7,8 +7,7 @@
 <script>if (new URLSearchParams(location.search).get("embed") === "1") document.documentElement.classList.add("embed");</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="../tokens.css">
-<link rel="stylesheet" href="../components/index.css">
+<link rel="stylesheet" href="../design-system/index.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 <script>
 /* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23 */
@@ -89,9 +88,9 @@
   <p>Урок 8. Плаский <code>ui/kit.css</code> розколото на <code>tokens.css</code> з двох рівнів і <code>components/</code>. PRIMITIVE — сирі значення без ролей. SEMANTIC — лише ролі кольору, кожна посилається на primitive. Колір компонент бере тільки через роль, геометрію — з primitive напряму.</p>
   <p>Таблиці нижче читають <code>tokens.css</code> наживо. Контраст рахується тут же, для обох тем.</p>
   <p class="vt-files">
-    <a class="vt-link" href="../tokens.css">tokens.css</a>
+    <a class="vt-link" href="../design-system/tokens.css">tokens.css</a>
     <a class="vt-link" href="../tokens-audit.md">tokens-audit.md</a>
-    <a class="vt-link" href="../components/README.md">components/</a>
+    <a class="vt-link" href="../design-system/components/README.md">components/</a>
     <a class="vt-link" href="kit.html">ui/kit.html</a>
     <a class="vt-link" href="../DESIGN.md">DESIGN.md</a>
   </p>
@@ -261,7 +260,7 @@
       ["--color-action-text", "--color-sheet", 4.5], ["--color-verified", "--color-page", 4.5], ["--color-verified", "--color-card", 4.5],
       ["--color-text-on-photo", "--color-over-photo-dim", 4.5, "дим над білим фото"],
       ["--color-text-on-verified", "--color-verified", 3], ["--color-error", "--color-page", 3], ["--color-state-icon", "--color-page", 3],
-      ["--color-inactive", "--color-action-disabled", 3], ["--color-field-edge", "--color-control", 3], ["--color-field-edge", "--color-page", 3],
+      ["--color-text-on-action", "--color-action-active", 4.5], ["--color-field-edge", "--color-control", 3], ["--color-field-edge", "--color-page", 3],
       ["--color-field-edge-hover", "--color-control", 3], ["--color-focus", "--color-page", 3], ["--color-focus", "--color-card", 3],
       ["--color-tag-hole-edge", "--color-over-photo", 3]
     ];
@@ -285,7 +284,7 @@
     }).join("");
   }
 
-  fetch("../tokens.css").then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(render).catch(function () {
+  fetch("../design-system/tokens.css").then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(render).catch(function () {
     document.querySelectorAll("[data-slot]").forEach(function (el) {
       el.outerHTML = '<p class="tk-error">Таблиці будуються з tokens.css і потребують сервера: відкрий сторінку через <code>python3 -m http.server</code> або на 3kutok.vercel.app.</p>';
     });

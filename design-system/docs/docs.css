@@ -1,0 +1,183 @@
+/* Стилі сторінок документації (docs/) — не компонент системи.
+   Компоненти на сторінках живі: їх дає ../index.css, тут лише рамка
+   документації — сітка, підписи, сцени, мітки анатомії. Колір — тільки
+   наявні semantic-ролі (текст, поверхня, лінія, інверсія), геометрія —
+   primitive з tokens.css. Нових ролей кольору немає: документація не має
+   власного кольору, щоб не сперечатися з The Coral Means Do і
+   The Green Is Proof. Ширини сцен — у rem/ch, бо це рамка сторінки, а не
+   продукт; продуктові розміри беремо лише з токенів. */
+
+/* ── Сторінка ── */
+.doc { max-width: 68rem; margin: 0 auto; padding: var(--space-3) var(--space-4) calc(var(--space-7) * 2); }
+.doc-skip { position: absolute; left: var(--space-2); top: calc(var(--space-7) * -1); z-index: var(--z-6); padding: var(--space-2) var(--space-3); border-radius: var(--radius-14); background: var(--color-inverted); color: var(--color-text-on-inverted); }
+.doc-skip:focus { top: var(--space-2); }
+.doc a.doc-link { color: var(--color-current); text-underline-offset: 0.2em; }
+.doc code { padding: 0 var(--space-1); border-radius: var(--radius-8); background: var(--color-card); font-size: 0.875em; overflow-wrap: anywhere; }
+
+.doc-nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); min-height: var(--size-48); }
+.doc-crumbs { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); color: var(--color-text-secondary); font-size: var(--text-sm); }
+
+.doc-hero { display: grid; gap: var(--space-3); max-width: 68ch; padding: var(--space-6) 0 var(--space-5); }
+.doc-eyebrow { color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+.doc-hero h1 { font-size: 1.75rem; font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); line-height: var(--leading-1-25); }
+.doc-lead { color: var(--color-text-secondary); }
+.doc-facts { display: grid; gap: var(--space-1); margin: 0; font-size: var(--text-sm); }
+.doc-facts > div { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-2); }
+.doc-facts dt { color: var(--color-text-secondary); }
+.doc-facts dd { margin: 0; }
+
+.doc-toc { display: flex; flex-wrap: wrap; gap: var(--space-2); padding-bottom: var(--space-2); }
+
+/* ── Частини сторінки компонента ── */
+.doc-part { padding: var(--space-6) 0; box-shadow: 0 calc(var(--stroke-1) * -1) 0 var(--color-divider); scroll-margin-top: var(--space-3); }
+.doc-part > h2 { padding-bottom: var(--space-1); font-size: var(--text-xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); }
+.doc-part > .doc-lead { max-width: 68ch; padding-bottom: var(--space-4); }
+.doc-prose { display: grid; gap: var(--space-3); max-width: 68ch; }
+.doc-prose ul, .doc-prose ol { display: grid; gap: var(--space-2); margin: 0; padding-left: var(--space-5); }
+.doc-sources { color: var(--color-text-secondary); font-size: var(--text-sm); }
+
+/* ── Сцени ── */
+.doc-stage { position: relative; padding: var(--space-4); border: var(--stroke-1) solid var(--color-divider); border-radius: var(--radius-18); background: var(--color-page); }
+.doc-stage--flush { padding: 0; overflow: hidden; }
+.doc-stage--card { background: var(--color-card); --avatar-ring: var(--color-card); }
+.doc-stage--row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+.doc-stage .shell { min-height: 0; }
+
+/* Сцена-екран: fixed-пояси кіта (меню, панель дії, шторка, поле чату)
+   прив'язуються до неї, а не до вікна — transform створює новий блок для fixed */
+.doc-screen { position: relative; width: min(22.5rem, 100%); height: 18.75rem; overflow: hidden; border: var(--stroke-1) solid var(--color-divider); border-radius: var(--radius-18); background: var(--color-page); transform: translateZ(0); }
+.doc-screen--bar { height: 7.5rem; }
+.doc-screen--tall { height: 35rem; }
+.doc-screen .shell { min-height: 100%; }
+.doc-screen .shell__main:has(> .state) { min-height: 0; }
+/* Шапка поверх фото без статус-бару мокапа */
+.doc-frame { --frame-status: 0px; }
+.doc-photo { display: block; width: 100%; aspect-ratio: var(--ratio-4-3); object-fit: cover; }
+
+/* ── Варіанти ── */
+.doc-themes { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.doc-theme { flex: 1 1 var(--size-220); min-width: 0; display: grid; gap: var(--space-3); align-content: start; padding: var(--space-4); border: var(--stroke-1) solid var(--color-divider); border-radius: var(--radius-18); background: var(--color-page); color: var(--color-text); }
+.doc-theme__label { color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+.doc-variants { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: flex-start; }
+.doc-spec { display: grid; gap: var(--space-2); align-content: start; margin: 0; }
+.doc-spec > figcaption { color: var(--color-text-secondary); font-size: var(--text-xs); }
+.doc-spec--phone { width: min(22.5rem, 100%); }
+.doc-spec--field { width: min(18.75rem, 100%); }
+
+/* ── Анатомія: живий компонент + мітки ── */
+.doc-anatomy { display: grid; gap: var(--space-5); align-items: start; }
+@media (min-width: 52rem) { .doc-anatomy { grid-template-columns: minmax(0, 22.5rem) minmax(0, 1fr); } }
+.doc-anatomy__live { position: relative; display: grid; gap: var(--space-3); }
+.doc-pin {
+  position: absolute;
+  z-index: var(--z-6);
+  display: grid;
+  place-items: center;
+  width: var(--size-20);
+  height: var(--size-20);
+  border-radius: var(--radius-round);
+  background: var(--color-inverted);
+  color: var(--color-text-on-inverted);
+  box-shadow: 0 0 0 var(--stroke-2) var(--color-page);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  pointer-events: none;
+}
+.doc-pointed { outline: var(--stroke-2) dashed var(--color-text) !important; outline-offset: var(--stroke-2) !important; }
+.doc-legend { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
+.doc-legend > li { display: grid; grid-template-columns: var(--size-20) minmax(0, 1fr); gap: var(--space-3); align-items: start; padding: var(--space-2); border-radius: var(--radius-14); cursor: default; }
+.doc-legend > li:hover, .doc-legend > li:focus-visible, .doc-legend > li.is-pointed { background: var(--color-card); }
+.doc-legend__n { display: grid; place-items: center; width: var(--size-20); height: var(--size-20); margin-top: var(--space-0-5); border-radius: var(--radius-round); background: var(--color-inverted); color: var(--color-text-on-inverted); font-size: var(--text-xs); font-weight: var(--weight-bold); }
+.doc-legend__text { display: grid; gap: var(--space-0-5); }
+.doc-legend__text small { color: var(--color-text-secondary); font-size: var(--text-sm); }
+
+/* ── Правило і антиправило ── */
+.doc-rules { display: grid; gap: var(--space-5); }
+@media (min-width: 52rem) { .doc-rules { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.doc-rule { display: grid; gap: var(--space-3); align-content: start; margin: 0; }
+.doc-rule__verdict { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-lg); font-weight: var(--weight-bold); }
+.doc-rule__verdict iconify-icon { font-size: var(--size-24); }
+.doc-rule > figcaption { display: grid; gap: var(--space-2); max-width: 60ch; }
+.doc-rule--dont .doc-stage, .doc-rule--dont .doc-screen { border-style: dashed; border-color: var(--color-text-secondary); }
+.doc-instead { font-weight: var(--weight-medium); }
+
+/* ── Гортання між сторінками ── */
+.doc-pager { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-6); box-shadow: 0 calc(var(--stroke-1) * -1) 0 var(--color-divider); }
+
+/* ── Showcase (index.html) ── */
+.doc-group { padding: var(--space-6) 0 var(--space-2); }
+.doc-group > h2 { font-size: var(--text-xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); }
+.doc-group > p { max-width: 68ch; padding-top: var(--space-1); color: var(--color-text-secondary); }
+.doc-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(17.5rem, 100%), 1fr)); gap: var(--space-4); margin: 0; padding: var(--space-4) 0 0; list-style: none; }
+.doc-card { position: relative; display: grid; grid-template-rows: auto 1fr; overflow: hidden; border: var(--stroke-1) solid var(--color-divider); border-radius: var(--radius-18); background: var(--color-page); }
+.doc-card__preview { position: relative; height: 12.5rem; overflow: hidden; padding: var(--space-4); background: var(--color-page); box-shadow: 0 var(--stroke-1) 0 var(--color-divider); transform: translateZ(0); }
+.doc-card__preview--card { background: var(--color-card); --avatar-ring: var(--color-card); }
+.doc-card__preview--flush { padding: 0; }
+.doc-card__preview--center { display: grid; place-items: center; }
+.doc-card__preview .shell { min-height: 100%; }
+/* Превʼю — лише картинка живого компонента: клікає вся картка */
+.doc-card__preview > * { pointer-events: none; }
+.doc-card__body { display: grid; gap: var(--space-1); align-content: start; padding: var(--space-3) var(--space-4) var(--space-4); }
+.doc-card__name { font-weight: var(--weight-bold); }
+.doc-card__name a { color: inherit; text-decoration: none; }
+.doc-card__name a::after { content: ""; position: absolute; inset: 0; z-index: var(--z-6); border-radius: var(--radius-18); }
+.doc-card__name a:focus-visible { outline: none; }
+.doc-card__name a:focus-visible::after { outline: var(--stroke-2) solid var(--color-focus); outline-offset: calc(var(--stroke-2) * -1); }
+.doc-card__role { color: var(--color-text-secondary); font-size: var(--text-sm); }
+.doc-card__api { font-size: var(--text-xs); }
+
+.doc-start { display: grid; gap: var(--space-2); max-width: 68ch; padding: var(--space-4); border-radius: var(--radius-18); background: var(--color-card); }
+.doc-start strong { font-size: var(--text-lg); }
+
+/* ── «Чому система така» (why.html) ── */
+.doc-quote { max-width: 60ch; padding-left: var(--space-4); box-shadow: inset var(--stroke-2) 0 0 var(--color-text); font-size: var(--text-lg); }
+.doc-attrs { display: grid; gap: var(--space-5); margin: 0; padding: 0; list-style: none; }
+.doc-attr { display: grid; gap: var(--space-4); padding: var(--space-4); border: var(--stroke-1) solid var(--color-divider); border-radius: var(--radius-18); }
+@media (min-width: 52rem) { .doc-attr { grid-template-columns: minmax(0, 1fr) minmax(0, 22.5rem); } }
+.doc-attr h3 { font-size: var(--text-lg); font-weight: var(--weight-bold); }
+.doc-attr__live { display: grid; gap: var(--space-3); align-content: start; }
+.doc-tag { display: inline-flex; align-items: center; min-height: var(--size-20); padding: 0 var(--space-2); border-radius: var(--radius-round); background: var(--color-card); color: var(--color-text-secondary); font-size: var(--text-xs); font-weight: var(--weight-medium); }
+
+.doc-table-wrap { max-width: 100%; overflow-x: auto; }
+.doc-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+.doc-table th, .doc-table td { padding: var(--space-2) var(--space-3) var(--space-2) 0; box-shadow: 0 var(--stroke-1) 0 var(--color-divider); text-align: left; vertical-align: top; }
+.doc-table th { color: var(--color-text-secondary); font-weight: var(--weight-medium); }
+.doc-table td:first-child { font-weight: var(--weight-medium); white-space: nowrap; }
+
+.doc-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(13.75rem, 100%), 1fr)); gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.doc-swatch { display: grid; grid-template-columns: var(--size-48) minmax(0, 1fr); gap: var(--space-3); align-items: center; }
+.doc-swatch__chip { width: var(--size-48); height: var(--size-48); border-radius: var(--radius-14); box-shadow: inset 0 0 0 var(--stroke-1) var(--color-divider); }
+.doc-swatch__text { display: grid; font-size: var(--text-sm); }
+.doc-swatch__text small { color: var(--color-text-secondary); }
+.doc-swatch--page { background: var(--color-page); }
+.doc-swatch--card { background: var(--color-card); }
+.doc-swatch--text { background: var(--color-text); }
+.doc-swatch--secondary { background: var(--color-text-secondary); }
+.doc-swatch--divider { background: var(--color-divider); }
+.doc-swatch--action { background: var(--color-action); }
+.doc-swatch--current { background: var(--color-current); }
+.doc-swatch--verified { background: var(--color-verified); }
+.doc-swatch--error { background: var(--color-error); }
+
+/* ── Нерухомі стани для показу (як у ui/kit.html) ──
+   У продукті стани дає CSS компонентів (:hover, :focus-visible, :active). */
+.is-hover.button--primary, .is-hover.composer__send { background: var(--color-action-hover); }
+.is-active.button--primary, .is-active.composer__send { background: var(--color-action-active); }
+.is-hover.button--secondary, .is-hover.chip { background: var(--color-control-hover); }
+.is-active.button--secondary, .is-active.chip { background: var(--color-control-active); }
+.is-hover.button--text, .is-active.button--text,
+.is-hover:is(.topbar__back, .topbar__action, .topbar__person) { background: var(--color-ghost-hover); }
+.is-active:is(.topbar__back, .topbar__action, .topbar__person), .is-active.tabbar__item iconify-icon { background: var(--color-ghost-active); }
+.is-hover.tabbar__item { color: var(--color-text); }
+.is-hover:is(.person-row, .chat-context) { background: var(--color-card-hover); }
+.is-hover.listing-card__link { color: var(--color-link-hover); }
+.is-hover:is(.input, .composer__input) { border-color: var(--color-field-edge-hover); }
+.topbar--over-photo .is-hover:is(.topbar__back, .topbar__action) { background: var(--color-over-photo-dim-hover); }
+.is-focus { outline: var(--stroke-2) solid var(--color-focus); outline-offset: var(--stroke-2); }
+.is-focus.listing-card__link { outline: none; }
+.is-focus.listing-card__link::after { outline: var(--stroke-2) solid var(--color-focus); outline-offset: var(--space-1); }
+
+/* Сторінка «Токени» (урок 9): зразок фарбує tokens.css через style="background: var(--…)" */
+.doc-swatch { display: inline-block; width: var(--size-20); height: var(--size-20); margin-right: var(--space-2); vertical-align: middle; border-radius: var(--radius-4); box-shadow: inset 0 0 0 var(--stroke-1) var(--color-divider); }
+.doc-pre { margin: 0 0 var(--space-4); font-size: var(--text-sm); line-height: var(--leading-1-45); white-space: pre; }

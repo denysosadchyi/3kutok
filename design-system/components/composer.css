@@ -1,0 +1,56 @@
+/* Composer — поле повідомлення + «Надіслати»
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.composer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--z-4);
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3) var(--space-4) calc(var(--space-3) + var(--safe-bottom));
+  background: var(--color-page);
+  box-shadow: 0 calc(var(--stroke-1) * -1) 0 var(--color-divider);
+}
+.composer__input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--size-48);
+  max-height: var(--size-112);
+  padding: var(--space-3) var(--space-4);
+  border: var(--stroke-1) solid var(--color-field-edge);
+  border-radius: var(--radius-14);
+  background: var(--color-control);
+  color: var(--color-text);
+  line-height: var(--leading-1-45);
+  resize: none;
+  overflow-y: auto;
+  field-sizing: content;
+}
+.composer__input:hover { border-color: var(--color-field-edge-hover); }
+.composer__send {
+  display: grid;
+  place-items: center;
+  width: var(--size-48);
+  height: var(--size-48);
+  flex: none;
+  border: 0;
+  border-radius: var(--radius-round);
+  background: var(--color-action);
+  color: var(--color-text-on-action);
+  font-size: var(--size-20);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--duration-180) var(--ease-out);
+}
+.composer__send:hover { background: var(--color-action-hover); }
+.composer__send:active { background: var(--color-action-active); }
+/* Неактивна (aria-disabled): поле порожнє, розмова вантажиться або не завантажилась —
+   глушиться загальним правилом base.css (--opacity-disabled), не перефарбовується */
+
+@media (prefers-reduced-motion: reduce) {
+  .composer__send { transition: none; }
+}

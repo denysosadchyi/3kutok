@@ -7,8 +7,7 @@
 <title>Оголошення — помилка</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="../tokens.css">
-<link rel="stylesheet" href="../components/index.css">
+<link rel="stylesheet" href="../design-system/index.css">
 <link rel="stylesheet" href="screens.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 <script>
@@ -48,6 +47,26 @@
 </section>
 </main>
 <script>
+document.addEventListener("toggle", function (e) {
+  var d = e.target;
+  if (!d.matches || !d.matches("details.sheet")) return;
+  for (var n = d; n.parentElement && n !== document.body; n = n.parentElement) {
+    Array.prototype.forEach.call(n.parentElement.children, function (el) {
+      if (el !== n && el.tagName !== "SCRIPT") el.inert = d.open;
+    });
+  }
+  if (d.open) {
+    var first = d.querySelector(".sheet__panel a, .sheet__panel button, .sheet__panel input, .sheet__panel select");
+    if (first) first.focus();
+  } else {
+    d.querySelector("summary").focus();
+  }
+}, true);
+document.addEventListener("input", function (e) {
+  var form = e.target.closest(".composer");
+  if (!form || form.hasAttribute("data-wait")) return;
+  form.querySelector(".composer__send").disabled = !e.target.value.trim();
+});
 document.addEventListener("click", function (e) {
   var sheet = e.target.closest("details.sheet[open]");
   if (sheet && !e.target.closest(".sheet__panel, summary")) sheet.open = false;

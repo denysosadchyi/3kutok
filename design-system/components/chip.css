@@ -1,0 +1,23 @@
+/* Чип — активне значення фільтра; вибраний — «Фільтри · N»
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
+
+.chip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--size-36);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-14);
+  background: var(--color-control);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+:is(summary, button, a).chip { cursor: pointer; transition: background-color var(--duration-180) var(--ease-out); }
+:is(summary, button, a).chip:hover { background: var(--color-control-hover); }
+:is(summary, button, a).chip:active { background: var(--color-control-active); }
+.chip iconify-icon { font-size: var(--size-20); }
+.chip--selected { background: var(--color-current); color: var(--color-text-on-current); } /* корал-чорнило: правка в макеті 2026-10-16 */
+.chip--selected:is(:hover, :active) { background: var(--color-current); } /* вибраний не міняється: це вже стан */

@@ -49,23 +49,45 @@ def end_slot(action=""):
     return f'<span class="theme-slot">{THEME}{action}</span>' if action else THEME
 
 
-# Усі екрани зібрані з кіта компонентів (урок 7): ../tokens.css — змінні
-# (primitive + semantic), ../components/index.css — компоненти, screens.css —
-# разові блоки. Іконки — iconify (Streamline Freehand
+# Усі екрани зібрані з кіта компонентів (урок 7). Система підключається одним
+# пакетом — ../design-system/index.css (tokens.css — primitive + semantic,
+# components/index.css — компоненти, урок 9); screens.css — разові блоки. Іконки — iconify (Streamline Freehand
 # і Solar linear).
 HEAD = """
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="../tokens.css">
-<link rel="stylesheet" href="../components/index.css">
+<link rel="stylesheet" href="../design-system/index.css">
 <link rel="stylesheet" href="screens.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>""" + "\n" + THEME_SCRIPT
 # Класи вайрфреймів → модифікатори оболонки кіта. status-dark — лише позначка
 # для хабу уроків (темний статус-бар над світлим скелетоном), стилів не має.
 SHELL = {"has-tabbar": "shell--tabbar", "has-actionbar": "shell--actionbar", "has-composer": "shell--composer", "photo-top": "shell--photo-top", "status-dark": "status-dark"}
-# Тап за межами шторки (по затемненню) або Escape закриває її.
+# Тап за межами шторки (по затемненню) або Escape закриває її. Відкрита
+# шторка модальна: решта сторінки inert, фокус — у панель; після закриття
+# фокус вертається на тригер (урок 9, аудит). «Надіслати» вмикається, коли
+# в полі є текст (форма з data-wait чекає на розмову і не вмикається).
 SHEET_SCRIPT = """
 <script>
+document.addEventListener("toggle", function (e) {
+  var d = e.target;
+  if (!d.matches || !d.matches("details.sheet")) return;
+  for (var n = d; n.parentElement && n !== document.body; n = n.parentElement) {
+    Array.prototype.forEach.call(n.parentElement.children, function (el) {
+      if (el !== n && el.tagName !== "SCRIPT") el.inert = d.open;
+    });
+  }
+  if (d.open) {
+    var first = d.querySelector(".sheet__panel a, .sheet__panel button, .sheet__panel input, .sheet__panel select");
+    if (first) first.focus();
+  } else {
+    d.querySelector("summary").focus();
+  }
+}, true);
+document.addEventListener("input", function (e) {
+  var form = e.target.closest(".composer");
+  if (!form || form.hasAttribute("data-wait")) return;
+  form.querySelector(".composer__send").disabled = !e.target.value.trim();
+});
 document.addEventListener("click", function (e) {
   var sheet = e.target.closest("details.sheet[open]");
   if (sheet && !e.target.closest(".sheet__panel, summary")) sheet.open = false;
@@ -116,7 +138,8 @@ def page(name, *, title, job, body, body_class="has-tabbar", tab="search"):
         if href:
             items.append(f'<li><a class="tabbar__item" href="{href}"{current}>{inner}</a></li>')
         else:
-            items.append(f'<li><span class="tabbar__item"{current}>{inner}</span></li>')
+            # Розділу ще немає: посилання без href (поза Tab) + aria-disabled — глушиться base.css
+            items.append(f'<li><a class="tabbar__item" aria-disabled="true"{current}>{inner}</a></li>')
     tabbar = (
         '\n<nav class="tabbar" aria-label="Головна навігація"><ul class="tabbar__list">' + "".join(items) + "</ul></nav>"
         if "has-tabbar" in body_class
@@ -163,10 +186,10 @@ def filters(district, budget, date, date_label):
     )
     budget_label = f"{int(budget):,}".replace(",", " ")
     return f"""
-<div class="chip-row"><div class="chip-row__track">
+<div class="chip-row"><div class="chip-row__track" tabindex="0" role="group" aria-label="Активні фільтри">
   <details class="sheet">
     <summary class="chip chip--selected">{lin("tuning-2")}Фільтри · 3</summary>
-    <section class="sheet__panel" aria-labelledby="filters-title">
+    <section class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="filters-title">
       <div class="sheet__grabber" aria-hidden="true"></div>
       <div class="sheet__head"><h2 class="sheet__title" id="filters-title">Фільтри</h2><a class="button button--text" href="listings.html">Скасувати</a></div>
       <form class="sheet__body" action="listings.html" method="get">
@@ -232,7 +255,7 @@ AUTHORS = [
 SORT_OPTIONS = ["Спершу нові", "Спершу дешевші", "Спершу дорожчі"]
 SORT_SHEET = f"""<details class="sheet">
   <summary class="sort">Спершу нові{lin("alt-arrow-down")}</summary>
-  <section class="sheet__panel" aria-labelledby="sort-title">
+  <section class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="sort-title">
     <div class="sheet__grabber" aria-hidden="true"></div>
     <div class="sheet__head"><h2 class="sheet__title" id="sort-title">Сортування</h2><a class="button button--text" href="listings.html">Скасувати</a></div>
     <ul class="sort-options">{"".join(f'<li><a href="listings.html"{' aria-current="true"' if i == 0 else ''}>{o}{lin("check") if i == 0 else ""}</a></li>' for i, o in enumerate(SORT_OPTIONS))}</ul>
@@ -334,7 +357,7 @@ page(
     + f"""
 <main class="shell__main" id="content">
 <div class="hero-photo"><img src="{ROOM_PHOTOS[0][0]}" alt="{ROOM_PHOTOS[0][1]}"><p class="price-tag">10 500 грн/міс</p><span class="photo-count">1 / {len(GALLERY) + 1}</span></div>
-<ul class="gallery" aria-label="Інші фото квартири">{"".join(f'<li class="gallery__item"><img src="{g}" alt="{alt}" loading="lazy"></li>' for g, alt in GALLERY)}</ul>
+<ul class="gallery" tabindex="0" aria-label="Інші фото квартири">{"".join(f'<li class="gallery__item"><img src="{g}" alt="{alt}" loading="lazy"></li>' for g, alt in GALLERY)}</ul>
 <div class="listing-title">
   <h1 class="listing-title__name">Кімната біля Лук’янівської</h1>
   <p class="listing-title__meta">Шевченківський район · з 1 жовтня</p>
@@ -506,20 +529,20 @@ page(
 # ---------- Чат ----------
 
 JOB_CHAT = "Related 4 — перевести придатний варіант у взаємну домовленість"
-CHAT_BAR = f"""<header class="topbar topbar--person"><a class="topbar__back" href="listing.html" aria-label="Назад до оголошення">{CHEVRON_LEFT}</a><a class="topbar__person" href="profile.html"><span class="avatar"><img src="{AUTHORS[0][1]}" alt="Фото профілю Ірини"></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено 12 вересня">{lin("shield-check")}<span class="sr-only">Номер підтверджено 12 вересня</span></span></a>{end_slot(REPORT)}</header>
+CHAT_BAR = f"""<header class="topbar topbar--person"><a class="topbar__back" href="listing.html" aria-label="Назад до оголошення">{CHEVRON_LEFT}</a><a class="topbar__person" href="profile.html"><span class="avatar"><img src="{AUTHORS[0][1]}" alt=""></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено 12 вересня">{lin("shield-check")}<span class="sr-only">Номер підтверджено 12 вересня</span></span></a>{end_slot(REPORT)}</header>
 <h1 class="sr-only">Чат з Іриною</h1>"""
-CHAT_CONTEXT = f"""<a class="chat-context" href="listing.html"><img class="chat-context__thumb" src="{ROOM_PHOTOS[0][0]}" alt="Фото кімнати"><span class="chat-context__text"><strong class="chat-context__title">Кімната біля Лук’янівської</strong><span class="chat-context__meta">10\u00a0500\u00a0грн/міс · з\u00a01\u00a0жовтня · номер\u00a0підтверджено 12\u00a0вересня</span></span>{CHEVRON_RIGHT}</a>"""
+CHAT_CONTEXT = f"""<a class="chat-context" href="listing.html"><img class="chat-context__thumb" src="{ROOM_PHOTOS[0][0]}" alt=""><span class="chat-context__text"><strong class="chat-context__title">Кімната біля Лук’янівської</strong><span class="chat-context__meta">10\u00a0500\u00a0грн/міс · з\u00a01\u00a0жовтня · номер\u00a0підтверджено 12\u00a0вересня</span></span>{CHEVRON_RIGHT}</a>"""
 
 
 def composer(text, placeholder="Повідомлення", ready=None):
     # «Надіслати» активна, лише коли є що надіслати й розмова завантажилась.
+    # Вимкнена — справжній disabled (поза Tab); вмикає скрипт за подією input.
+    wait = ready is False
     ready = bool(text) if ready is None else ready
-    send = (
-        f'<a class="composer__send" href="chat.html" aria-label="Надіслати">{lin("plain-2")}</a>'
-        if ready
-        else f'<button class="composer__send" type="button" aria-disabled="true" aria-label="Надіслати">{lin("plain-2")}</button>'
-    )
-    return f"""<form class="composer"><label class="sr-only" for="message">Повідомлення Ірині</label><textarea class="composer__input" id="message" name="message" rows="1" placeholder="{placeholder}">{text}</textarea>{send}</form>"""
+    off = "" if ready else " disabled"
+    send = f'<button class="composer__send" type="submit" aria-label="Надіслати"{off}>{lin("plain-2")}</button>'
+    attrs = ' action="chat.html"' + (" data-wait" if wait else "")
+    return f"""<form class="composer"{attrs}><label class="sr-only" for="message">Повідомлення Ірині</label><textarea class="composer__input" id="message" name="message" rows="1" placeholder="{placeholder}">{text}</textarea>{send}</form>"""
 
 
 page(

@@ -1,0 +1,29 @@
+<!--
+  Патерн: Деталі з контактом (contact-frame)
+  Композиція: компактна шапка «назад + ⋯ (заблокувати чи поскаржитися)» →
+  прокручуваний вміст про кімнату чи людину → закріплена панель з однією
+  кораловою дією «Написати Ірині», що веде в чат.
+  Компоненти: shell (--actionbar), topbar (__back, __title, __action),
+  actionbar, button (--primary); у завантаженні — skeleton--button у тій
+  самій панелі.
+  Де стоїть (3+): wireframes/listing, profile, profile-empty; скелетон тієї
+  самої рамки — listing-loading, profile-loading.
+  Коли брати: екран показує одну пропозицію чи одну людину, і наступний
+  крок core loop — написати їй. Скарга й блокування стоять у ⋯ на кожному
+  такому екрані (C-19).
+  Коли — окремі компоненти: дії на екрані немає або їх кілька (тоді не
+  actionbar), екран — стрічка (header + tabbar), розмова вже йде (chat-frame).
+  Варіант: в оголошенні шапка стоїть поверх фото — topbar--over-photo без
+  назви і shell--photo-top; у профілі — назва «Профіль Ірини» абзацом
+  (heading=False у wireframes/_build.py), бо h1 — ім’я в profile-head.
+  Не входить: кнопка теми (.theme-slot / .theme-toggle) — разовий блок
+  wireframes/screens.css.
+  Нових стилів немає: лише класи з design-system/index.css.
+-->
+<div class="shell shell--actionbar">
+  <header class="topbar"><a class="topbar__back" href="#" aria-label="Назад до оголошення"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><p class="topbar__title">Профіль Ірини</p><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button></header>
+  <main class="shell__main">
+    <!-- вміст: profile-head, section-group, card-feed або hero-photo + listing-title -->
+  </main>
+  <div class="actionbar"><a class="button button--primary" href="#">Написати Ірині</a></div>
+</div>

@@ -1,0 +1,94 @@
+<!doctype html>
+<!--
+  Приклад: екран «Скарга на Ірину» (report) — Related job 5 у jtbd.md
+  («Не втратити контроль під час взаємодії з незнайомою людиною»), крок
+  FORM у flows.md: обрати категорію й додати контекст скарги.
+  Вхід — ⋯ «Заблокувати чи поскаржитися» в шапці чату.
+
+  Перевірка самодостатності системи (урок 9): екран зібраний лише з
+  design-system/index.css — без <style>, style="", screens.css і нових
+  класів. Усе, чого забракло, не домальоване тут, а записане замовленням
+  у ../backlog.md (позначки [B1]… нижче ведуть туди).
+  Скрипт теми — дослівна копія THEME_SCRIPT з wireframes/_build.py:
+  у системі його немає ([B9]).
+-->
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="wireframe-job" content="Related 5 — не втратити контроль під час взаємодії з незнайомою людиною">
+<title>Скарга на Ірину — Куток</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../index.css">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<script>
+/* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23 */
+(function () {
+  var KEY = "kutok-theme", root = document.documentElement;
+  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function apply(dark) {
+    if (dark) root.setAttribute("data-theme", "dark"); else root.removeAttribute("data-theme");
+    document.querySelectorAll(".theme-toggle").forEach(function (b) {
+      b.setAttribute("aria-pressed", dark ? "true" : "false");
+      var i = b.querySelector("iconify-icon");
+      if (i) i.setAttribute("icon", dark ? "solar:sun-2-linear" : "solar:moon-linear");
+    });
+  }
+  apply(saved() === "dark");
+  document.addEventListener("DOMContentLoaded", function () { apply(saved() === "dark"); });
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest(".theme-toggle");
+    if (!b) return;
+    var dark = root.getAttribute("data-theme") !== "dark";
+    apply(dark);
+    try { localStorage.setItem(KEY, dark ? "dark" : "light"); } catch (err) {}
+  });
+  window.addEventListener("storage", function (e) { if (e.key === KEY) apply(e.newValue === "dark"); });
+})();
+</script>
+</head>
+<body class="shell shell--actionbar">
+<header class="topbar"><a class="topbar__back" href="../../wireframes/chat.html" aria-label="Назад до чату"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><h1 class="topbar__title">Скарга на Ірину</h1><button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button></header>
+<main class="shell__main" id="content">
+<!-- Про кого скарга і з якого чату — наявні group + person-row (не посилання: тут не відкриваємо профіль) -->
+<div class="group">
+  <div class="group__row"><span class="person-row"><span class="avatar avatar--md"><img src="../../visuals/person-iryna.jpg" alt="Фото профілю Ірини"></span><span class="person-row__text"><strong class="person-row__name">Ірина</strong><span class="person-row__caption">Чат про «Кімната біля Лук’янівської»</span></span></span></div>
+</div>
+
+<!-- [B1] Компонента списку вибору ще немає: нативні радіо в .group__row; колір і розмір дає base.css (урок 9).
+     [B2] закрито: fieldset/legend скинуто в base.css — семантика групи нативна, без role="radiogroup". -->
+<form id="report" action="report-sent.html">
+<fieldset>
+<legend class="section-title">Що сталося?</legend>
+<div class="group">
+  <label class="group__row"><span>Спам або реклама</span><input type="radio" name="reason" value="spam"></label>
+  <label class="group__row"><span>Просить передоплату або гроші</span><input type="radio" name="reason" value="money" checked></label>
+  <label class="group__row"><span>Образи, погрози чи тиск</span><input type="radio" name="reason" value="abuse"></label>
+  <label class="group__row"><span>Оголошення не відповідає дійсності</span><input type="radio" name="reason" value="fake"></label>
+  <label class="group__row"><span>Інше</span><input type="radio" name="reason" value="other"></label>
+</div>
+</fieldset>
+
+<!-- [B3] .input не має багаторядкового варіанта: textarea бере висоту й поля однорядкового поля.
+     [B4] У .field немає підказки під полем (__hint) — тут .muted з base.css. -->
+<div class="field">
+  <label class="field__label" for="details">Що саме сталося</label>
+  <textarea class="input" id="details" name="details" rows="4" aria-describedby="details-hint">Після першого повідомлення попросила 3 000 грн завдатку на картку, ще до перегляду.</textarea>
+  <p class="muted" id="details-hint">Необов’язково. Дата чи слова з повідомлення допоможуть розібратися.</p>
+</div>
+</form>
+
+<!-- [B5] Пояснювального блоку (notice) у системі немає: «що буде далі» — простим текстом.
+     Блок і скарга незалежні (flows.md): блокування — окрема дія тут же. -->
+<h2 class="section-title">Що буде далі</h2>
+<p class="muted">Скаргу розгляне модерація. Строк не обіцяємо, і скарга сама по собі не означає покарання.</p>
+<p class="muted">Скарга не блокує Ірину. Щоб вона більше не могла тобі писати, заблокуй її окремо.</p>
+<!-- [B6] Варіанта кнопки для небезпечної дії немає: «Заблокувати» — звичайна другорядна. -->
+<a class="button button--secondary button--block" href="../../wireframes/chat.html">Заблокувати Ірину</a>
+</main>
+<!-- [B7] Стану «надсилаємо» в кнопки немає (loading); помилку надсилання без втрати форми
+     показати нічим ([B8]) — див. backlog. -->
+<div class="actionbar"><button class="button button--primary" type="submit" form="report">Надіслати скаргу</button></div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+/* Дизайн-система «Кутка» — одна точка входу.
+   Продукт підключає систему як один пакет:
+     <link rel="stylesheet" href="design-system/index.css">
+   Порядок важливий: спершу значення (tokens.css — primitive, semantic,
+   темна тема, шрифт Onest), потім компоненти, що їх читають. */
+@import url("tokens.css");
+@import url("components/index.css");

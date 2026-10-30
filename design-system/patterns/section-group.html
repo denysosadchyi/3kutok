@@ -1,0 +1,37 @@
+<!--
+  Патерн: Розділ зі списком (section-group)
+  Композиція: заголовок розділу → згрупований список рядків на сірій
+  поверхні. Найчастіший зміст — «Що підтверджено» з рядком перевірки:
+  він однаковий на всіх трьох екранах.
+  Компоненти: section-title, group (ul — рядки-елементи, dl — підпис і
+  значення), verified-note; у розділі «Хто живе в квартирі» — person-row,
+  avatar.
+  Де стоїть (3+): wireframes/listing («Хто живе в квартирі», «Що
+  підтверджено»), profile («Спосіб життя», «Що підтверджено»),
+  profile-empty («Що підтверджено»).
+  Коли брати: на сторінці деталей є кілька однорідних фактів або одна
+  сутність (людина, перевірка), яким потрібна назва розділу.
+  Коли — окремі компоненти: факти йдуть одразу під назвою оголошення без
+  власного заголовка (group без section-title, як «Співмешканці / Квартира /
+  Комунальні» в listing); розділ без даних — заголовок і разовий блок
+  .state-note (profile-empty), не порожній group.
+  Нових стилів немає: лише класи з design-system/index.css.
+-->
+<h2 class="section-title">Що підтверджено</h2>
+<ul class="group">
+  <li class="group__row verified-note"><span class="verified-note__icon"><iconify-icon icon="solar:shield-check-linear" aria-hidden="true"></iconify-icon></span><span class="verified-note__text"><strong class="verified-note__title">Номер підтверджено 12 вересня</strong><br><span class="verified-note__limit">Це означає лише, що людина має доступ до цього номера.</span></span></li>
+</ul>
+
+<!-- варіант: підпис і значення (profile, «Спосіб життя») -->
+<h2 class="section-title">Спосіб життя</h2>
+<dl class="group">
+  <div class="group__row"><dt class="group__label">Розпорядок дня</dt><dd class="group__value">будні, 9:00–18:00</dd></div>
+  <div class="group__row"><dt class="group__label">Куріння</dt><dd class="group__value">не курить</dd></div>
+  <div class="group__row"><dt class="group__label">Гості</dt><dd class="group__value">за домовленістю</dd></div>
+</dl>
+
+<!-- варіант: людина (listing, «Хто живе в квартирі») -->
+<h2 class="section-title">Хто живе в квартирі</h2>
+<ul class="group">
+  <li class="group__row"><a class="person-row" href="#" aria-label="Відкрити профіль Ірини"><span class="avatar avatar--md"><img src="../../visuals/person-iryna.jpg" alt="Фото профілю Ірини"><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span><span class="person-row__text"><strong class="person-row__name">Ірина, 29 років</strong><span class="person-row__caption">Живе з одним співмешканцем</span></span><iconify-icon class="chevron" icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></a></li>
+</ul>

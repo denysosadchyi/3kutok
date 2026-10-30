@@ -7,8 +7,7 @@
 <title>Результати пошуку — Куток</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="../tokens.css">
-<link rel="stylesheet" href="../components/index.css">
+<link rel="stylesheet" href="../design-system/index.css">
 <link rel="stylesheet" href="screens.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 <script>
@@ -41,10 +40,10 @@
 <header class="header"><div class="header__top"><button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button><h1 class="header__title">Результати пошуку</h1><p class="header__subtitle">Київ · кімнати та співмешканці</p></div></header>
 <main class="shell__main" id="content">
 
-<div class="chip-row"><div class="chip-row__track">
+<div class="chip-row"><div class="chip-row__track" tabindex="0" role="group" aria-label="Активні фільтри">
   <details class="sheet">
     <summary class="chip chip--selected"><iconify-icon icon="solar:tuning-2-linear" aria-hidden="true"></iconify-icon>Фільтри · 3</summary>
-    <section class="sheet__panel" aria-labelledby="filters-title">
+    <section class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="filters-title">
       <div class="sheet__grabber" aria-hidden="true"></div>
       <div class="sheet__head"><h2 class="sheet__title" id="filters-title">Фільтри</h2><a class="button button--text" href="listings.html">Скасувати</a></div>
       <form class="sheet__body" action="listings.html" method="get">
@@ -64,7 +63,7 @@
 </div></div>
 <div class="results-meta"><span>12 оголошень</span><details class="sheet">
   <summary class="sort">Спершу нові<iconify-icon icon="solar:alt-arrow-down-linear" aria-hidden="true"></iconify-icon></summary>
-  <section class="sheet__panel" aria-labelledby="sort-title">
+  <section class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="sort-title">
     <div class="sheet__grabber" aria-hidden="true"></div>
     <div class="sheet__head"><h2 class="sheet__title" id="sort-title">Сортування</h2><a class="button button--text" href="listings.html">Скасувати</a></div>
     <ul class="sort-options"><li><a href="listings.html" aria-current="true">Спершу нові<iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon></a></li><li><a href="listings.html">Спершу дешевші</a></li><li><a href="listings.html">Спершу дорожчі</a></li></ul>
@@ -107,8 +106,28 @@
 </ul>
 <a class="button button--secondary button--block" href="listings.html">Показати ще 9</a>
 </main>
-<nav class="tabbar" aria-label="Головна навігація"><ul class="tabbar__list"><li><a class="tabbar__item" href="listings.html" aria-current="page"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon><span>Пошук</span></a></li><li><a class="tabbar__item" href="chat.html"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li><li><span class="tabbar__item"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></span></li></ul></nav>
+<nav class="tabbar" aria-label="Головна навігація"><ul class="tabbar__list"><li><a class="tabbar__item" href="listings.html" aria-current="page"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon><span>Пошук</span></a></li><li><a class="tabbar__item" href="chat.html"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li><li><a class="tabbar__item" aria-disabled="true"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></a></li></ul></nav>
 <script>
+document.addEventListener("toggle", function (e) {
+  var d = e.target;
+  if (!d.matches || !d.matches("details.sheet")) return;
+  for (var n = d; n.parentElement && n !== document.body; n = n.parentElement) {
+    Array.prototype.forEach.call(n.parentElement.children, function (el) {
+      if (el !== n && el.tagName !== "SCRIPT") el.inert = d.open;
+    });
+  }
+  if (d.open) {
+    var first = d.querySelector(".sheet__panel a, .sheet__panel button, .sheet__panel input, .sheet__panel select");
+    if (first) first.focus();
+  } else {
+    d.querySelector("summary").focus();
+  }
+}, true);
+document.addEventListener("input", function (e) {
+  var form = e.target.closest(".composer");
+  if (!form || form.hasAttribute("data-wait")) return;
+  form.querySelector(".composer__send").disabled = !e.target.value.trim();
+});
 document.addEventListener("click", function (e) {
   var sheet = e.target.closest("details.sheet[open]");
   if (sheet && !e.target.closest(".sheet__panel, summary")) sheet.open = false;

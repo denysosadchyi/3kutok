@@ -7,8 +7,7 @@
 <title>Оголошення — Куток</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="../tokens.css">
-<link rel="stylesheet" href="../components/index.css">
+<link rel="stylesheet" href="../design-system/index.css">
 <link rel="stylesheet" href="screens.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
 <script>
@@ -41,7 +40,7 @@
 <header class="topbar topbar--over-photo"><a class="topbar__back" href="listings.html" aria-label="Назад до результатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><span></span><span class="theme-slot"><button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button></span></header>
 <main class="shell__main" id="content">
 <div class="hero-photo"><img src="../visuals/room-lukianivska-bedroom.jpg" alt="Світла спальня з ліжком, тумбою і настінною лампою"><p class="price-tag">10 500 грн/міс</p><span class="photo-count">1 / 5</span></div>
-<ul class="gallery" aria-label="Інші фото квартири"><li class="gallery__item"><img src="../visuals/room-lukianivska-living.jpg" alt="Спільна вітальня з диваном, рослинами й книжковою полицею" loading="lazy"></li><li class="gallery__item"><img src="../visuals/room-lukianivska-kitchen.jpg" alt="Спільна кухня з білими шафами й обіднім столом біля вікна" loading="lazy"></li><li class="gallery__item"><img src="../visuals/room-lukianivska-corner.jpg" alt="Куточок вітальні з кріслом, торшером і книжковою полицею" loading="lazy"></li><li class="gallery__item"><img src="../visuals/room-lukianivska-bathroom.jpg" alt="Спільна ванна кімната з пральною машиною" loading="lazy"></li></ul>
+<ul class="gallery" tabindex="0" aria-label="Інші фото квартири"><li class="gallery__item"><img src="../visuals/room-lukianivska-living.jpg" alt="Спільна вітальня з диваном, рослинами й книжковою полицею" loading="lazy"></li><li class="gallery__item"><img src="../visuals/room-lukianivska-kitchen.jpg" alt="Спільна кухня з білими шафами й обіднім столом біля вікна" loading="lazy"></li><li class="gallery__item"><img src="../visuals/room-lukianivska-corner.jpg" alt="Куточок вітальні з кріслом, торшером і книжковою полицею" loading="lazy"></li><li class="gallery__item"><img src="../visuals/room-lukianivska-bathroom.jpg" alt="Спільна ванна кімната з пральною машиною" loading="lazy"></li></ul>
 <div class="listing-title">
   <h1 class="listing-title__name">Кімната біля Лук’янівської</h1>
   <p class="listing-title__meta">Шевченківський район · з 1 жовтня</p>
@@ -61,6 +60,26 @@
 </main>
 <div class="actionbar"><a class="button button--primary" href="chat.html">Написати Ірині</a></div>
 <script>
+document.addEventListener("toggle", function (e) {
+  var d = e.target;
+  if (!d.matches || !d.matches("details.sheet")) return;
+  for (var n = d; n.parentElement && n !== document.body; n = n.parentElement) {
+    Array.prototype.forEach.call(n.parentElement.children, function (el) {
+      if (el !== n && el.tagName !== "SCRIPT") el.inert = d.open;
+    });
+  }
+  if (d.open) {
+    var first = d.querySelector(".sheet__panel a, .sheet__panel button, .sheet__panel input, .sheet__panel select");
+    if (first) first.focus();
+  } else {
+    d.querySelector("summary").focus();
+  }
+}, true);
+document.addEventListener("input", function (e) {
+  var form = e.target.closest(".composer");
+  if (!form || form.hasAttribute("data-wait")) return;
+  form.querySelector(".composer__send").disabled = !e.target.value.trim();
+});
 document.addEventListener("click", function (e) {
   var sheet = e.target.closest("details.sheet[open]");
   if (sheet && !e.target.closest(".sheet__panel, summary")) sheet.open = false;

@@ -1,0 +1,28 @@
+<!--
+  Патерн: Стан замість екрана (screen-state)
+  Композиція: компактна шапка лише з «назад» → стан на весь вільний екран
+  (іконка, заголовок, пояснення) → основна дія і, якщо є, вихід другою
+  кнопкою. Нижнього поясу немає: дії «Написати» без даних не буває.
+  Компоненти: shell (без модифікатора), topbar (__back, __title), state
+  (--error для помилки, з role="alert"), button (--primary, --secondary).
+  Де стоїть (3+): wireframes/listing-empty, listing-error, profile-error.
+  Коли брати: не вдалося показати саму сторінку — оголошення зняли, профіль
+  чи оголошення не завантажилися. Людині лишаються повтор і дорога назад.
+  Заголовок стану тоді — h1 сторінки.
+  Коли — окремі компоненти: дані зникли лише в частині екрана, а рамка
+  працює — тоді state ставиш усередину наявної рамки, без цього патерна:
+  у search-panel (listings-empty, listings-error — фільтри лишаються) і в
+  chat-frame (chat-empty, chat-error — поле й чернетка лишаються).
+  Нових стилів немає: лише класи з design-system/index.css.
+-->
+<div class="shell">
+  <header class="topbar"><a class="topbar__back" href="#" aria-label="Назад до результатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><span></span><span></span></header>
+  <main class="shell__main">
+    <section class="state state--error" role="alert">
+      <div class="state__icon"><iconify-icon icon="streamline-freehand:alerts-warning-triangle" aria-hidden="true"></iconify-icon></div>
+      <h1 class="state__title">Не вдалося завантажити оголошення</h1>
+      <p class="state__text">Перевір з’єднання й спробуй ще.</p>
+      <div class="state__actions"><a class="button button--primary" href="#">Спробувати ще</a><a class="button button--secondary" href="#">Назад до результатів</a></div>
+    </section>
+  </main>
+</div>
