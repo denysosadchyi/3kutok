@@ -338,9 +338,10 @@ html.embed .hub-theme { display: none; }
 }
 .ct-row:hover .ct-glyph { box-shadow: 0 0 0 3px var(--ds-wash); }
 .ct-glyph svg { width: 11px; height: 11px; }
+/* Пройдений урок — номер на інверсії (як «моя» бульбашка), поточні — на коралі. */
 .ct-lesson[data-status="done"] .ct-glyph {
-  background: var(--ds-ink);
-  color: var(--ds-surface);
+  background: var(--color-inverted);
+  color: var(--color-text-on-inverted);
 }
 .ct-lesson[data-status="active"] .ct-glyph {
   background: var(--color-action);
