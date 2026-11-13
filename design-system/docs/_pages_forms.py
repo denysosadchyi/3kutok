@@ -54,7 +54,7 @@ def chat_context_tatarka():
 BUTTON = dict(
     slug="button", name="Кнопка", group="Форми",
     api="button",
-    files=["button.css"],
+    files=["button.css", "button.js"],
     classes="<code>.button</code> · <code>--primary</code> · <code>--secondary</code> · <code>--text</code> · <code>--block</code>",
     role="Дія, яку людина робить на екрані. Коралова — головна й одна на екран, сіра — друга, текстова — тихе «Скасувати».",
     card_role="Одна коралова дія на екран, решта — сірі.",
@@ -94,7 +94,7 @@ BUTTON = dict(
            "Текст на заливці — тільки чорнилом.</p>"
            "<p>Друга дія — сіра <code>--secondary</code>: «Назад до оголошення», «Назад до результатів», «Показати ще 9». "
            "Тиха дія без заливки — <code>--text</code>: «Скасувати» в шторці. Назви дій однакові на всіх екранах — словник дій у <code>microcopy.md</code>.</p>"
-           "<p>Наведення й натискання міняють лише фон — розмір і положення не рухаються (стиск 0.98 прибрано в уроці 9). Фокус — кільце <code>--color-focus</code> товщиною <code>--stroke-2</code>.</p>"),
+           "<p>Наведення й натискання міняють лише фон — розмір і положення не рухаються (стиск 0.98 прибрано в уроці 9). Фон наведення приходить кругом із того боку, звідки зайшов курсор: точку пише <code>components/button.js</code> (його підключають екрани, документація й вітрина), без нього круг росте з центру. Той самий скрипт розбиває напис на літери (<code>.button__label</code> / <code>.button__char</code>, для читача екрана — <code>.sr-only</code> з цілим словом): на наведенні вони хвилею перекочуються вгору, кожну змінює її копія знизу. Фокус — кільце <code>--color-focus</code> товщиною <code>--stroke-2</code>.</p>"),
     sources="<code>DESIGN.md</code> → Components → Buttons, Colors → Named Rules (The One Coral Button, The Coral Means Do); <code>microcopy.md</code> → Звірка після переписування → Дії; <code>ui/inventory.md</code> → Форми",
     do=("одна коралова, друга сіра",
         stage(button("Спробувати ще") + button("Назад до оголошення", "secondary"), "row"),
@@ -141,7 +141,7 @@ CHIP = dict(
     sources="<code>DESIGN.md</code> → Components → Chips, Colors → Named Rules (The Coral Means Do); <code>microcopy.md</code> → Результати пошуку; <code>ui/inventory.md</code> → Форми",
     do=("фільтри, що діють, — у ряду",
         stage(chip_row()),
-        "<p>Людина бачить умови пошуку, не відкриваючи шторку, а «Фільтри · 3» веде туди, де їх змінити.</p>"),
+        "<p>Людина бачить умови пошуку без шторки, а «Фільтри · 3» веде туди, де їх змінити.</p>"),
     dont=("чип як головна дія",
           stage(profile_head() + '<a class="chip chip--selected" href="#">Написати Ірині</a>'),
           "<p>Чип 36 читається як фільтр, а не як крок до контакту: головна дія губиться й не має висоти 48.</p>",
@@ -409,8 +409,8 @@ COMPOSER = dict(
     ],
     usage=("<p>Пояс стоїть на всіх екранах чату й тримається внизу над клавіатурою. Плейсхолдер — «Повідомлення», кнопка — «Надіслати» (словник дій). "
            "Перше повідомлення людина пише сама: порожній стан підказує «Представся й запитай, чи кімната ще вільна…».</p>"
-           "<p>«Надіслати» коралова, лише коли в полі є текст. Поле порожнє, розмова вантажиться чи не завантажилась — кнопка "
-           "<code>disabled</code> і приглушена прозорістю 0.4: на <code>chat-error</code> коралова дія одна — «Спробувати ще» (правка уроку 7, The One Coral Button Rule).</p>"),
+           "<p>«Надіслати» коралова, лише коли в полі є текст. Якщо поле порожнє, розмова вантажиться чи не завантажилась, кнопка має "
+           "<code>disabled</code> і прозорість 0.4. На <code>chat-error</code> коралова дія одна — «Спробувати ще» (правка уроку 7, The One Coral Button Rule).</p>"),
     sources="<code>DESIGN.md</code> → Components → Buttons (Send), Inputs / Fields, Правки уроку 7 і 8; <code>microcopy.md</code> → Чат (C-15…C-17, C-23, C-29); <code>ui/inventory.md</code> → Чат",
     do=("на помилці «Надіслати» мовчить",
         chat_screen(state("chat-error"), composer(disabled=True), "tall"),

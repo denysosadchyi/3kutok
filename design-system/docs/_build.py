@@ -21,6 +21,7 @@ import _pages_cards
 import _pages_forms
 import _why
 import _states
+import _motion
 import _patterns
 import _tokens
 
@@ -62,6 +63,7 @@ def head(title, description):
 <link rel="stylesheet" href="docs.css">
 {ICONIFY}
 <script src="docs.js"></script>
+<script src="../components/button.js" defer></script>
 </head>
 <body>
 <a class="doc-skip" href="#main">До змісту</a>
@@ -139,6 +141,8 @@ def part(pid, title, lead, body):
 
 def component_page(page, prev, nxt):
     a = page["anatomy"]
+    w = page.get("widths")  # (вступ, html) — лише в компонентів з адаптивом (урок 10)
+    mv = _motion.block(page["slug"], variants)  # «Рух» — лише в компонентів, що рухаються
     anatomy = f'<div class="doc-anatomy"><div class="doc-anatomy__live">{a["live"]}</div>{legend(a["legend"])}</div>'
     usage = f'<div class="doc-prose">{page["usage"]}<p class="doc-sources">Джерела: {page["sources"]}</p></div>'
     pager = '<nav class="doc-pager" aria-label="Сусідні компоненти">'
@@ -153,12 +157,16 @@ def component_page(page, prev, nxt):
             + f'<h1>{page["name"]}</h1><p class="doc-lead">{page["role"]}</p>{facts(page)}</header>'
             + '<nav class="doc-toc" aria-label="Частини сторінки">'
             + '<a class="chip" href="#anatomy">Анатомія</a><a class="chip" href="#variants">Варіанти</a>'
-            + '<a class="chip" href="#usage">Коли вживати</a><a class="chip" href="#rules">Правило й антиправило</a><a class="chip" href="#states">Стани</a></nav>'
+            + ('<a class="chip" href="#widths">Три ширини</a>' if w else "")
+            + '<a class="chip" href="#usage">Коли вживати</a><a class="chip" href="#rules">Правило й антиправило</a><a class="chip" href="#states">Стани</a>'
+            + ('<a class="chip" href="#motion">Рух</a>' if mv else "") + '</nav>'
             + part("anatomy", "1. Анатомія", a.get("lead", "Живий компонент із системи. Наведи на рядок легенди — частина обведеться пунктиром."), anatomy)
             + part("variants", "2. Варіанти й розміри", page.get("variants_lead", "Усі варіанти з <code>ui/inventory.md</code>, поруч."), variants(page["variants"]))
-            + part("usage", "3. Коли вживати", "", usage)
-            + part("rules", "4. Правило і антиправило", "", rules(page))
-            + part("states", "5. Стани", "", _states.block(page["slug"], variants))
+            + (part("widths", "3. Три ширини", w[0], w[1]) if w else "")
+            + part("usage", f"{3 + bool(w)}. Коли вживати", "", usage)
+            + part("rules", f"{4 + bool(w)}. Правило і антиправило", "", rules(page))
+            + part("states", f"{5 + bool(w)}. Стани", "", _states.block(page["slug"], variants))
+            + (part("motion", f"{6 + bool(w)}. Рух", "", mv) if mv else "")
             + pager
             + "</main></div>\n</body>\n</html>\n")
 
@@ -188,10 +196,10 @@ def index_page():
             + '<p>Звідки взялися біла стіна з холодною сірою поверхнею, один кораловий колір, вага замість розміру й бирка з ціною — коротко, з посиланнями на джерела.</p>'
             + '<p><a class="button button--primary" href="why.html">Чому система така</a></p></div>'
             + '<section class="doc-group" aria-labelledby="how"><h2 id="how">Як читати сторінку компонента</h2>'
-            + '<p>П’ять частин, завжди в одному порядку: <strong>анатомія</strong> — живий компонент з пронумерованими частинами; '
-            + '<strong>варіанти й розміри</strong> — усе з <code>ui/inventory.md</code> поруч; <strong>коли вживати</strong> — роль у продукті '
-            + 'за <code>DESIGN.md</code> і <code>microcopy.md</code>; <strong>правило й антиправило</strong> — доречне вживання і випадок, '
-            + 'коли треба взяти інший компонент; <strong>стани</strong> — наведення, натискання, фокус і вимкнене в обох темах.</p></section>'
+            + '<p>Сторінка має п’ять частин, завжди в одному порядку. <strong>Анатомія</strong> — живий компонент з пронумерованими частинами. '
+            + '<strong>Варіанти й розміри</strong> — усе з <code>ui/inventory.md</code> поруч. <strong>Коли вживати</strong> — роль у продукті '
+            + 'за <code>DESIGN.md</code> і <code>microcopy.md</code>. <strong>Правило й антиправило</strong> — доречне вживання і випадок, '
+            + 'коли треба взяти інший компонент. <strong>Стани</strong> — наведення, натискання, фокус і вимкнене в обох темах.</p></section>'
             + "".join(groups)
             + '<section class="doc-group" aria-labelledby="more"><h2 id="more">Поруч</h2><div class="doc-prose"><ul>'
             + '<li><a class="doc-link" href="tokens.html">Токени</a> — усі значення з <code>tokens.css</code>: primitive, semantic-ролі кольору в обох темах, контраст пар.</li>'

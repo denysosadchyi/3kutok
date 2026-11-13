@@ -12,7 +12,16 @@
   — компонент без збірки в components/index.css чи без сторінки в docs/;
   — патерн без рядка в patterns/README.md;
   — порушення будови tokens.css (semantic — лише var() на primitive, темна
-    тема — лише semantic).
+    тема — лише semantic);
+  — рух повз правила DESIGN.md «Анімація»: primitive руху (--duration-*,
+    --curve-*) напряму замість ролі --dur-*/--ease-*; transition чи @keyframes
+    на чомусь, крім transform і opacity; рух без prefers-reduced-motion у файлі;
+    тривалість чи затримка числом або не з ролі --dur-*; крива ключовим словом
+    чи cubic-bezier() замість --ease-*; transition без властивості (= all);
+    немає глобального блоку prefers-reduced-motion у components/base.css
+    (*, ::before, ::after: тривалість --dur-instant, повтор 1, прокрутка auto);
+    JS компонента анімує (animate/setKeyframes) щось, крім transform і opacity,
+    чи пише тривалість числом. Перевірка руху діє в усіх рівнях, і у вітрині.
 
 Рівні перевірки (див. SCOPES нижче):
   product  — компоненти, screens.css, екрани, патерни, приклади: суворо,
@@ -93,6 +102,26 @@ UNITS = {"px", "rem", "em", "ex", "ch", "lh", "rlh", "vw", "vh", "vmin", "vmax",
          "q", "deg", "rad", "grad", "turn", "s", "ms", "hz", "khz", "dpi", "dppx", "x", "%"}
 VAR = re.compile(r"var\(\s*(--[\w-]+)\s*(,)?")
 TOKEN_PROPS = {"font-weight", "line-height", "z-index", "letter-spacing"}  # число без одиниці — теж токен
+
+# Рух (DESIGN.md «Анімація»): ролі — semantic, primitive — лише в tokens.css
+MOTION_ROLE = re.compile(r"--(dur|ease|move)-")
+MOTION_PRIM = re.compile(r"--(duration|curve)-")
+MOTION_PROPS = {"transform", "opacity"}   # що дозволено анімувати; фокус, колір, розмір — миттєво
+# Де стоять тривалості й криві (DESIGN.md «Анімація» → «Ціна кадру»)
+TIME_PROPS = {"transition", "transition-duration", "transition-delay",
+              "animation", "animation-duration", "animation-delay"}
+EASE_PROPS = {"transition-timing-function", "animation-timing-function"}
+TIME_NUM = re.compile(r"(?<![\w.#-])(-?(?:\d+\.?\d*|\.\d+))(ms|s)\b", re.I)
+EASE_RAW = re.compile(r"(?<![\w-])(ease(?:-in-out|-in|-out)?|linear|step-start|step-end|cubic-bezier|steps)(?![\w-])", re.I)
+# Глобальний блок «менше руху» (components/base.css): селектор і обов'язкові оголошення
+REDUCED_FILE = f"{DS}/components/base.css"
+REDUCED_SELECTORS = {"*", "*::before", "*::after"}
+REDUCED_DECLS = {
+    "animation-duration": r"var\(--dur-instant\)",
+    "animation-iteration-count": r"1",
+    "transition-duration": r"var\(--dur-instant\)",
+    "scroll-behavior": r"auto",
+}
 
 
 class Report:
@@ -179,7 +208,13 @@ def load_tokens(rep):
                 rep.err(TOKENS, line, f"semantic {name} посилається на роль {m.group(1)}: роль — var() на primitive")
             elif m.group(1) not in color_prims and m.group(1) in root:
                 rep.err(TOKENS, line, f"semantic {name} посилається на {m.group(1)}, а це не колір-primitive")
-        elif "--color-" in value:
+        elif MOTION_ROLE.match(name):
+            m = re.fullmatch(r"var\((--[\w-]+)\)", value)
+            if not m:
+                rep.err(TOKENS, line, f"semantic {name} = «{value}»: роль руху — лише var() на primitive")
+            elif MOTION_ROLE.match(m.group(1)) or m.group(1).startswith("--color-"):
+                rep.err(TOKENS, line, f"semantic {name} посилається на роль {m.group(1)}: роль — var() на primitive")
+        elif "--color-" in value or any(MOTION_ROLE.match(r) for r, _ in VAR.findall(value)):
             rep.err(TOKENS, line, f"primitive {name} посилається на роль: primitive не знає ролей")
 
     for name, (value, line) in dark.items():
@@ -193,7 +228,8 @@ def load_tokens(rep):
             rep.err(TOKENS, line, f"темна {name} = «{value}»: лише var() на колір-primitive")
 
     contrast_check(raw, root, rep)
-    return set(root), color_prims
+    breakpoints = {v: n for n, (v, _) in root.items() if n.startswith("--bp-")}
+    return set(root), color_prims, breakpoints
 
 
 def contrast_check(raw, root, rep):
@@ -241,6 +277,23 @@ def check_value(rel, line, prop, value, scope, ctx, rep):
             rep.err(rel, line, f"var({ref}) — такого токена немає в tokens.css")
         elif ref in color_prims:
             rep.err(rel, line, f"var({ref}) — колір-primitive напряму; колір береться лише через роль --color-*")
+        elif MOTION_PRIM.match(ref):
+            rep.err(rel, line, f"var({ref}) — primitive руху напряму; рух лише через --dur-*, --ease-*, --move-*")
+
+    if prop in ("transition", "transition-property"):
+        for seg in VAR.sub(" ", value).split(","):
+            words = re.findall(r"[a-zA-Z][\w-]*", seg.replace("!important", " "))
+            target = words[0].lower() if words else ""
+            if prop == "transition" and target in ("ease", "ease-in", "ease-out", "ease-in-out", "linear",
+                                                   "step-start", "step-end", "steps", "cubic-bezier"):
+                target = ""
+            if target and target != "none" and target not in MOTION_PROPS:
+                rep.err(rel, line, f"{prop}: анімується «{target}» — лише transform і opacity (DESIGN.md «Анімація»); "
+                                   "колір, рамка й кільце фокусу міняються миттєво")
+            elif prop == "transition" and not target and seg.strip():
+                rep.err(rel, line, "transition без властивості — це all (розмір, колір, відступи); "
+                                   "назви transform чи opacity (DESIGN.md «Анімація»)")
+    check_timing(rel, line, prop, value, rep, ctx["tokens"])
 
     rest = VAR.sub(" ", value)
     rest = re.sub(r"\"[^\"]*\"|'[^']*'", " ", rest) if prop not in ("font-family", "font") else rest
@@ -264,8 +317,8 @@ def check_value(rel, line, prop, value, scope, ctx, rep):
     for num, unit in NUMBER.findall(rest):
         unit_l = unit.lower()
         n = float(num)
-        if unit_l == "fr":
-            continue
+        if unit_l == "fr" or (unit_l in ("s", "ms") and prop in TIME_PROPS):
+            continue   # тривалість — check_timing, щоб не дублювати
         if unit_l in UNITS:
             if n == 0 or (unit_l == "%" and n == 100):
                 continue
@@ -279,10 +332,131 @@ def check_value(rel, line, prop, value, scope, ctx, rep):
             rep.err(rel, line, f"{prop}: «{num}{unit}» — невідома одиниця, значення лише з tokens.css")
 
 
+def top_level_split(value):
+    """Кома між шарами transition/animation — не кома всередині var(…, фолбек)."""
+    parts, depth, cur = [], 0, ""
+    for ch in value:
+        depth += {"(": 1, ")": -1}.get(ch, 0)
+        if ch == "," and depth == 0:
+            parts.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    return parts + [cur]
+
+
+def check_timing(rel, line, prop, value, rep, tokens):
+    """Тривалість, затримка й крива — лише ролі руху (DESIGN.md «Анімація»):
+    число в ms/s, ключове слово кривої чи cubic-bezier() — дефект у будь-якому
+    рівні, і у вітрині теж; токен не тієї родини (--space-* як тривалість) — теж."""
+    if prop not in TIME_PROPS and prop not in EASE_PROPS:
+        return
+    bare = VAR.sub(" ", value)
+    for num, unit in TIME_NUM.findall(bare):
+        if float(num) != 0:
+            rep.err(rel, line, f"{prop}: тривалість «{num}{unit}» записана числом — лише var(--dur-*) з tokens.css "
+                               "(нова — спершу primitive --duration-* і роль)")
+    m = EASE_RAW.search(bare)
+    if m:
+        rep.err(rel, line, f"{prop}: крива «{m.group(1)}» — лише var(--ease-*) з tokens.css")
+    refs = [r for r, _ in VAR.findall(value)]
+    allowed = {"transition-duration": "dur", "animation-duration": "dur", "transition-delay": "dur",
+               "animation-delay": "dur", "transition-timing-function": "ease",
+               "animation-timing-function": "ease"}.get(prop, "dur|ease")
+    for ref in refs:   # локальна змінна компонента (--i — індекс літери) — множник, не тривалість
+        if ref in tokens and not re.match(rf"--({allowed})-", ref):
+            rep.err(rel, line, f"{prop}: var({ref}) — тривалість і крива лише з ролей --dur-* / --ease-*")
+    if prop in EASE_PROPS and not refs and bare.strip().lower() not in ("inherit", "initial", "unset", "revert"):
+        rep.err(rel, line, f"{prop}: «{value}» — крива лише var(--ease-*)")
+    if prop in ("transition", "animation"):
+        if bare.strip().lower() in ("none", "inherit", "initial", "unset", "revert"):
+            return
+        for seg in top_level_split(value):
+            if seg.strip() and not re.search(r"var\(\s*--dur-", seg):
+                rep.err(rel, line, f"{prop}: «{seg.strip()}» — тривалість не з токена; задай var(--dur-*)")
+
+
+def check_reduced_global(rep):
+    """Глобальний блок «менше руху» у components/base.css — страховка поверх
+    блоків компонентів: *, *::before, *::after — тривалість --dur-instant,
+    повтор 1, прокрутка auto (DESIGN.md «Анімація» → «Ціна кадру»)."""
+    css = strip_css(read(REDUCED_FILE))
+    found = {}
+    for m in re.finditer(r"@media\s*\(\s*prefers-reduced-motion\s*:\s*reduce\s*\)\s*\{", css):
+        depth, i = 1, m.end()
+        while depth and i < len(css):
+            depth += {"{": 1, "}": -1}.get(css[i], 0)
+            i += 1
+        for rule in re.finditer(r"([^{}]+)\{([^{}]*)\}", css[m.end():i - 1]):
+            sels = {re.sub(r"\s+", "", x) for x in rule.group(1).split(",")}
+            if REDUCED_SELECTORS <= sels:
+                for _, prop, value in declarations("{" + rule.group(2) + "}"):
+                    found[prop] = value.replace("!important", "").strip()
+    missing = [f"{p}: {v.replace(chr(92), '')}" for p, v in REDUCED_DECLS.items()
+               if not re.fullmatch(v, found.get(p, ""))]
+    if missing:
+        rep.err(REDUCED_FILE, None,
+                "немає глобального @media (prefers-reduced-motion: reduce) { *, *::before, *::after { … } } "
+                f"або в ньому бракує: {'; '.join(missing)} (DESIGN.md «Анімація» → «Ціна кадру»)")
+
+
+def check_js_motion(rep):
+    """JS компонента не анімує повз CSS-правила: у animate()/setKeyframes() —
+    лише transform, opacity (і службові offset, easing, composite); тривалість
+    числом у JS — дефект."""
+    service = {"offset", "easing", "composite"}
+    for rel in sorted(glob.glob(f"{DS}/components/*.js", root_dir=ROOT)):
+        js = re.sub(r"/\*.*?\*/|//[^\n]*", blank, read(rel), flags=re.S)
+        for m in re.finditer(r"\.(animate|setKeyframes)\s*\(", js):
+            depth, i = 1, m.end()
+            while depth and i < len(js):
+                depth += {"(": 1, ")": -1}.get(js[i], 0)
+                i += 1
+            args = js[m.end():i - 1]
+            for key in re.findall(r"[{,]\s*[\"']?([A-Za-z-]+)[\"']?\s*:", args):
+                k = re.sub(r"[A-Z]", lambda c: "-" + c.group(0).lower(), key)
+                if k in ("duration", "delay", "end-delay", "iterations", "fill", "direction"):
+                    if re.search(rf"{key}\s*:\s*\d", args):
+                        rep.err(rel, line_of(js, m.start()), f"{m.group(1)}(): {key} числом — тривалість лише з --dur-* (читай getComputedStyle)")
+                elif k not in MOTION_PROPS and k not in service:
+                    rep.err(rel, line_of(js, m.start()), f"{m.group(1)}() анімує {k} — лише transform і opacity (DESIGN.md «Анімація»)")
+
+
 def check_css(rel, text, scope, ctx, rep, base_line=1):
     css = strip_css(text)
     for off, prop, value in declarations(css):
         check_value(rel, line_of(css, off, base_line), prop, value, scope, ctx, rep)
+    if scope in PRODUCT:
+        check_media(rel, css, ctx, rep, base_line)
+    check_motion(rel, css, rep, base_line)
+
+
+def check_motion(rel, css, rep, base_line):
+    """@keyframes — лише transform і opacity; рух у файлі — лише разом із
+    @media (prefers-reduced-motion) у тому ж файлі (DESIGN.md «Анімація»)."""
+    for m in re.finditer(r"@keyframes\s+[\w-]+\s*\{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}", css):
+        for off, prop, _ in declarations(m.group(1)):
+            if prop not in MOTION_PROPS:
+                rep.err(rel, line_of(css, m.start(1) + off, base_line),
+                        f"@keyframes анімує {prop} — лише transform і opacity (DESIGN.md «Анімація»)")
+    moving = [off for off, prop, value in declarations(css)
+              if (prop in ("transition", "animation", "animation-name") and value.strip().lower() != "none")]
+    if moving and "prefers-reduced-motion" not in css:
+        rep.err(rel, line_of(css, moving[0], base_line),
+                "рух без @media (prefers-reduced-motion: reduce) у цьому файлі — зсуви й масштаб мусять вимикатися, статус лишатися видимим")
+
+
+def check_media(rel, css, ctx, rep, base_line):
+    """var() у @media не працює, тож межа пишеться числом — і це число мусить
+    дорівнювати значенню --bp-* з tokens.css (DESIGN.md → «Адаптив»)."""
+    bps = ctx["breakpoints"]
+    for m in re.finditer(r"@(?:media|container)\b([^{;]*)", css):
+        for num in re.finditer(r"(?<![\w.-])(\d*\.?\d+)([a-z%]+)", m.group(1)):
+            if num.group(0) not in bps:
+                known = ", ".join(f"{n} = {v}" for v, n in sorted(bps.items(), key=lambda kv: kv[1]))
+                rep.err(rel, line_of(css, m.start(1) + num.start(), base_line),
+                        f"межа «{num.group(0)}» в @-правилі не є значенням --bp-* ({known}): "
+                        "нова межа — спершу токен у tokens.css")
 
 
 # ── HTML ─────────────────────────────────────────────────────────────────
@@ -373,7 +547,7 @@ def check_inventory(rep):
 
 def run():
     rep = Report()
-    tokens, color_prims = load_tokens(rep)
+    tokens, color_prims, breakpoints = load_tokens(rep)
     api_read, api_declared = component_api(rep)
     api = (api_read | set(api_declared)) - tokens
     for name in sorted(set(api_declared) - api_read - tokens):
@@ -382,6 +556,7 @@ def run():
     ctx = {
         "tokens": tokens,
         "color_prims": color_prims,
+        "breakpoints": breakpoints,
         "api": api,
         "classes_ds": classes_in(sorted(glob.glob(f"{DS}/components/*.css", root_dir=ROOT))),
         "classes_screens": classes_in(["wireframes/screens.css"]),
@@ -394,6 +569,8 @@ def run():
                 else:
                     check_html(rel, scope, ctx, rep)
     check_inventory(rep)
+    check_reduced_global(rep)
+    check_js_motion(rep)
     return rep
 
 
@@ -401,7 +578,38 @@ def fmt(items):
     return "\n".join(f"  {f}{':' + str(l) if l else ''}  {m}" for f, l, m in items)
 
 
+# ── Заборона браузерної автоматизації (wireframes/_conventions.md) ──────
+# PreToolUse-хук: Playwright і headless-браузери — лише коли користувач прямо
+# попросив саме їх у поточному запиті. Тоді він сам створює прапорець
+# `! touch .claude/allow-browser`; хук пропускає ОДНУ команду і стирає його.
+BROWSER = re.compile(r"playwright|ms-playwright|puppeteer|chrom(e|ium)\b|chrome-headless|headless[-_ ]shell"
+                     r"|--headless|wkhtmlto|firefox|webkit|selenium", re.I)
+ALLOW_FLAG = ".claude/allow-browser"
+
+
+def guard_browser():
+    try:
+        data = json.load(sys.stdin)
+    except ValueError:
+        return 0
+    tool = data.get("tool_name") or ""
+    cmd = (data.get("tool_input") or {}).get("command") or ""
+    hit = tool if tool.startswith("mcp__") else (BROWSER.search(cmd).group(0) if BROWSER.search(cmd) else "")
+    if not hit:
+        return 0
+    flag = os.path.join(ROOT, ALLOW_FLAG)
+    if os.path.exists(flag):
+        os.remove(flag)
+        return 0
+    print(f"Заблоковано: «{hit}» — Playwright і headless-браузери в цьому проєкті заборонені "
+          "(wireframes/_conventions.md, «Головне правило перевірки»). Перевіряй гейтом і читанням CSS. "
+          f"Дозвіл дає лише користувач: `! touch {ALLOW_FLAG}` — на одну команду.", file=sys.stderr)
+    return 2
+
+
 def main(argv):
+    if "--guard-browser" in argv:
+        return guard_browser()
     hook = "--hook" in argv
     only = [a for a in argv if not a.startswith("--")]
     if hook:
@@ -411,7 +619,7 @@ def main(argv):
         except (ValueError, AttributeError):
             return 0
         rel = os.path.relpath(os.path.abspath(path), ROOT) if path else ""
-        if not rel.startswith((f"{DS}/", "wireframes/", "ui/")) or not rel.endswith((".css", ".html")):
+        if not rel.startswith((f"{DS}/", "wireframes/", "ui/")) or not rel.endswith((".css", ".html", ".js")):
             return 0
         only = [rel]
 

@@ -1,0 +1,282 @@
+# Специфікація компонента «Кнопка» (Spec-Driven Development)
+#
+# Джерело правди для .button. Порядок зміни: спершу ця специфікація →
+# components/button.css → docs/button.html (docs/_pages_*.py) → ui/kit.html →
+# екрани через wireframes/_build.py. Код, що розходиться зі специфікацією, —
+# дефект коду або привід переглянути специфікацію (з причиною в DESIGN.md).
+#
+# Ключові слова MUST / MUST NOT / SHOULD — у значенні RFC 2119.
+
+spec:
+  id: component.button
+  name: Кнопка
+  version: 1.1.0
+  status: stable            # draft | stable | deprecated
+  updated: 2026-11-06
+  owner: design-system
+  implements: design-system/components/button.css
+  docs: design-system/docs/button.html
+  showcase: ui/kit.html
+
+intent:
+  problem: >
+    Людині на кожному екрані Кутка треба одразу бачити, яка дія головна
+    (написати людині, застосувати фільтри, спробувати ще), і не плутати її з
+    другорядними чи скасуванням.
+  goal: >
+    Одна мова дій: головна — корал, другорядна — сіра, скасування — текст.
+    Однакова форма, ціль дотику й поведінка станів на всіх екранах, в обох темах.
+  non_goals:
+    - Кругла кнопка «Надіслати» в чаті — це .composer__send, окремий елемент.
+    - Кнопки шапки (.topbar__back, .topbar__action) і кнопки поверх фото.
+    - Чип-кнопка «Фільтри · N» — компонент .chip.
+    - Кнопка з іконкою без тексту — варіанту немає (див. open_questions).
+    - Стан завантаження всередині кнопки — замість кнопки ставиться скелетон
+      панелі дії (.actionbar loading).
+
+api:
+  base_class: .button
+  elements:
+    - tag: a
+      when: дія веде на інший екран або стан (переважна більшість екранів)
+      requires: href
+    - tag: button
+      when: дія на місці (відправка форми, скрипт)
+      requires: type="button" | type="submit"
+  variants:                 # MUST: рівно один варіант на кнопку
+    primary:
+      class: .button--primary
+      role: головна дія екрана
+      examples: ["Написати Ірині", "Застосувати фільтри", "Спробувати ще", "Назад до результатів"]
+    secondary:
+      class: .button--secondary
+      role: друга дія поруч із головною
+      examples: ["Показати ще 9", "Назад до результатів (поруч із «Спробувати ще»)"]
+    text:
+      class: .button--text
+      role: скасування або тиха дія в заголовку шторки
+      examples: ["Скасувати"]
+  modifiers:
+    block:
+      class: .button--block
+      effect: ширина 100% контейнера
+      allowed_in: [.sheet__foot, .actionbar]
+      applies_to: [primary, secondary]
+  slots:
+    label: { required: true, content: "текст дії, дієслово + об'єкт, за microcopy.md" }
+    icon:  { required: false, position: before-label, gap: --space-2 }
+
+anatomy:
+  layout: inline-flex, вирівнювання по центру в обох осях
+  geometry:                 # лише primitive-токени
+    min-height: --size-48   # 48px — ціль дотику
+    padding-inline: --space-5   # 24px
+    gap: --space-2          # 8px між іконкою й текстом
+    border-radius: --radius-14
+    border: 0
+  typography:
+    font-size: --text-md    # 16px
+    font-weight: --weight-medium   # 500
+    text-align: center
+    text-decoration: none
+  elevation: none           # The Only-On-Photo Rule — без тіні
+  motion:
+    layers: "::before — фон наведення, ::after — фон натискання; z-index var(--z-minus-1), isolation: isolate, overflow: hidden на кнопці"
+    hover: >
+      ::before — круг діаметром calc(100% * 3) з центром у точці входу курсора
+      (var(--button-hover-x / -y, var(--pct-50))), transform: scale(0) → scale(1)
+      за var(--dur-slow) var(--ease-enter); на виході — scale(0) до точки виходу
+      за var(--dur-fast) var(--ease-exit). Колір шару — роль наведення без змін.
+    hover_origin: >
+      components/button.js на pointerenter / pointerleave пише координати курсора
+      всередині кнопки в --button-hover-x / -y (локальні змінні компонента, не токени).
+      Без скрипта, з клавіатури, у нерухомому .is-hover — центр кнопки.
+    text_roll: >
+      components/button.js розбиває напис на .button__char у .button__label (aria-hidden)
+      + .sr-only з цілим словом. На :hover кожна літера — translateY(-100%), копія
+      ::after (attr(data-char)) виїжджає знизу; transition transform var(--dur-base)
+      var(--ease-standard), затримка calc(var(--dur-fast) * 0.12 * var(--i)). Без JS — напис стоїть.
+    pressed: "::after — opacity 0 → 1 за var(--dur-fast) var(--ease-standard)"   # колір елемента не анімується (DESIGN.md «Анімація» → The Layer Rule)
+    reduced_motion: "круга немає: ::before на всю кнопку (inset 0, transform: none), opacity 0 → 1 одразу; transition: none на шарах — стан той самий"
+
+# Колір — лише semantic-ролі. Значення primitive наведено для перевірки,
+# компонент їх напряму не читає.
+tokens:
+  primary:
+    rest:   { background: --color-action,        text: --color-text-on-action }
+    hover:  { background: --color-action-hover,  text: --color-text-on-action }
+    active: { background: --color-action-active, text: --color-text-on-action }
+  secondary:
+    rest:   { background: --color-control,        text: --color-text }
+    hover:  { background: --color-control-hover,  text: --color-text }
+    active: { background: --color-control-active, text: --color-text }
+  text:
+    rest:   { background: none,                text: --color-action-text }
+    hover:  { background: --color-ghost-hover, text: --color-action-text }
+    active: { background: --color-ghost-hover, text: --color-action-text }  # навмисно = hover
+  focus:
+    outline: --stroke-2 solid --color-focus
+    outline-offset: --stroke-2
+  disabled:
+    opacity: --opacity-disabled   # 0.4, правило в components/base.css
+
+themes:
+  light:
+    primary:   { rest: coral / ink, hover: coral-deep / ink, active: coral-pressed / ink }
+    secondary: { rest: grey-50 / ink, hover: grey-100 / ink, active: grey-200 / ink }
+    text:      { rest: "— / coral-dark", hover: grey-50 / coral-dark }
+    focus: green
+  dark:
+    primary:   { rest: coral / ink, hover: coral-deep / ink, active: coral-pressed / ink }
+    secondary: { rest: grey-900 / grey-50, hover: grey-800 / grey-50, active: grey-600 / grey-50 }
+    text:      { rest: "— / coral-light", hover: grey-900 / coral-light }
+    focus: green-light
+
+contrast:                   # WCAG AA: текст 4.5, кільце фокусу 3; дзеркало таблиць у tokens.css
+  light:
+    - { pair: text-on-action / action,        ratio: 8.79 }
+    - { pair: text-on-action / action-hover,  ratio: 7.82 }
+    - { pair: text-on-action / action-active, ratio: 6.31 }
+    - { pair: text / control,                 ratio: 16.45 }
+    - { pair: text / control-hover,           ratio: 14.63 }
+    - { pair: text / control-active,          ratio: 12.6 }
+    - { pair: action-text / sheet,            ratio: 5.10 }
+    - { pair: action-text / ghost-hover,      ratio: 4.67 }
+    - { pair: focus / page,                   ratio: 5.21 }
+    - { pair: focus / control-hover,          ratio: 4.24 }
+  dark:
+    - { pair: text-on-action / action,        ratio: 8.79 }
+    - { pair: text-on-action / action-hover,  ratio: 7.82 }
+    - { pair: text-on-action / action-active, ratio: 6.31 }
+    - { pair: text / control,                 ratio: 16.45 }
+    - { pair: text / control-hover,           ratio: 12.34 }
+    - { pair: text / control-active,          ratio: 5.83 }
+    - { pair: action-text / sheet,            ratio: 11.32 }
+    - { pair: action-text / ghost-hover,      ratio: 11.32 }
+    - { pair: focus / page,                   ratio: 6.82 }
+    - { pair: focus / control-hover,          ratio: 4.38 }
+
+states:
+  rest:     { trigger: — }
+  hover:    { trigger: ":hover", change: лише фон }
+  active:   { trigger: ":active", change: лише фон; без scale і зсуву }
+  focus:    { trigger: ":focus-visible", change: зелене кільце; фон не змінюється }
+  disabled:
+    trigger:
+      button: атрибут disabled
+      a: без href + aria-disabled="true"
+    change: прозорість --opacity-disabled, cursor default, pointer-events none
+    note: pointer-events сам по собі не зупиняє клавіатуру — потрібна семантика
+
+rules:
+  - id: BTN-R1
+    level: MUST
+    text: На екрані не більше однієї .button--primary (The One Coral Button Rule).
+  - id: BTN-R2
+    level: MUST
+    text: Друга дія поруч із головною — .button--secondary або .button--text, не друга primary.
+  - id: BTN-R3
+    level: MUST NOT
+    text: Hover і active не змінюють розмір чи положення кнопки — лише фон (шар-підложка; масштабується тільки круг наведення всередині кнопки).
+  - id: BTN-R4
+    level: MUST
+    text: Висота не менша за --size-48 у всіх варіантах.
+  - id: BTN-R5
+    level: MUST
+    text: Колір — лише через semantic --color-*; геометрія — primitive; жодних hex/px у компоненті.
+  - id: BTN-R6
+    level: MUST
+    text: Вимкнена кнопка вимкнена семантично (disabled або aria-disabled без href).
+  - id: BTN-R7
+    level: MUST NOT
+    text: Тінь, рамка, градієнт на кнопці.
+  - id: BTN-R8
+    level: MUST
+    text: Кожна нова пара кольорів має рядок контрасту в tokens.css для обох тем.
+  - id: BTN-R9
+    level: SHOULD
+    text: Текст кнопки — дієслово + конкретика («Написати Ірині», не «Написати»), за microcopy.md.
+  - id: BTN-R10
+    level: MUST NOT
+    text: «Поскаржитися» / «Заблокувати» кнопкою в панелі дії — вони живуть у ⋯ шапки (D8).
+
+accessibility:
+  role: нативна (a — link, button — button); role="button" на інших тегах заборонено
+  keyboard:
+    - Tab фокусує; Enter активує a і button; Space активує button
+    - Вимкнена кнопка поза порядком Tab
+  focus_visible: обов'язково, кільце видно на page, card, sheet, control-hover в обох темах
+  name: доступне ім'я = видимий текст; для майбутньої icon-only — aria-label
+  target_size: ">= 48x48"
+
+acceptance:                 # Given / When / Then — перевірка ревʼю, гейтом і вітриною
+  - id: BTN-AC1
+    given: будь-який екран у wireframes/
+    when: рахуємо .button--primary
+    then: кількість <= 1
+  - id: BTN-AC2
+    given: .button--primary у світлій і темній темі
+    when: наводимо курсор, потім натискаємо
+    then: фон змінюється на --color-action-hover, далі --color-action-active; bounding box не змінюється
+  - id: BTN-AC3
+    given: .button будь-якого варіанту
+    when: фокус з клавіатури
+    then: видно кільце --stroke-2 кольору --color-focus з відступом --stroke-2
+  - id: BTN-AC4
+    given: <button disabled> або <a aria-disabled="true"> без href
+    when: Tab і клік
+    then: фокус і дія не відбуваються; прозорість 0.4
+  - id: BTN-AC5
+    given: prefers-reduced-motion не задано
+    when: hover, потім натискання
+    then: >
+      на hover круг фону розходиться з точки входу курсора (scale 0 → 1) за --dur-slow,
+      літери напису хвилею перекочуються вгору (копія знизу), читач екрана чує ціле слово
+      і накриває всю кнопку в межах її радіуса; на виході стягується до точки виходу за
+      --dur-fast; натискання — шар проступає (opacity 0 → 1) за --dur-fast. Кінцевий
+      колір — --color-action-hover / -active; розмір і положення кнопки не змінюються.
+      Без JS чи з клавіатури — круг з центру. З prefers-reduced-motion: reduce — той
+      самий фон одразу, без круга
+  - id: BTN-AC6
+    given: design-system/components/button.css
+    when: python3 design-system/_gate.py
+    then: 0 порушень (нема сирих значень, колір лише semantic)
+  - id: BTN-AC7
+    given: docs/button.html і ui/kit.html
+    when: відкриваємо сторінку
+    then: показано всі 3 варіанти × 5 станів (rest, hover, active, focus, disabled) в обох темах
+
+usage:                      # знято з wireframes/*.html, 2026-10-30
+  primary: 9
+  primary_block: 4
+  secondary: 3
+  secondary_block: 1
+  text: 5
+  screens: 11
+
+traceability:
+  - DESIGN.md → Components → Buttons; Named Rules → The One Coral Button Rule
+  - DESIGN.md → Правки уроку 9 (прибрано scale 0.98 і --color-action-disabled)
+  - design-system/tokens.css → semantic-ролі й таблиці контрасту
+  - design-system/components/base.css → :focus-visible, [disabled]
+  - microcopy.md → D4, D7, D8
+  - ui/inventory.md → рядки 57–59
+
+known_drift:                # розбіжності документації з кодом на момент v1.0.0
+  - file: ui/inventory.md
+    line: 57
+    issue: згадує «active (стиск 0.98)» і клас btn-block; у коді — зміна фону і .button--block
+  - file: DESIGN.md
+    section: YAML components.button-secondary-hover
+    issue: "значення {colors.line}; у коді — --color-control-hover"
+
+open_questions:
+  - id: BTN-Q1
+    text: >
+      Темна тема: hover .button--text у шторці не видно — --color-ghost-hover і
+      --color-sheet обидва = --grey-900. Потрібна окрема роль або інше значення
+      ghost-hover у темній (кандидат — --grey-800, як --color-ghost-active).
+  - id: BTN-Q2
+    text: Чи потрібен варіант icon-only (квадрат 48) — зараз такі кнопки живуть у шапці окремими класами.
+  - id: BTN-Q3
+    text: Чи стандартизувати стан завантаження всередині кнопки замість скелетона (напр. для «Застосувати фільтри»).

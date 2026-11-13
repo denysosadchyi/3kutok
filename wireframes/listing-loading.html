@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="../design-system/index.css">
 <link rel="stylesheet" href="screens.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<script src="../design-system/components/button.js" defer></script>
+<script src="../design-system/components/split.js"></script>
 <script>
 /* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23 */
 (function () {
@@ -36,8 +38,145 @@
 })();
 </script>
 </head>
-<body class="shell shell--actionbar shell--photo-top status-dark">
-<header class="topbar topbar--over-photo"><a class="topbar__back" href="listings.html" aria-label="Назад до результатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><span></span><span class="theme-slot"><button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button></span></header>
+<body class="shell shell--tabbar shell--actionbar shell--photo-top status-dark shell--split">
+<div class="split split--detail">
+<section class="split__pane split__pane--list" aria-label="Перелік"><header class="header"><div class="header__top"><button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button><p class="header__title">Результати пошуку</p><p class="header__subtitle">Київ · кімнати та співмешканці</p></div></header>
+<div class="shell__main">
+
+<div class="chip-row"><div class="chip-row__track" tabindex="0" role="group" aria-label="Активні фільтри">
+  <details class="sheet">
+    <summary class="chip chip--selected"><iconify-icon icon="solar:tuning-2-linear" aria-hidden="true"></iconify-icon>Фільтри · 3</summary>
+    <section class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="filters-title">
+      <div class="sheet__grabber" aria-hidden="true"></div>
+      <div class="sheet__head"><h2 class="sheet__title" id="filters-title">Фільтри</h2><a class="button button--text" href="listings.html">Скасувати</a></div>
+      <form class="sheet__body" action="listings.html" method="get">
+        <fieldset>
+          <legend class="sr-only">Базові умови кімнати</legend>
+          <div class="field"><label class="field__label" for="district">Район Києва</label><select class="input" id="district" name="district"><option>Усі райони</option><option selected>Шевченківський</option><option>Подільський</option><option>Голосіївський</option><option>Дніпровський</option></select></div>
+          <div class="field"><label class="field__label" for="budget">Бюджет до, грн/місяць</label><input class="input" id="budget" name="budget" type="number" inputmode="numeric" min="1000" step="500" value="12000"></div>
+          <div class="field"><label class="field__label" for="move-in">Дата заїзду</label><input class="input" id="move-in" name="move-in" type="text" inputmode="none" readonly value="з 1 жовтня 2026"></div>
+        </fieldset>
+      </form>
+      <div class="sheet__foot"><a class="button button--primary button--block" href="listings.html">Застосувати фільтри</a></div>
+    </section>
+  </details>
+  <span class="chip">Шевченківський</span>
+  <span class="chip">до 12 000 грн</span>
+  <span class="chip">з 1 жовтня</span>
+</div></div>
+<div class="results-meta"><span>12 оголошень</span><details class="sheet">
+  <summary class="sort">Спершу нові<iconify-icon icon="solar:alt-arrow-down-linear" aria-hidden="true"></iconify-icon></summary>
+  <section class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="sort-title">
+    <div class="sheet__grabber" aria-hidden="true"></div>
+    <div class="sheet__head"><h2 class="sheet__title" id="sort-title">Сортування</h2><a class="button button--text" href="listings.html">Скасувати</a></div>
+    <ul class="sort-options"><li><a href="listings.html" aria-current="true">Спершу нові<iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon></a></li><li><a href="listings.html">Спершу дешевші</a></li><li><a href="listings.html">Спершу дорожчі</a></li></ul>
+  </section>
+</details></div>
+<ul class="card-list">
+  <li class="listing-card">
+    <div class="listing-card__photo">
+      <img src="../visuals/room-lukianivska-bedroom.jpg" alt="Світла спальня з ліжком, тумбою і настінною лампою" loading="lazy">
+      <p class="price-tag">10 500 грн/міс</p>
+      <p class="card-author"><span class="avatar"><img src="../visuals/person-iryna.jpg" alt=""><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span>Ірина</p>
+    </div>
+    <div class="listing-card__body">
+      <h2 class="listing-card__title"><a class="listing-card__link" aria-current="page" href="listing.html">Кімната біля Лук’янівської</a></h2>
+      <p class="listing-card__meta">Шевченківський · 2 співмешканці · з 1 жовтня</p>
+    </div>
+  </li>
+  <li class="listing-card">
+    <div class="listing-card__photo">
+      <img src="../visuals/room-tatarka-sofa.jpg" alt="Світла кімната з диваном, комодом, торшером і рослиною" loading="lazy">
+      <p class="price-tag">9 800 грн/міс</p>
+      <p class="card-author"><span class="avatar"><img src="../visuals/person-maryna.jpg" alt=""><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span>Марина</p>
+    </div>
+    <div class="listing-card__body">
+      <h2 class="listing-card__title"><a class="listing-card__link" href="listing-tatarka.html">Світла кімната на Татарці</a></h2>
+      <p class="listing-card__meta">Шевченківський · 1 співмешканка · з 5 жовтня</p>
+    </div>
+  </li>
+  <li class="listing-card">
+    <div class="listing-card__photo">
+      <img src="../visuals/room-kpi-armchair.jpg" alt="Кімната з ліжком, теракотовим кріслом, торшером і робочим столом" loading="lazy">
+      <p class="price-tag">11 500 грн/міс</p>
+      <p class="card-author"><span class="avatar"><img src="../visuals/person-olia.jpg" alt=""><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span>Оля</p>
+    </div>
+    <div class="listing-card__body">
+      <h2 class="listing-card__title"><a class="listing-card__link" href="listing-kpi.html">Кімната поруч із КПІ</a></h2>
+      <p class="listing-card__meta">Шевченківський · 2 співмешканки · з 12 жовтня</p>
+    </div>
+  </li>
+  <li class="listing-card">
+    <div class="listing-card__photo">
+      <img src="../visuals/room-lukianivska-living.jpg" alt="Кімната з диваном, рослинами й книжковою полицею" loading="lazy">
+      <p class="price-tag">12 000 грн/міс</p>
+      <p class="card-author"><span class="avatar"><img src="../visuals/person-maryna.jpg" alt=""><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span>Марина</p>
+    </div>
+    <div class="listing-card__body">
+      <h2 class="listing-card__title"><a class="listing-card__link" href="listing-zoloti-vorota.html">Кімната з диваном біля Золотих воріт</a></h2>
+      <p class="listing-card__meta">Шевченківський · 1 співмешканець · з 1 жовтня</p>
+    </div>
+  </li>
+  <li class="listing-card">
+    <div class="listing-card__photo">
+      <img src="../visuals/room-lukianivska-corner.jpg" alt="Кімната з кріслом, торшером і книжковою полицею" loading="lazy">
+      <p class="price-tag">10 000 грн/міс</p>
+      <p class="card-author"><span class="avatar"><img src="../visuals/person-olia.jpg" alt=""><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span>Оля</p>
+    </div>
+    <div class="listing-card__body">
+      <h2 class="listing-card__title"><a class="listing-card__link" href="listing-lvivska.html">Кімната з кріслом на Львівській площі</a></h2>
+      <p class="listing-card__meta">Шевченківський · 2 співмешканці · з 15 жовтня</p>
+    </div>
+  </li>
+  <li class="listing-card">
+    <div class="listing-card__photo">
+      <img src="../visuals/room-lukianivska-bedroom.jpg" alt="Світла спальня з ліжком, тумбою і настінною лампою" loading="lazy">
+      <p class="price-tag">9 500 грн/міс</p>
+      <p class="card-author"><span class="avatar"><img src="../visuals/person-iryna.jpg" alt=""><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span>Ірина</p>
+    </div>
+    <div class="listing-card__body">
+      <h2 class="listing-card__title"><a class="listing-card__link" href="listing-universytet.html">Тиха кімната біля Університету</a></h2>
+      <p class="listing-card__meta">Шевченківський · 1 співмешканка · з 3 жовтня</p>
+    </div>
+  </li>
+  <li class="listing-card">
+    <div class="listing-card__photo">
+      <img src="../visuals/room-tatarka-sofa.jpg" alt="Світла кімната з диваном, комодом, торшером і рослиною" loading="lazy">
+      <p class="price-tag">8 700 грн/міс</p>
+      <p class="card-author"><span class="avatar"><img src="../visuals/person-maryna.jpg" alt=""><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span>Марина</p>
+    </div>
+    <div class="listing-card__body">
+      <h2 class="listing-card__title"><a class="listing-card__link" href="listing-syrets.html">Кімната на Сирці з балконом</a></h2>
+      <p class="listing-card__meta">Шевченківський · 2 співмешканці · з 10 жовтня</p>
+    </div>
+  </li>
+  <li class="listing-card">
+    <div class="listing-card__photo">
+      <img src="../visuals/room-kpi-armchair.jpg" alt="Кімната з ліжком, теракотовим кріслом, торшером і робочим столом" loading="lazy">
+      <p class="price-tag">11 000 грн/міс</p>
+      <p class="card-author"><span class="avatar"><img src="../visuals/person-olia.jpg" alt=""><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span>Оля</p>
+    </div>
+    <div class="listing-card__body">
+      <h2 class="listing-card__title"><a class="listing-card__link" href="listing-dorohozhychi.html">Кімната на Дорогожичах</a></h2>
+      <p class="listing-card__meta">Шевченківський · 1 співмешканець · з 20 жовтня</p>
+    </div>
+  </li>
+  <li class="listing-card">
+    <div class="listing-card__photo">
+      <img src="../visuals/room-lukianivska-living.jpg" alt="Кімната з диваном, рослинами й книжковою полицею" loading="lazy">
+      <p class="price-tag">9 000 грн/міс</p>
+      <p class="card-author"><span class="avatar"><img src="../visuals/person-iryna.jpg" alt=""><span class="avatar__mark"><iconify-icon icon="solar:check-linear" aria-hidden="true"></iconify-icon><span class="sr-only">Номер підтверджено</span></span></span>Ірина</p>
+    </div>
+    <div class="listing-card__body">
+      <h2 class="listing-card__title"><a class="listing-card__link" href="listing-nyvky.html">Простора кімната на Нивках</a></h2>
+      <p class="listing-card__meta">Шевченківський · 2 співмешканки · з 7 жовтня</p>
+    </div>
+  </li>
+</ul>
+<a class="button button--secondary button--block" href="listings.html">Показати ще 3</a>
+</div>
+</section>
+<section class="split__pane split__pane--detail"><header class="topbar topbar--over-photo"><a class="topbar__back" href="listings.html" aria-label="Назад до результатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><span></span><span class="theme-slot"><button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button><a class="topbar__action split__close" href="listings.html" aria-label="Закрити оголошення"><iconify-icon icon="solar:close-linear" aria-hidden="true"></iconify-icon></a></span></header>
 <main class="shell__main" id="content" aria-busy="true">
 <h1 class="sr-only">Оголошення</h1>
 <p class="sr-only" role="status">Завантажуємо оголошення</p>
@@ -49,6 +188,9 @@
 <div class="group group--padded skeleton-person" aria-hidden="true"><div class="skeleton skeleton--avatar"></div><div class="skeleton-person__text"><div class="skeleton skeleton--line skeleton--w60"></div><div class="skeleton skeleton--line skeleton--w40"></div></div></div>
 </main>
 <div class="actionbar" aria-hidden="true"><div class="skeleton skeleton--button"></div></div>
+</section>
+</div>
+<nav class="tabbar" aria-label="Головна навігація"><ul class="tabbar__list"><li><a class="tabbar__item" href="listings.html" aria-current="page"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon><span>Пошук</span></a></li><li><a class="tabbar__item" href="chats.html"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li><li><a class="tabbar__item" aria-disabled="true"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></a></li></ul></nav>
 <script>
 document.addEventListener("toggle", function (e) {
   var d = e.target;

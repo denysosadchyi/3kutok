@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="../design-system/index.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<script src="../design-system/components/button.js" defer></script>
 <script>
 /* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23 */
 (function () {
@@ -86,18 +87,34 @@
   .vt-screen .shell { min-height: 100%; }
   .vt-screen .shell__main:has(> .state) { min-height: 0; }
 
+  /* Три ширини (урок 10): справжній екран в iframe справжньої ширини, зменшений у 0.44 —
+     медіазапити --bp-tablet / --bp-desktop бачать ширину iframe, а не вітрини */
+  .vt-widths { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: flex-start; }
+  .vt-width { display: grid; gap: var(--space-2); margin: 0; }
+  .vt-width > figcaption { color: var(--color-text-secondary); font-size: var(--text-xs); }
+  .vt-width__view { max-width: 100%; height: calc(720px * 0.44); overflow: hidden; border: var(--stroke-1) solid var(--color-divider); border-radius: var(--radius-8); background: var(--color-page); }
+  .vt-width__view > iframe { display: block; height: 720px; border: 0; transform: scale(0.44); transform-origin: 0 0; }
+  .vt-width--phone .vt-width__view { width: calc(390px * 0.44); }
+  .vt-width--phone iframe { width: 390px; }
+  .vt-width--tablet .vt-width__view { width: calc(48rem * 0.44); }
+  .vt-width--tablet iframe { width: 48rem; }
+  .vt-width--desktop .vt-width__view { width: calc(72rem * 0.44); }
+  .vt-width--desktop iframe { width: 72rem; }
+
   .vt-shell-frame { width: min(390px, 100%); height: 720px; border: var(--stroke-1) solid var(--color-divider); border-radius: var(--radius-18); background: var(--color-page); }
 
   .vt-list { display: grid; gap: var(--space-2); max-width: 72ch; margin: 0; padding-left: var(--space-5); }
   .vt-list li::marker { color: var(--color-text-secondary); }
 
-  .is-hover.button--primary, .is-hover.composer__send { background: var(--color-action-hover); }
-  .is-active.button--primary, .is-active.composer__send { background: var(--color-action-active); }
-  .is-hover.button--secondary, .is-hover.chip { background: var(--color-control-hover); }
-  .is-active.button--secondary, .is-active.chip { background: var(--color-control-active); }
-  .is-hover.button--text, .is-active.button--text,
-  .is-hover:is(.topbar__back, .topbar__action, .topbar__person) { background: var(--color-ghost-hover); }
-  .is-active:is(.topbar__back, .topbar__action, .topbar__person), .is-active.tabbar__item iconify-icon { background: var(--color-ghost-active); }
+  /* Фон стану — шар-підложка компонента (::before наведення, ::after натискання;
+     DESIGN.md «Анімація»): нерухомий стан лише вмикає шар. Живі — у docs/, розділ «Рух». */
+  :is(.button, .chip, .composer__send, .topbar__back, .topbar__action, .topbar__person).is-hover::before,
+  :is(.button, .chip, .composer__send, .topbar__back, .topbar__action, .topbar__person).is-active::after,
+  .button--text.is-active::before,
+  .is-active.tabbar__item iconify-icon::before { opacity: 1; }
+  /* у .button наведення — круг (scale 0 → 1), нерухомий стан — розкритий круг */
+  .button.is-hover::before,
+  .button--text.is-active::before { transform: scale(1); }
   .is-hover.tabbar__item { color: var(--color-text); }
   .is-hover:is(.person-row, .chat-context) { background: var(--color-card-hover); }
   .is-hover.listing-card__link { color: var(--color-link-hover); }
@@ -206,6 +223,32 @@
         <li><a class="tabbar__item" href="#" aria-current="page"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li>
         <li><a class="tabbar__item" aria-disabled="true"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></a></li>
       </ul></nav></div><figcaption>активні «Чати»</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Три ширини · стрічка</h3><p class="vt-api"><code>.tabbar</code> · <code>.shell--tabbar</code> · <code>.card-list</code> — від <code>--bp-tablet</code> і <code>--bp-desktop</code></p><p>Справжній екран listings. Меню: пояс знизу → від 72rem шапка вгорі, ті самі пункти й стани. Картки: 1 → 2 → 3 колонки. Адаптив діє лише на сторінці (<code>body.shell</code>) — зразки вище в рамці телефона лишаються мобільними. Тема рамок — та, що була при відкритті вітрини.</p></div>
+    <div class="vt-widths">
+      <figure class="vt-width vt-width--phone"><div class="vt-width__view" inert><iframe src="../wireframes/listings.html" title="listings: телефон · 390" loading="lazy"></iframe></div><figcaption>телефон · 390</figcaption></figure>
+      <figure class="vt-width vt-width--tablet"><div class="vt-width__view" inert><iframe src="../wireframes/listings.html" title="listings: планшет · від <code>--bp-tablet</code> 48rem" loading="lazy"></iframe></div><figcaption>планшет · від <code>--bp-tablet</code> 48rem</figcaption></figure>
+      <figure class="vt-width vt-width--desktop"><div class="vt-width__view" inert><iframe src="../wireframes/listings.html" title="listings: десктоп · від <code>--bp-desktop</code> 72rem" loading="lazy"></iframe></div><figcaption>десктоп · від <code>--bp-desktop</code> 72rem</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="vt-comp">
+    <div class="vt-comp-head"><h3>Список і деталь</h3><p class="vt-api"><code>.split</code> · <code>--detail</code> <code>--solo</code> <code>--tablet</code> · <code>__pane--list</code> <code>__pane--detail</code> · <code>__close</code> · <code>body.shell--split</code></p><p>Екрани: chats*, chat*, listings*, listing*. На телефоні — одна панель (<code>--detail</code> відкриває деталь і ховає меню); поруч — чати від <code>--bp-tablet</code> (<code>--tablet</code>), стрічка від <code>--bp-desktop</code>. Коли панелі поруч, «назад» сховано, × закриває деталь. Нічого не вибрано: перелік рядків — «Обери чат ліворуч», сітка карток — <code>--solo</code>. Вибраний — <code>aria-current="page"</code>. Документація — <a href="../design-system/docs/split.html">docs/split</a>, патерн — <a href="../design-system/patterns/split-view.html">split-view</a>.</p></div>
+    <div class="vt-widths">
+      <figure class="vt-width vt-width--phone"><div class="vt-width__view" inert><iframe src="../wireframes/chat.html" title="chat.html: телефон · 390" loading="lazy"></iframe></div><figcaption>chat.html · телефон · 390</figcaption></figure>
+      <figure class="vt-width vt-width--tablet"><div class="vt-width__view" inert><iframe src="../wireframes/chat.html" title="chat.html: планшет · від <code>--bp-tablet</code> 48rem" loading="lazy"></iframe></div><figcaption>chat.html · планшет · від <code>--bp-tablet</code> 48rem</figcaption></figure>
+      <figure class="vt-width vt-width--tablet"><div class="vt-width__view" inert><iframe src="../wireframes/chats.html" title="chats.html: нічого не вибрано · 48rem" loading="lazy"></iframe></div><figcaption>chats.html · нічого не вибрано · 48rem</figcaption></figure>
+      <figure class="vt-width vt-width--desktop"><div class="vt-width__view" inert><iframe src="../wireframes/listing.html" title="listing.html: десктоп · від <code>--bp-desktop</code> 72rem" loading="lazy"></iframe></div><figcaption>listing.html · десктоп · від <code>--bp-desktop</code> 72rem</figcaption></figure>
+      <figure class="vt-width vt-width--desktop"><div class="vt-width__view" inert><iframe src="../wireframes/listings.html" title="listings.html: --solo · 72rem" loading="lazy"></iframe></div><figcaption>listings.html · --solo · 72rem</figcaption></figure>
+    </div>
+    <div class="vt-states">
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><ul class="group"><li class="group__row"><a class="person-row" href="#" aria-current="page"><span class="avatar avatar--md"><img src="../visuals/person-iryna.jpg" alt=""></span><span class="person-row__text"><strong class="person-row__name">Ірина</strong><span class="person-row__caption">Так, домовилися. Напишу адресу в суботу зранку.</span></span><iconify-icon class="chevron" icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></a></li><li class="group__row"><a class="person-row is-hover" href="#"><span class="avatar avatar--md"><img src="../visuals/person-maryna.jpg" alt=""></span><span class="person-row__text"><strong class="person-row__name">Марина</strong><span class="person-row__caption">Можна в неділю після 11:00.</span></span><iconify-icon class="chevron" icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></a></li><li class="group__row"><a class="person-row is-focus" href="#"><span class="avatar avatar--md"><img src="../visuals/person-olia.jpg" alt=""></span><span class="person-row__text"><strong class="person-row__name">Оля</strong><span class="person-row__caption">Так, четвер о 18:30. Чекаємо!</span></span><iconify-icon class="chevron" icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></a></li></ul></div><figcaption>рядок: вибраний (<code>aria-current</code>) · наведення · фокус</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><header class="topbar"><a class="topbar__back" href="#" aria-label="Назад до чатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><p class="topbar__title">Ірина</p><a class="topbar__action split__close" href="#" aria-label="Закрити чат"><iconify-icon icon="solar:close-linear" aria-hidden="true"></iconify-icon></a></header></div><figcaption>× — звичайна (видно лише поруч)</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><header class="topbar"><a class="topbar__back" href="#" aria-label="Назад до чатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><p class="topbar__title">Ірина</p><a class="topbar__action split__close is-hover" href="#" aria-label="Закрити чат"><iconify-icon icon="solar:close-linear" aria-hidden="true"></iconify-icon></a></header></div><figcaption>× · наведення</figcaption></figure>
+      <figure class="vt-spec vt-spec--phone"><div class="vt-stage"><header class="topbar"><a class="topbar__back" href="#" aria-label="Назад до чатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><p class="topbar__title">Ірина</p><a class="topbar__action split__close is-focus" href="#" aria-label="Закрити чат"><iconify-icon icon="solar:close-linear" aria-hidden="true"></iconify-icon></a></header></div><figcaption>× · фокус з клавіатури</figcaption></figure>
     </div>
   </div>
 

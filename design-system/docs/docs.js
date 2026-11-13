@@ -100,3 +100,53 @@ document.addEventListener("keydown", function (e) {
   setTimeout(all, 600);
   setTimeout(all, 1800);
 })();
+
+/* Повзунки підбору руху (docs/_motion.py → TUNER): ставлять ролі --dur-* / --ease-*
+   у style панелі .doc-tuner — компоненти всередині читають їх як завжди, рух дає
+   їхній власний CSS. Початкові значення — з tokens.css (обчислений стиль панелі). */
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll("[data-tuner]").forEach(function (panel) {
+    var ctrls = Array.prototype.slice.call(panel.querySelectorAll("[data-token]"));
+    var code = panel.querySelector(".doc-tuner__code");
+    var cs = getComputedStyle(panel), defs = {};
+    function ms(v) { v = v.trim(); return /ms$/.test(v) ? parseFloat(v) : parseFloat(v) * 1000; }
+    ctrls.forEach(function (c) {
+      var t = c.dataset.token, now = cs.getPropertyValue(t).trim();
+      if (c.tagName === "SELECT") {
+        Array.prototype.forEach.call(c.options, function (o) {
+          var name = o.value.slice(4, -1);
+          if (cs.getPropertyValue(name).trim() === now) c.value = o.value;
+        });
+      } else {
+        c.value = ms(now);
+      }
+      defs[t] = c.value;
+    });
+    function render() {
+      var lines = [];
+      ctrls.forEach(function (c) {
+        var t = c.dataset.token, range = c.tagName !== "SELECT";
+        var out = c.parentNode.querySelector("output");
+        if (range) {
+          panel.style.setProperty(t, c.value + "ms");
+          out.textContent = c.value + " мс" + (t === "--dur-fast" ? " · хвиля " + Math.round(c.value * 0.12) + " мс/літера" : "");
+        } else {
+          panel.style.setProperty(t, c.value);
+          out.textContent = "";
+        }
+        if (c.value !== defs[t]) {
+          lines.push(range
+            ? t + ": var(--duration-" + c.value + ");   /* було " + defs[t] + " мс; новий primitive --duration-" + c.value + ": " + c.value + "ms */"
+            : t + ": " + c.value + ";   /* було " + defs[t] + " */");
+        }
+      });
+      code.textContent = lines.length ? lines.join("\n") : "Значення як у tokens.css — нічого не змінено.";
+    }
+    panel.addEventListener("input", render);
+    panel.querySelector("[data-tuner-reset]").addEventListener("click", function () {
+      ctrls.forEach(function (c) { c.value = defs[c.dataset.token]; });
+      render();
+    });
+    render();
+  });
+});

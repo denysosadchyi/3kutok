@@ -15,20 +15,107 @@
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color var(--duration-180) var(--ease-out);
 }
-/* Стани міняють лише фон — без scale і зсуву (урок 9) */
+/* Стани міняють лише фон — без scale і зсуву самої кнопки (урок 9). Колір не
+   анімується (DESIGN.md «Анімація» → The Layer Rule), тож фон наведення й
+   натискання — два шари-підложки під текстом (::before, ::after). Кінцеві
+   кольори ті самі ролі, контраст — tokens.css. */
+.button { position: relative; isolation: isolate; overflow: hidden; }
+.button::before,
+.button::after {
+  content: "";
+  position: absolute;
+  z-index: var(--z-minus-1);
+  pointer-events: none;
+}
+/* Натискання — шар на всю кнопку, росте лише opacity: відповідь, --dur-fast */
+.button::after {
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+.button:active::after { opacity: 1; }
+/* Наведення — круг, що розходиться з точки входу курсора (2026-11-06).
+   Точку пише components/button.js у --button-hover-x / -y; без скрипта й без
+   курсора — центр кнопки. Діаметр — три ширини кнопки (margin у % теж від
+   ширини, тож зсув на півкруга вгору й ліворуч): з будь-якої точки краю круг
+   повністю накриває кнопку, поки висота не перевищує ширину; overflow кнопки
+   обрізає його по її радіусу. Росте лише transform: scale 0 → 1 —
+   --dur-slow з --ease-enter (явніше, ніж 200: «більш явна анімація»,
+   2026-11-06; швидко від курсора, гальмує в кінці); на виході
+   стягується до точки, де курсор пішов, — коротше, --dur-fast з --ease-exit. */
+.button::before {
+  top: var(--button-hover-y, var(--pct-50));
+  left: var(--button-hover-x, var(--pct-50));
+  width: calc(100% * 3);
+  aspect-ratio: 1;
+  margin: calc(100% * -1.5) 0 0 calc(100% * -1.5);
+  border-radius: var(--pct-50);
+  transform: scale(0);
+  transition: transform var(--dur-fast) var(--ease-exit);
+}
+.button:hover::before,
+.button--text:active::before {
+  transform: scale(1);
+  transition: transform var(--dur-slow) var(--ease-enter);
+}
+/* Текст наведення — «перекат» літер (2026-11-06): кожна літера їде вгору на
+   свою висоту, а її копія (::after, attr(data-char)) виїжджає знизу на її
+   місце; літери стартують хвилею зліва направо. Розбиває текст на літери
+   components/button.js (.button__label aria-hidden + .sr-only з тим самим
+   текстом для читачів екрана); без скрипта текст стоїть, лишається круг.
+   Лише transform, --dur-base з --ease-standard (зміна на місці — кінцевий
+   вигляд той самий текст); крок хвилі — частка --dur-fast на індекс літери
+   (--i пише скрипт). Без пружини й відскоку. */
+.button__label {
+  display: inline-flex;
+  overflow: hidden;
+}
+.button__char {
+  position: relative;
+  display: inline-block;
+  white-space: pre;
+  transition: transform var(--dur-base) var(--ease-standard);
+  transition-delay: calc(var(--dur-fast) * 0.12 * var(--i, 0));
+}
+.button__char::after {
+  content: attr(data-char);
+  position: absolute;
+  top: 100%;
+  left: 0;
+}
+.button:hover .button__char { transform: translateY(calc(100% * -1)); }
 .button--primary { background: var(--color-action); color: var(--color-text-on-action); }
-.button--primary:hover { background: var(--color-action-hover); }
-.button--primary:active { background: var(--color-action-active); }
+.button--primary::before { background: var(--color-action-hover); }
+.button--primary::after { background: var(--color-action-active); }
 .button--secondary { background: var(--color-control); color: var(--color-text); }
-.button--secondary:hover { background: var(--color-control-hover); }
-.button--secondary:active { background: var(--color-control-active); }
+.button--secondary::before { background: var(--color-control-hover); }
+.button--secondary::after { background: var(--color-control-active); }
 .button--text { background: none; color: var(--color-action-text); }
-/* :active = :hover: корал на темнішій підложці не тримає 4.5 (tokens.css) */
-.button--text:hover, .button--text:active { background: var(--color-ghost-hover); }
+/* :active = :hover (круг наведення, правило вище): корал на темнішій підложці
+   не тримає 4.5 (tokens.css) — шар натискання не потрібен */
+.button--text::before { background: var(--color-ghost-hover); }
+.button--text::after { content: none; }
 .button--block { width: 100%; }
-
+/* Менше руху: круга немає — шар наведення на всю кнопку з'являється одразу,
+   як і шар натискання; стан той самий, без масштабу й переходу; літери стоять */
 @media (prefers-reduced-motion: reduce) {
-  .button { transition: none; }
+  .button::before {
+    inset: 0;
+    width: auto;
+    margin: 0;
+    aspect-ratio: auto;
+    border-radius: inherit;
+    transform: none;
+    opacity: 0;
+  }
+  .button:hover::before,
+  .button--text:active::before { transform: none; opacity: 1; }
+  .button::before,
+  .button::after,
+  .button:hover::before,
+  .button--text:active::before { transition: none; }
+  .button__char,
+  .button:hover .button__char { transform: none; transition: none; }
 }

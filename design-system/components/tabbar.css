@@ -1,4 +1,4 @@
-/* Нижнє меню — три вкладки під хвилею
+/* Нижнє меню — три вкладки під хвилею; від --bp-desktop — верхня шапка
    Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
 
 .tabbar {
@@ -54,12 +54,64 @@
   border-radius: var(--radius-round);
   font-size: var(--size-24);
   transform: translateY(var(--space-1));
-  transition: color var(--duration-180) var(--ease-out), background-color var(--duration-180) var(--ease-out);
 }
 .tabbar__item:hover { color: var(--color-text); }
-.tabbar__item:active iconify-icon { background: var(--color-ghost-active); } /* підложка капсули; зсув translateY — розкладка, не стан */
+/* Натискання — підложка капсули: шар ::before, у якому росте лише opacity
+   (відповідь на дію, --dur-fast). Зсув translateY вище — розкладка, не стан і не рух.
+   Перехід на іншу вкладку (aria-current) — колір, міняється миттєво. */
+.tabbar__item iconify-icon { position: relative; isolation: isolate; }
+.tabbar__item iconify-icon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-minus-1);
+  border-radius: inherit;
+  background: var(--color-ghost-active);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+.tabbar__item:active iconify-icon::before { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .tabbar__item iconify-icon::before { transition: none; }
+}
 .tabbar__item[aria-current="page"] { color: var(--color-current); font-weight: var(--weight-bold); }
 
-@media (prefers-reduced-motion: reduce) {
-  .tabbar__item iconify-icon { transition: none; }
+/* Десктоп (від --bp-desktop = 72rem; var() у @media не працює — число звіряє гейт).
+   Нижня панель на десктопі витрачає висоту й не має «великого пальця»
+   (responsive/width-audit.md, рядок «Оболонка»), тож меню стає шапкою
+   сторінки: зверху, пункти в рядок — іконка + підпис, межа знизу замість хвилі.
+   Пункти й стани — ті самі правила вище: hover, :active (капсула іконки),
+   aria-current, focus-visible з base.css. Тут лише розкладка.
+   Лише на сторінці (body.shell--tabbar): зразки в рамці телефона у вітрині
+   лишаються мобільними на будь-якому моніторі. */
+@media (min-width: 72rem) {
+  body.shell--tabbar > .tabbar {
+    top: 0;
+    bottom: auto;
+    padding-bottom: 0;
+    box-shadow: 0 var(--stroke-1) 0 var(--color-divider);
+  }
+  body.shell--tabbar > .tabbar::after { content: none; }
+  body.shell--tabbar > .tabbar .tabbar__list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0 var(--space-4);
+  }
+  body.shell--tabbar > .tabbar .tabbar__item {
+    grid-template-rows: none;
+    grid-auto-flow: column;
+    gap: var(--space-1);
+    height: var(--size-36);
+    padding-right: var(--space-3);
+    border-radius: var(--radius-round); /* кільце focus-visible іде по капсулі пункту */
+    font-size: var(--text-sm);
+    transform: none;
+  }
+  /* Капсула вужча: поруч підпис, ширина 56 лише розсуває пункти */
+  body.shell--tabbar > .tabbar .tabbar__item iconify-icon {
+    width: calc(var(--size-24) + var(--space-2));
+    transform: none;
+  }
 }

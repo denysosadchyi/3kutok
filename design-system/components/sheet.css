@@ -51,3 +51,21 @@
   padding: var(--space-3) var(--space-4) calc(var(--space-3) + var(--safe-bottom));
   box-shadow: 0 calc(var(--stroke-1) * -1) 0 var(--color-divider);
 }
+
+/* Поява (DESIGN.md «Анімація» → Поява / зникнення): затемнення проступає,
+   панель піднімається на --move-md знизу, звідки її викликали, — --dur-slow,
+   --ease-enter. Робота — зв'язок: видно, що панель лягла поверх стрічки, а не
+   замінила її. Закриття — миттєве: <details> ховає вміст одразу, а стану
+   «закривається» в компоненті немає (без JS його не буде). */
+.sheet[open]::before { animation: sheet-fade var(--dur-slow) var(--ease-enter); }
+.sheet[open] > .sheet__panel { animation: sheet-rise var(--dur-slow) var(--ease-enter); }
+@keyframes sheet-fade {
+  from { opacity: 0; }
+}
+@keyframes sheet-rise {
+  from { opacity: 0; transform: translateY(var(--move-md)); }
+}
+/* Менше руху: панель без зсуву, лише проступає — стан видно одразу й повністю */
+@media (prefers-reduced-motion: reduce) {
+  .sheet[open] > .sheet__panel { animation-name: sheet-fade; }
+}

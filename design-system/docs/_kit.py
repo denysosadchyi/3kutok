@@ -9,6 +9,9 @@ P(n, at) — позначка частини для анатомії: data-pin="
 кут мітки: tl tr bl br t b l r c). docs.js ставить номер поверх сцени.
 """
 
+import html as _html
+import re as _re
+
 V = "../../visuals/"
 
 _uid = [0]
@@ -352,3 +355,39 @@ def screen(inner, mod=""):
 def photo_frame(inner):
     """Фото 4:3 з шапкою поверх нього, без статус-бару мокапа."""
     return f'<div class="doc-stage doc-stage--flush doc-frame"><img class="doc-photo" src="{V}room-lukianivska-bedroom.jpg" alt="">{inner}</div>'
+
+
+# ── Три ширини (урок 10) ──
+# Адаптив у системі — медіазапити на --bp-tablet / --bp-desktop. Медіазапит бачить
+# ширину вікна, тож рамка-div на сторінці доків її не імітує: кожна ширина — iframe
+# справжньої ширини з тією самою розміткою, зменшений у docs.css (.doc-widths).
+# Тема — як у найближчого предка з data-theme (панелі «Світла / Темна» у станах)
+# або як у самої сторінки доків; перемикач теми підхоплюється наживо.
+_FRAME_THEME = ('(function(){try{var f=frameElement,r=parent.document.documentElement,h=document.documentElement;'
+                'function s(){var t=f.parentElement.closest("[data-theme]");'
+                'if(t&&t.getAttribute("data-theme")==="dark")h.setAttribute("data-theme","dark");else h.removeAttribute("data-theme")}'
+                's();new MutationObserver(s).observe(r,{attributes:true,attributeFilter:["data-theme"]})}catch(e){}})()')
+WIDTHS = (("phone", "телефон · 390"), ("tablet", "планшет · від <code>--bp-tablet</code> 48rem"),
+          ("desktop", "десктоп · від <code>--bp-desktop</code> 72rem"))
+
+
+def frame(inner, body="shell", title="Приклад"):
+    """Iframe із цілою сторінкою: body.{body} > inner, стилі системи + docs.css (імітація станів)."""
+    doc = ('<!DOCTYPE html><html lang="uk"><head><meta charset="utf-8">'
+           '<link rel="stylesheet" href="../index.css"><link rel="stylesheet" href="docs.css">'
+           '<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>'
+           f'<script>{_FRAME_THEME}</script></head><body class="{body}">{inner}</body></html>')
+    return f'<iframe title="{title}" loading="lazy" srcdoc="{_html.escape(doc, quote=True)}"></iframe>'
+
+
+def widths(inner, body="shell", mod="", title="Приклад"):
+    """Та сама розмітка на трьох ширинах поруч. mod: bar (низька сцена) | feed (стрічка)."""
+    m = f" doc-widths--{mod}" if mod else ""
+    out = "".join(f'<figure class="doc-width doc-width--{w}"><div class="doc-width__view" inert>{frame(inner, body, f"{title}: {_re.sub('<[^>]+>', '', cap)}")}</div>'
+                  f'<figcaption>{cap}</figcaption></figure>' for w, cap in WIDTHS)
+    return f'<div class="doc-widths{m}">{out}</div>'
+
+
+def desk(inner, body="shell shell--tabbar", title="Приклад: десктоп"):
+    """Смуга десктопа в натуральну величину: iframe 72rem, видно лівий край (меню, шапка)."""
+    return f'<div class="doc-desk" inert>{frame(inner, body, title)}</div>'

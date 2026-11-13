@@ -3,6 +3,10 @@
 
 .shell { min-height: var(--viewport-height); }
 .shell--tabbar { padding-bottom: calc(var(--size-56) + var(--safe-bottom)); }
+/* Від --bp-desktop меню — шапка зверху (tabbar.css): резерв переїжджає вгору */
+@media (min-width: 72rem) {
+  body.shell--tabbar { padding-top: var(--size-56); padding-bottom: 0; }
+}
 .shell--actionbar { padding-bottom: calc(var(--size-68) + var(--space-3) + var(--safe-bottom)); }
 .shell--composer { padding-bottom: var(--size-76); }
 .shell__main {

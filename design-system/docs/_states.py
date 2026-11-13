@@ -7,8 +7,10 @@ docs.css — вони дзеркалять :hover, :active, :focus-visible. Ви
 """
 import re
 
+from _pages_shell import chat_rows, close, current_card
+
 from _kit import (back, button, card_list, chat_context, chip, composer, field, more,
-                  listing_card, person_row, tabbar, topbar_photo, screen, photo_frame)
+                  listing_card, person_row, tabbar, topbar_photo, screen, photo_frame, desk)
 
 
 def _on(html, cls, marker):
@@ -22,9 +24,14 @@ def _tab_hover():
     return a + 'class="tabbar__item is-hover" href="#">' + b
 
 
-def _tab_active():
+def _tab(state):
+    """«Чати» у стані state (is-hover / is-active / is-focus); «Пошук» — поточний."""
     a, b = tabbar("search").split('class="tabbar__item" href="#">', 1)
-    return a + 'class="tabbar__item is-active" href="#">' + b
+    return a + f'class="tabbar__item {state}" href="#">' + b
+
+
+def _tab_active():
+    return _tab("is-active")
 
 
 def _rows(html):
@@ -71,9 +78,15 @@ STATES = {
         ("меню · натискання", f'<header class="topbar">{back()}<p class="topbar__title">Профіль Ірини</p>{_on(more(), "is-active", "topbar__action")}</header>'),
         ("назад · фокус", f'<header class="topbar">{_on(back(), "is-focus", "topbar__back")}<p class="topbar__title">Профіль Ірини</p>{more()}</header>'),
     ]),
-    "tabbar": ("Неактивна вкладка під курсором темнішає до основного тексту; під пальцем капсула іконки отримує підложку. Підйом вкладки — розкладка, а не стан.", [
+    "tabbar": ("Неактивна вкладка під курсором темнішає до основного тексту; під пальцем капсула іконки отримує підложку; фокус з клавіатури — кільце. "
+               "Підйом вкладки — розкладка, а не стан. На десктопі (від <code>--bp-desktop</code>) меню — шапка вгорі, а стани ті самі правила: "
+               "змінюється лише розкладка, тож кільце фокусу йде по капсулі пункту.", [
         ("«Чати» під курсором", screen(_tab_hover(), "bar"), "phone"),
         ("«Чати» під пальцем", screen(_tab_active(), "bar"), "phone"),
+        ("«Чати» · фокус з клавіатури", screen(_tab("is-focus"), "bar"), "phone"),
+        ("десктоп · «Пошук» поточний, «Чати» під курсором", desk(_tab("is-hover")), "desk"),
+        ("десктоп · «Чати» під пальцем", desk(_tab("is-active")), "desk"),
+        ("десктоп · «Чати» · фокус з клавіатури", desk(_tab("is-focus")), "desk"),
     ]),
     "listing-card": ("Уся картка — одна ціль: під курсором заголовок стає кораловим, фокус обводить картку цілком.", [
         ("наведення / натискання", card_list(listing_card(link_cls="is-hover"))),
@@ -95,6 +108,15 @@ STATES = {
         ("кнопка · натискання", f'<div class="actionbar">{button(extra="button--block is-active")}</div>'),
     ]),
     "state": ("Екран стану не інтерактивний; дії в ньому — кнопки з їхніми станами (див. «Кнопка»).", []),
+    "split": ("Сам спліт станів не має — їх мають вибраний елемент переліку і ×. Вибране — не наведення: <code>aria-current=\"page\"</code> тримає кільце "
+              "<code>--color-current</code>, поки деталь відкрита; наведення на інший рядок лише темнить підложку.", [
+        ("вибраний чат", chat_rows(0)),
+        ("вибраний чат, під курсором — інший", chat_rows(0, state=(1, "is-hover"))),
+        ("інший чат · фокус з клавіатури", chat_rows(0, state=(2, "is-focus"))),
+        ("вибрана картка стрічки", card_list(current_card(listing_card()))),
+        ("× · наведення", f'<header class="topbar">{back("Назад до чатів")}<p class="topbar__title">Ірина</p>{close(cls="is-hover")}</header>'),
+        ("× · фокус з клавіатури", f'<header class="topbar">{back("Назад до чатів")}<p class="topbar__title">Ірина</p>{close(cls="is-focus")}</header>'),
+    ]),
     "hero-photo": ("Фото станів не має; кнопки над ним — <code>.topbar--over-photo</code>: під курсором і пальцем затемнення густішає.", [
         ("назад · наведення", photo_frame(_on(topbar_photo(), "is-hover", "topbar__back")), "phone"),
     ]),
@@ -110,10 +132,11 @@ def _dark_ids(html):
 
 def block(slug, variants):
     lead, items = STATES.get(slug, (NONE, []))
-    common = ("Правила для всіх: наведення й натискання міняють лише фон, колір або рамку; "
-              "фокус з клавіатури — кільце <code>--color-focus</code> (AA в обох темах); "
-              "вимкнене — <code>--opacity-disabled</code> і без курсора; кнопка й поле — атрибут <code>disabled</code> (поза Tab), "
-              "посилання — без <code>href</code> з <code>aria-disabled=\"true\"</code>.")
+    common = ("Правила для всіх компонентів такі. Наведення й натискання міняють лише фон, колір або рамку. "
+              "Фон кнопки, чипа, «Надіслати», шапки й капсули меню проступає шаром за <code>--dur-fast</code> (розділ «Рух»). "
+              "Фокус з клавіатури — кільце <code>--color-focus</code> (AA в обох темах).</p><p class=\"doc-sources\">"
+              "Вимкнене — <code>--opacity-disabled</code> і без курсора. Кнопку й поле вимикає атрибут <code>disabled</code> (поза Tab). "
+              "Вимкнене посилання — без <code>href</code> з <code>aria-disabled=\"true\"</code>.")
     out = f'<div class="doc-prose"><p>{lead}</p></div>'
     if items:
         light = variants(items)

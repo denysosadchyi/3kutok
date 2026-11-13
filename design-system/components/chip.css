@@ -15,9 +15,30 @@
   font-weight: var(--weight-medium);
   white-space: nowrap;
 }
-:is(summary, button, a).chip { cursor: pointer; transition: background-color var(--duration-180) var(--ease-out); }
-:is(summary, button, a).chip:hover { background: var(--color-control-hover); }
-:is(summary, button, a).chip:active { background: var(--color-control-active); }
+:is(summary, button, a).chip { position: relative; isolation: isolate; cursor: pointer; }
+/* Наведення й натискання — шари-підложки, у яких росте лише opacity (як у .button):
+   відповідь на дію, --dur-fast. Колір не анімується (DESIGN.md «Анімація»). */
+:is(summary, button, a).chip::before,
+:is(summary, button, a).chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-minus-1);
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+:is(summary, button, a).chip::before { background: var(--color-control-hover); }
+:is(summary, button, a).chip::after { background: var(--color-control-active); }
+:is(summary, button, a).chip:hover::before,
+:is(summary, button, a).chip:active::after { opacity: 1; }
 .chip iconify-icon { font-size: var(--size-20); }
 .chip--selected { background: var(--color-current); color: var(--color-text-on-current); } /* корал-чорнило: правка в макеті 2026-10-16 */
-.chip--selected:is(:hover, :active) { background: var(--color-current); } /* вибраний не міняється: це вже стан */
+/* Вибраний не міняється: це вже стан — шарів немає, вибір вмикається миттєво (колір) */
+.chip--selected::before,
+.chip--selected::after { content: none; }
+@media (prefers-reduced-motion: reduce) {
+  :is(summary, button, a).chip::before,
+  :is(summary, button, a).chip::after { transition: none; }
+}

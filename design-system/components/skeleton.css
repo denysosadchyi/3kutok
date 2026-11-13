@@ -1,7 +1,14 @@
 /* Скелетон — сірий блок у формі майбутнього вмісту
    Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
 
-.skeleton { border-radius: var(--radius-8); background: var(--color-stub); }
+.skeleton {
+  border-radius: var(--radius-8);
+  background: var(--color-stub);
+  /* Статус: поки дані вантажаться, блок рівно пульсує прозорістю — без зсуву,
+     без «блиску». Півхвилі = три --dur-slow (≈1 с), --ease-standard туди й назад.
+     Прийшов вміст — скелетона в розмітці немає, пульс зникає разом із ним. */
+  animation: skeleton-pulse calc(var(--dur-slow) * 3) var(--ease-standard) infinite alternate;
+}
 .skeleton-stack { display: grid; gap: var(--space-2); }
 .skeleton--title { width: var(--pct-70); height: var(--space-4); }
 .skeleton--line { width: 100%; height: var(--space-3); }
@@ -18,3 +25,11 @@
 .skeleton-person { display: flex; align-items: center; gap: var(--space-3); }
 .skeleton-person__text { display: grid; flex: 1; gap: var(--space-2); }
 .skeleton--section { margin-top: var(--space-2); }
+@keyframes skeleton-pulse {
+  to { opacity: var(--opacity-disabled); }
+}
+/* Менше руху: безперервного пульсу немає — сірий блок стоїть, статус лишається
+   (форма вмісту + role="status" поруч) */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}

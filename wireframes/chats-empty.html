@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="wireframe-job" content="Related 4 — повернутися до потрібного чату й продовжити домовленість">
+<title>Чати — порожньо</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../design-system/index.css">
+<link rel="stylesheet" href="screens.css">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<script src="../design-system/components/button.js" defer></script>
+<script src="../design-system/components/split.js"></script>
+<script>
+/* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23 */
+(function () {
+  var KEY = "kutok-theme", root = document.documentElement;
+  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function apply(dark) {
+    if (dark) root.setAttribute("data-theme", "dark"); else root.removeAttribute("data-theme");
+    document.querySelectorAll(".theme-toggle").forEach(function (b) {
+      b.setAttribute("aria-pressed", dark ? "true" : "false");
+      var i = b.querySelector("iconify-icon");
+      if (i) i.setAttribute("icon", dark ? "solar:sun-2-linear" : "solar:moon-linear");
+    });
+  }
+  apply(saved() === "dark");
+  document.addEventListener("DOMContentLoaded", function () { apply(saved() === "dark"); });
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest(".theme-toggle");
+    if (!b) return;
+    var dark = root.getAttribute("data-theme") !== "dark";
+    apply(dark);
+    try { localStorage.setItem(KEY, dark ? "dark" : "light"); } catch (err) {}
+  });
+  window.addEventListener("storage", function (e) { if (e.key === KEY) apply(e.newValue === "dark"); });
+})();
+</script>
+</head>
+<body class="shell shell--tabbar shell--split">
+<div class="split split--tablet split--solo">
+<section class="split__pane split__pane--list" aria-label="Перелік"><header class="header"><div class="header__top"><button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button><h1 class="header__title">Чати</h1></div></header>
+<main class="shell__main" id="content">
+<section class="state">
+  <div class="state__icon"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon></div>
+  <h2 class="state__title">Чатів ще немає</h2>
+  <p class="state__text">Знайди кімнату чи співмешканця й напиши першим — чат з’явиться тут.</p>
+  <div class="state__actions"><a class="button button--primary" href="listings.html">Перейти до пошуку</a></div>
+</section>
+</main>
+</section>
+</div>
+<nav class="tabbar" aria-label="Головна навігація"><ul class="tabbar__list"><li><a class="tabbar__item" href="listings.html"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon><span>Пошук</span></a></li><li><a class="tabbar__item" href="chats.html" aria-current="page"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li><li><a class="tabbar__item" aria-disabled="true"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></a></li></ul></nav>
+<script>
+document.addEventListener("toggle", function (e) {
+  var d = e.target;
+  if (!d.matches || !d.matches("details.sheet")) return;
+  for (var n = d; n.parentElement && n !== document.body; n = n.parentElement) {
+    Array.prototype.forEach.call(n.parentElement.children, function (el) {
+      if (el !== n && el.tagName !== "SCRIPT") el.inert = d.open;
+    });
+  }
+  if (d.open) {
+    var first = d.querySelector(".sheet__panel a, .sheet__panel button, .sheet__panel input, .sheet__panel select");
+    if (first) first.focus();
+  } else {
+    d.querySelector("summary").focus();
+  }
+}, true);
+document.addEventListener("input", function (e) {
+  var form = e.target.closest(".composer");
+  if (!form || form.hasAttribute("data-wait")) return;
+  form.querySelector(".composer__send").disabled = !e.target.value.trim();
+});
+document.addEventListener("click", function (e) {
+  var sheet = e.target.closest("details.sheet[open]");
+  if (sheet && !e.target.closest(".sheet__panel, summary")) sheet.open = false;
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+  document.querySelectorAll("details.sheet[open]").forEach(function (d) { d.open = false; });
+});
+</script>
+</body>
+</html>

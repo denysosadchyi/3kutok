@@ -72,6 +72,9 @@
   .tk-fail { color: var(--color-error); font-weight: var(--weight-bold); }
 
   .tk-bar { height: var(--size-12); border-radius: var(--radius-3); background: var(--color-action); }
+  .tk-curve { display: block; width: var(--size-48); height: var(--size-48); color: var(--color-action); overflow: visible; }
+  .tk-curve path { fill: none; stroke: currentColor; stroke-width: var(--stroke-2); vector-effect: non-scaling-stroke; }
+  .tk-curve .tk-axis { stroke: var(--color-divider); stroke-width: var(--stroke-1); }
   .tk-box { width: var(--size-48); height: var(--size-48); background: var(--color-card); box-shadow: inset 0 0 0 var(--stroke-1) var(--color-field-edge); }
 
   .vt-list { display: grid; gap: var(--space-2); max-width: 72ch; margin: var(--space-3) 0 0; padding-left: var(--space-5); }
@@ -85,7 +88,7 @@
 <header class="vt-hero" id="overview">
   <button class="chip theme-toggle vt-theme" type="button" aria-pressed="false"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon>Темна тема</button>
   <h1>Токени Кутка</h1>
-  <p>Урок 8. Плаский <code>ui/kit.css</code> розколото на <code>tokens.css</code> з двох рівнів і <code>components/</code>. PRIMITIVE — сирі значення без ролей. SEMANTIC — лише ролі кольору, кожна посилається на primitive. Колір компонент бере тільки через роль, геометрію — з primitive напряму.</p>
+  <p>Урок 8. Плаский <code>ui/kit.css</code> розколото на <code>tokens.css</code> з двох рівнів і <code>components/</code>. PRIMITIVE — сирі значення без ролей. SEMANTIC — ролі кольору, а з 2026-11-06 і ролі руху; кожна посилається на primitive. Колір і рух компонент бере тільки через роль, геометрію — з primitive напряму.</p>
   <p>Таблиці нижче читають <code>tokens.css</code> наживо. Контраст рахується тут же, для обох тем.</p>
   <p class="vt-files">
     <a class="vt-link" href="../design-system/tokens.css">tokens.css</a>
@@ -119,6 +122,18 @@
   <div data-slot="semantic"></div>
 </section>
 
+<section class="vt-role" id="motion" aria-labelledby="motion-h">
+  <h2 id="motion-h">Рух: primitive і ролі</h2>
+  <p class="vt-lead">Додано 2026-11-06. Сирі тривалості й криві — primitive, над ними ролі <code>--dur-*</code>, <code>--ease-*</code>, <code>--move-*</code>; компонент бере лише ролі, від теми вони не залежать. Анімуємо тільки <code>transform</code> і <code>opacity</code>, кільце фокусу з'являється миттєво, під <code>prefers-reduced-motion</code> зсуви й масштаб вимикаються. Правила — <code>DESIGN.md</code>, розділ «Анімація».</p>
+  <h3>Тривалості</h3>
+  <div class="tk-scroll"><table class="tk-table" data-slot="dur"></table></div>
+  <h3>Криві</h3>
+  <p class="vt-lead">Час — по горизонталі, шлях — по вертикалі. Жодна крива не виходить за межі 0…1: без пружини й відскоку.</p>
+  <div class="tk-scroll"><table class="tk-table" data-slot="ease"></table></div>
+  <h3>Зсув при появі</h3>
+  <div class="tk-scroll"><table class="tk-table" data-slot="move"></table></div>
+</section>
+
 <section class="vt-role" id="contrast" aria-labelledby="contrast-h">
   <h2 id="contrast-h">Контраст за WCAG AA</h2>
   <p class="vt-lead">Поріг 4.5:1 для тексту і 3:1 для іконок, великого тексту й меж контролів. Напівпрозорі кольори змішано з фоном. Ті самі пари записано коментарями в <code>tokens.css</code>.</p>
@@ -150,8 +165,9 @@
 
 </div>
 <script>
-/* Читає tokens.css і будує таблиці: перший :root — primitive + світлий
-   semantic, :root[data-theme="dark"] — темні перевизначення. */
+/* Читає tokens.css і будує таблиці: перший :root — primitive,
+   :root, [data-theme="light"] — світлий semantic, другий :root (SEMANTIC —
+   рух) — ролі руху, :root[data-theme="dark"] — темні перевизначення. */
 (function () {
   function slot(name) { return document.querySelector('[data-slot="' + name + '"]'); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -202,9 +218,11 @@
 
   function render(css) {
     var rootAt = css.indexOf(":root {"), darkAt = css.indexOf(':root[data-theme="dark"]');
-    var all = parseBlock(css, rootAt), dark = parseBlock(css, darkAt);
-    var semAt = all.findIndex(function (t) { return t.name.indexOf("--color-") === 0; });
-    var prim = all.slice(0, semAt), sem = all.slice(semAt);
+    var lightAt = css.indexOf(':root, [data-theme="light"]');
+    var motionAt = css.indexOf(":root {", css.indexOf("SEMANTIC (рух)"));
+    var prim = parseBlock(css, rootAt), sem = lightAt < 0 ? [] : parseBlock(css, lightAt), dark = parseBlock(css, darkAt);
+    var motion = css.indexOf("SEMANTIC (рух)") < 0 ? [] : parseBlock(css, motionAt);
+    var all = prim.concat(sem, motion);
     var light = {}, darkMap = {};
     all.forEach(function (t) { light[t.name] = t.value; darkMap[t.name] = t.value; });
     dark.forEach(function (t) { darkMap[t.name] = t.value; });
@@ -233,6 +251,32 @@
         var sample = t.name.indexOf("--text-") === 0 ? "Кімната біля метро Лук'янівська" : "Тиха кімната з балконом, поруч метро. Шукаю співмешканку, яка не курить і рано встає.";
         return '<tr><td><code>' + esc(t.name) + '</code></td><td class="tk-num">' + esc(t.value) + '</td><td><div style="' + style + '">' + sample + "</div></td></tr>";
       }).join("");
+
+    // Рух: роль → primitive → значення
+    function motionRows(prefix) {
+      return motion.filter(function (t) { return t.name.indexOf(prefix) === 0; }).map(function (t) {
+        return { role: t, prim: ref(t.value), value: resolve(t.name, light) };
+      });
+    }
+    var maxMs = Math.max.apply(null, motionRows("--dur-").map(function (r) { return parseFloat(r.value); }).concat([1]));
+    slot("dur").innerHTML = "<tr><th>Роль</th><th>Primitive</th><th>Значення</th><th>Коли</th><th>Шкала</th></tr>" + motionRows("--dur-").map(function (r) {
+      return '<tr><td><code>' + esc(r.role.name) + '</code></td><td><code>' + esc(r.prim) + '</code></td><td class="tk-num">' + esc(r.value) +
+        '</td><td class="tk-note">' + esc(r.role.note) + '</td><td style="width:30%"><div class="tk-bar" style="width:' + (parseFloat(r.value) / maxMs * 100) + '%"></div></td></tr>';
+    }).join("");
+    slot("ease").innerHTML = "<tr><th>Роль</th><th>Primitive</th><th>Крива</th><th>Значення</th><th>Коли</th></tr>" + motionRows("--ease-").map(function (r) {
+      var n = (r.value.match(/[\d.]+/g) || []).map(Number), svg = "";
+      if (n.length === 4) {
+        var y = function (v) { return 100 - v * 100; };
+        svg = '<svg class="tk-curve" viewBox="0 0 100 100" aria-hidden="true"><path class="tk-axis" d="M0 0V100H100"/><path d="M0 100C' +
+          n[0] * 100 + " " + y(n[1]) + " " + n[2] * 100 + " " + y(n[3]) + ' 100 0"/></svg>';
+      }
+      return '<tr><td><code>' + esc(r.role.name) + '</code></td><td><code>' + esc(r.prim) + "</code></td><td>" + svg +
+        '</td><td class="tk-num"><code>' + esc(r.value) + '</code></td><td class="tk-note">' + esc(r.role.note) + "</td></tr>";
+    }).join("");
+    slot("move").innerHTML = "<tr><th>Роль</th><th>Primitive</th><th>Значення</th><th>Коли</th><th>Шкала</th></tr>" + motionRows("--move-").map(function (r) {
+      return '<tr><td><code>' + esc(r.role.name) + '</code></td><td><code>' + esc(r.prim) + '</code></td><td class="tk-num">' + esc(r.value) +
+        '</td><td class="tk-note">' + esc(r.role.note) + '</td><td style="width:30%"><div class="tk-bar" style="width:var(' + r.role.name + ')"></div></td></tr>';
+    }).join("");
 
     // Semantic
     var groups = [];

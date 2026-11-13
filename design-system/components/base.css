@@ -57,3 +57,18 @@ input:is([type="radio"], [type="checkbox"]) {
 .muted { color: var(--color-text-secondary); }
 .chevron { flex: none; color: var(--color-inactive); font-size: var(--size-16); }
 ::placeholder { color: var(--color-text-secondary); opacity: 1; }
+/* Менше руху — глобально (DESIGN.md «Анімація» → «Ціна кадру», 2026-11-06).
+   Страховка поверх блоків у кожному компоненті: будь-яка анімація чи перехід,
+   навіть забуті, програються за --dur-instant (майже нуль, не 0 — кінцеві
+   події приходять, fill-mode доводить до кінцевого стану) і лише раз —
+   нескінченний пульс зупиняється. Прокрутка — стрибком, без плавності.
+   Статус не ховається: завантаження називає текст role="status" («Завантажуємо…»)
+   і aria-busy на <main>, а не пульс скелетона. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: var(--dur-instant) !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: var(--dur-instant) !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -14,6 +14,15 @@ def _listings_screen(pins=False):
     return _shell("shell--header shell--tabbar", head, results_meta() + card_list(listing_card()), bar, p(2))
 
 
+def _listings_page():
+    """Стрічка як ціла сторінка (body.shell) — для «Трьох ширин»: медіазапити бачать iframe."""
+    cards = card_list(listing_card(), listing_card_tatarka(), listing_card())
+    return header() + f'<main class="shell__main">{results_meta()}{cards}</main>' + tabbar()
+
+
+_LISTINGS_WIDTHS = widths(_listings_page(), "shell shell--header shell--tabbar", title="Стрічка listings")
+
+
 def _profile_screen(pins=False, bottom=None):
     p = (lambda n: P(n)) if pins else (lambda n: "")
     top = topbar().replace('<header class="topbar">', f'<header class="topbar"{p(1)}>', 1)
@@ -33,6 +42,112 @@ def _chat_screen():
     return _shell("shell--composer", topbar_person(), chat_context() + messages(MESSAGES[:2]), composer())
 
 
+# ── Split-view (урок 10): перелік + деталь ──
+CHATS = [("Ірина", "person-iryna.jpg", "Так, домовилися. Напишу адресу в суботу зранку."),
+         ("Марина", "person-maryna.jpg", "Можна в неділю після 11:00."),
+         ("Оля", "person-olia.jpg", "Так, четвер о 18:30. Чекаємо!")]
+
+
+def chat_rows(current=0, pin="", state=None):
+    """Перелік чатів: ul.group з person-row; вибраний — aria-current="page". state=(n, клас) — стан рядка n."""
+    out = []
+    for n, (name, photo, last) in enumerate(CHATS):
+        cur = ' aria-current="page"' if n == current else ""
+        p = pin if n == current else ""
+        cls = f" {state[1]}" if state and state[0] == n else ""
+        out.append(f'<li class="group__row"><a class="person-row{cls}" href="#"{cur}{p}>{avatar("md", alt="", photo=photo)}'
+                   f'<span class="person-row__text"><strong class="person-row__name">{name}</strong>'
+                   f'<span class="person-row__caption">{last}</span></span>{ico("solar:alt-arrow-right-linear", "chevron")}</a></li>')
+    return '<ul class="group">' + "".join(out) + '</ul>'
+
+
+def chats_head(pin=""):
+    return f'<header class="header"{pin}><div class="header__top"><h3 class="header__title">Чати</h3></div></header>'
+
+
+def nothing(what="чат", icon="streamline-freehand:messages-bubble-smile", text="Тут відкриється переписка й кімната, про яку йдеться.", pin=""):
+    """«Нічого не вибрано» — права панель на ширині, коли деталь ще не відкрита."""
+    return (f'<section class="state"{pin}><div class="state__icon">{ico(icon)}</div>'
+            f'<h3 class="state__title">Обери {what} ліворуч</h3><p class="state__text">{text}</p></section>')
+
+
+def split(list_html, detail_html=None, mods="", pin_list="", pin_detail=""):
+    """detail_html=None — деталі немає: --solo, перелік на всю ширину."""
+    if detail_html is None:
+        mods = (mods + " split--solo").strip()
+    m = f" {mods}" if mods else ""
+    detail = f'<section class="split__pane split__pane--detail"{pin_detail}>{detail_html}</section>' if detail_html is not None else ""
+    return (f'<div class="split{m}"><section class="split__pane split__pane--list"{pin_list}>{list_html}</section>{detail}</div>')
+
+
+def close(label="Закрити чат", cls="", pin=""):
+    """× у шапці деталі — видно лише, коли панелі поруч (split.css)."""
+    c = f" {cls}" if cls else ""
+    return f'<a class="topbar__action split__close{c}"{pin} href="#" aria-label="{label}">{ico("solar:close-linear")}</a>'
+
+
+def _chat_top(pin_close=""):
+    """Шапка чату в спліті: «Назад до чатів» і × замість ⋯ (на екранах × стоїть поруч із ⋯)."""
+    return topbar_person().replace(back(), back("Назад до чатів"), 1).replace(more(), close(pin=pin_close), 1)
+
+
+def _chat_pane(pin_close=""):
+    return _chat_top(pin_close) + f'<div class="shell__main">{chat_context()}{messages()}</div>' + composer()
+
+
+def _chats_list(current=0, main=False, pin=""):
+    tag = "main" if main else "div"
+    return chats_head() + f'<{tag} class="shell__main">{chat_rows(current, pin)}</{tag}>'
+
+
+def current_card(html):
+    """Вибрана картка переліку — aria-current="page" на посиланні (кільце --color-current)."""
+    return html.replace('class="listing-card__link"', 'class="listing-card__link" aria-current="page"', 1)
+
+
+def _feed_pane(selected=False):
+    cards = card_list(listing_card(), listing_card_tatarka(), listing_card())
+    return header(bar=False) + f'<div class="shell__main">{chip_row()}{results_meta()}{current_card(cards) if selected else cards}</div>'
+
+
+def _listing_pane():
+    top = f'<header class="topbar topbar--over-photo">{back("Назад до результатів")}<span></span>{close("Закрити оголошення")}</header>'
+    return top + f'<div class="shell__main">{hero_photo()}{listing_title()}{group(FLAT)}</div>' + actionbar()
+
+
+_CHATS_PAGE = split(_chats_list(), _chat_pane(), "split--tablet split--detail") + tabbar("chats")
+_CHATS_NOTHING = split(_chats_list(None, main=True), f'<div class="shell__main">{nothing()}</div>', "split--tablet") + tabbar("chats")
+_LISTINGS_SOLO = split(_feed_pane()) + tabbar()
+_LISTINGS_SPLIT = split(_feed_pane(selected=True), _listing_pane(), "split--detail") + tabbar()
+# Антиприклад: стрічка з плейсхолдером «Обери оголошення ліворуч» замість --solo
+_LISTINGS_NOTHING = split(_feed_pane(), '<div class="shell__main">' + nothing(
+    "оголошення", "streamline-freehand:home", "Тут відкриється оголошення — фото, умови й хто живе в квартирі.") + '</div>') + tabbar()
+B_CHATS = "shell shell--tabbar shell--composer shell--split"
+B_CHATS_LIST = "shell shell--tabbar shell--split"
+B_FEED = "shell shell--tabbar shell--split"
+B_LISTING = "shell shell--tabbar shell--split shell--photo-top shell--actionbar"
+
+
+def at(w, inner, body, title):
+    """Одна сцена потрібної ширини (tablet | desktop) у зменшеному масштабі, як у «Трьох ширинах»."""
+    cap = dict(WIDTHS)[w]
+    return (f'<figure class="doc-width doc-width--{w}"><div class="doc-width__view" inert>{frame(inner, body, title)}</div>'
+            f'<figcaption>{cap}</figcaption></figure>')
+
+
+def wide(inner, body, title):
+    """Одна сцена десктопа 72rem у зменшеному масштабі (як «Три ширини», без телефона й планшета)."""
+    return at("desktop", inner, body, title)
+
+
+def _anatomy_split():
+    """Планшет 48rem — найвужча ширина, де панелі вже поруч; мітки — частини спліта."""
+    inner = (split(chats_head(P(1)) + f'<div class="shell__main">{chat_rows(0, P(2, "tr"))}</div>',
+                   _chat_pane(P(4, "tr")), "split--tablet split--detail", pin_detail=P(3))
+             + tabbar("chats").replace('<nav class="tabbar"', f'<nav class="tabbar"{P(5, "t")}', 1))
+    return at("tablet", inner, B_CHATS, "Анатомія: перелік чатів і чат поруч")
+
+
 PAGES = [
     dict(
         slug="shell", name="Оболонка екрана", group="Оболонка", api="shell",
@@ -47,6 +162,9 @@ PAGES = [
             (3, "Нижній пояс", "<code>.actionbar</code>, <code>.tabbar</code> або <code>.composer</code> — завжди один; <code>.shell--actionbar</code> резервує під нього висоту"),
         ]),
         variants_lead="Чотири поєднання верху й низу, що стоять на 16 екранах.",
+        widths=("Стрічка listings на 390, 48rem і 72rem. До <code>--bp-desktop</code> меню — пояс знизу, від нього — шапка вгорі: "
+                "<code>.shell--tabbar</code> переносить резерв висоти з низу вгору. Картки — <code>.card-list</code>: 1 → 2 → 3 колонки. "
+                "Решта оболонки не змінюється (<code>responsive/width-audit.md</code>).", _LISTINGS_WIDTHS),
         variants=[
             ("<code>shell--header shell--tabbar</code> · listings*", screen(_listings_screen(), "tall"), "phone"),
             ("<code>shell--actionbar</code> · profile*", screen(_profile_screen(), "tall"), "phone"),
@@ -57,7 +175,9 @@ PAGES = [
                "Mobile-first, базовий viewport 390×844, одна колонка, бокові поля 16, горизонтального скролу сторінки немає.</p>"
                "<p>Нижній пояс — там, де великий палець. Стрічка має нижнє меню (людина переходить між розділами), оголошення й профіль — "
                "панель з однією кораловою дією «Написати Ірині», чат — поле повідомлення. Усі пояси враховують <code>safe-area-inset-bottom</code>. "
-               "Оголошення починається з фото на всю ширину, яке заходить під статус-бар, — для цього <code>--photo-top</code> знімає верхнє поле.</p>"),
+               "Оголошення починається з фото на всю ширину, яке заходить під статус-бар, — для цього <code>--photo-top</code> знімає верхнє поле.</p>"
+               "<p>Від <code>--bp-desktop</code> нижнього меню немає: <code>.shell--tabbar</code> резервує висоту меню зверху, бо меню стає шапкою сторінки "
+               "(див. «Нижнє меню»). Правило діє лише на <code>body.shell--tabbar</code> — на сторінці, а не на зразку в рамці телефона.</p>"),
         sources="<code>DESIGN.md</code> → Layout; <code>ui/shell.html</code>; <code>ui/inventory.md</code> → Навігація",
         do=("один пояс знизу", screen(_profile_screen(), "tall"),
             "<p>Профіль: компактна шапка, вміст, одна панель дії. Людина знає, що робити далі, і кнопка під пальцем.</p>"),
@@ -65,6 +185,61 @@ PAGES = [
               screen(_shell("shell--tabbar", topbar(), profile_head(), actionbar() + tabbar()), "tall"),
               "<p>Два закріплені пояси з’їдають висоту і змагаються за палець: панель дії налазить на меню, а коралова кнопка губиться поруч із навігацією.</p>",
               "actionbar", "на деталях лишається тільки панель дії; меню — на стрічці."),
+    ),
+
+    dict(
+        slug="split", name="Список і деталь", group="Оболонка", api="split",
+        files=["split.css", "split.js"],
+        classes="<code>.split</code> · <code>__pane</code> <code>__pane--list</code> <code>__pane--detail</code> <code>__close</code> · <code>--detail</code> <code>--solo</code> <code>--tablet</code> · на <code>body</code> — <code>.shell--split</code>",
+        role="Перелік і відкритий елемент на одній сторінці. На телефоні видно одну панель, як два окремі екрани; на ширині — поруч: перелік ліворуч, деталь праворуч. Людина перескакує між елементами, не повертаючись назад.",
+        role_plain="Перелік і відкритий елемент на одній сторінці: на телефоні видно одну панель, на ширині — поруч.",
+        card_role="Перелік + деталь: на телефоні по черзі, на ширині поруч.",
+        preview=screen(_CHATS_NOTHING), preview_mod="flush",
+        anatomy=dict(lead="Ціла сторінка на планшеті 48rem (iframe): панелі поруч стоять лише на сторінці, у рамці телефона — одна. Номери легенди описують частини сцени.",
+            live=_anatomy_split(), legend=[
+            (1, "Панель переліку", "<code>.split__pane--list</code> — своя шапка (<code>.header</code>, на деталі — <code>p</code>, не <code>h1</code>) і <code>.shell__main</code>; на ширині — 1 колонка сітки, прокручується сама"),
+            (2, "Вибраний елемент", "<code>aria-current=\"page\"</code> на посиланні рядка чи картки — кільце <code>--color-current</code>"),
+            (3, "Панель деталі", "<code>.split__pane--detail</code> — звичайна оболонка: шапка, <code>main</code>, свій пояс (поле повідомлення, панель дії) — sticky низом панелі"),
+            (4, "Закрити ×", "<code>.split__close</code> (<code>topbar__action</code>) — лише коли панелі поруч; веде на перелік без вибору. «Назад» на ширині схований"),
+            (5, "Меню", "<code>.tabbar</code> — після <code>.split</code>; на телефоні з <code>--detail</code> ховається, як на окремому екрані-деталі"),
+        ]),
+        variants_lead="Ті самі сторінки на різних ширинах. На телефоні <code>--detail</code> вирішує, яку панель видно; на ширині — чи є права панель узагалі.",
+        variants=[
+            ("телефон · перелік (chats) — деталь схована", screen(_CHATS_NOTHING, "tall"), "phone"),
+            ("телефон · <code>--detail</code> (chat) — перелік і меню сховані", screen(_CHATS_PAGE, "tall"), "phone"),
+            ("планшет · <code>--tablet --detail</code> — перелік чатів і чат поруч (chat*)", at("tablet", _CHATS_PAGE, B_CHATS, "Планшет: чати й чат"), "desk"),
+            ("планшет · <code>--tablet</code>, нічого не вибрано — «Обери чат ліворуч» (chats)", at("tablet", _CHATS_NOTHING, B_CHATS_LIST, "Планшет: чат не вибрано"), "desk"),
+            ("десктоп · <code>--solo</code> — стрічка без вибору на всю ширину, 3 колонки (listings*)", wide(_LISTINGS_SOLO, B_FEED, "Десктоп: стрічка"), "desk"),
+            ("десктоп · <code>--detail</code> — стрічка в 1 колонку + оголошення (listing*)", wide(_LISTINGS_SPLIT, B_LISTING, "Десктоп: стрічка й оголошення"), "desk"),
+        ],
+        widths=("Чат з Іриною на 390, 48rem і 72rem. Телефон — лише чат, дорога до переліку — «Назад до чатів». "
+                "Від <code>--bp-tablet</code> (<code>--tablet</code>) — перелік ліворуч, чат праворуч, «назад» сховано, з’являється ×. "
+                "Від <code>--bp-desktop</code> — те саме в контейнері <code>--container-max</code>, меню — шапкою вгорі. "
+                "Стрічка → оголошення без <code>--tablet</code> стає поруч лише від <code>--bp-desktop</code> (<code>responsive/width-audit.md</code>).",
+                widths(_CHATS_PAGE, B_CHATS, title="Чат з Іриною")),
+        usage=("<p><strong>Коли екран стає спліт-в’ю.</strong> Лише коли перелік і деталь — одна задача, і людина перескакує між елементами: "
+               "порівнює кімнати підряд або відповідає в кількох чатах. На телефоні це два кроки (перелік → деталь → «назад»), на ширині — дві зони поруч, "
+               "і крок «назад» зникає (<code>responsive/width-audit.md</code>, вердикт «нова поведінка»). Чати → чат — від <code>--bp-tablet</code> (<code>--tablet</code>): "
+               "рядок переліку вузький, чату вистачає двох колонок. Стрічка → оголошення — від <code>--bp-desktop</code>: оголошення тримається на фото, "
+               "у двох колонках планшета воно стало б мініатюрою.</p>"
+               "<p><strong>Коли лишається одна колонка.</strong> Профіль, «оголошення зняли», помилки профілю — читання згори вниз без переліку поруч: "
+               "аудит каже «однаково», точки нічого не вмикають. Не роби спліт, якщо зліва нема чого вибирати.</p>"
+               "<p><strong>Нічого не вибрано — дві відповіді.</strong> Сітка карток (стрічка) — <code>--solo</code>: деталі немає, картки на всю ширину в 3 колонки, "
+               "бо вільне місце й так займають картки. Перелік рядків (чати) — права панель зі станом «Обери чат ліворуч»: вузький рядок на всю ширину лише "
+               "розтягнувся б. Немає переліку взагалі (порожньо, помилка, завантаження переліку) — <code>--solo</code> зі станом на всю ширину.</p>"
+               "<p><strong>×, а не «назад».</strong> Коли панелі поруч, «назад» сховано — перелік уже видно. Щоб закрити деталь, у шапці деталі стоїть "
+               "<code>.split__close</code>: веде на перелік без вибору (chats, listings). Підпис — «Закрити чат», «Закрити оголошення». На телефоні × схований: "
+               "той самий шлях дає стрілка «Назад до чатів» / «Назад до результатів».</p>"
+               "<p><strong>Розмітка.</strong> Рівно один <code>&lt;main id=\"content\"&gt;</code> стоїть у панелі, яка головна на телефоні. "
+               "Це деталь з <code>--detail</code>, інакше перелік. Друга панель — <code>div.shell__main</code>, її заголовок — <code>p</code>. <code>body</code> отримує <code>.shell--split</code>: на ширині оболонка "
+               "знімає власні резерви, панелі прокручуються самі, пояси деталі стають sticky. Рух відкриття й закриття — розділ «Рух» нижче і <code>split.js</code>.</p>"),
+        sources="<code>responsive/width-audit.md</code> → «Перелік розмов», «Чат із людиною», питання 1; <code>DESIGN.md</code> → Адаптив; <code>microcopy.md</code> → T2, O-15",
+        do=("чати поруч із чатом", at("tablet", _CHATS_PAGE, B_CHATS, "Так: чати й чат поруч"),
+            "<p>Людина відповідає Ірині й бачить, що Марина теж написала, — перейти можна одним тапом, без «назад».</p>"),
+        dont=("плейсхолдер замість стрічки",
+              wide(_LISTINGS_NOTHING, B_FEED, "Ні: стрічка з плейсхолдером"),
+              "<p>Картки стиснуті в одну колонку, а дві третини екрана займає «Обери оголошення ліворуч» — підказка, якої нікому не треба, коли вибирати й так видно з чого.</p>",
+              "split", "сітка карток без вибору — <code>--solo</code>; плейсхолдер лише для переліку рядків (чати)."),
     ),
 
     dict(
@@ -125,7 +300,7 @@ PAGES = [
             ("перший шар — <code>.header__top</code>", stage(header(bar=False), "flush"), "phone"),
             ("з чипами під нею — listings*", stage(header(), "flush"), "phone"),
         ],
-        usage=("<p>Велика шапка — лише на стрічці «Результати пошуку» (listings*). Перший крок core loop — пошук за фільтрами, тож фільтри живуть просто в шапці: "
+        usage=("<p>Велика шапка — лише на стрічці «Результати пошуку» (listings*). Перший крок core loop — пошук за фільтрами. Тому фільтри стоять просто в шапці: "
                "чип «Фільтри · 3» відкриває шторку, решта чипів показують, що саме ввімкнено (район, бюджет, дата заїзду).</p>"
                "<p>Назви фільтрів — за словником: «Бюджет», «Дата заїзду», «з 1 жовтня» (T6, T7). Під шапкою — підсумок «12 оголошень».</p>"),
         sources="<code>DESIGN.md</code> → Layout; <code>microcopy.md</code> → D7, T6, T7; <code>ui/inventory.md</code> → Навігація",
@@ -142,7 +317,8 @@ PAGES = [
         slug="tabbar", name="Нижнє меню", group="Навігація", api="tabbar",
         files=["tabbar.css"],
         classes="<code>.tabbar</code> · <code>__list</code> <code>__item</code> · активний — <code>aria-current=\"page\"</code>",
-        role="Три розділи продукту — Пошук, Чати, Профіль — під великим пальцем. Білий пояс із хвилею і великими мальованими іконками: найпомітніша «рука» в системі.",
+        role="Три розділи продукту — Пошук, Чати, Профіль — під великим пальцем. Білий пояс із хвилею і великими мальованими іконками: найпомітніша «рука» в системі. Від <code>--bp-desktop</code> — та сама навігація шапкою вгорі.",
+        role_plain="Три розділи продукту — Пошук, Чати, Профіль — під великим пальцем. Від --bp-desktop — та сама навігація шапкою вгорі.",
         card_role="Пошук · Чати · Профіль, мальовані іконки й хвиля.",
         preview=screen(tabbar(), "bar"), preview_mod="flush",
         anatomy=dict(live=screen(
@@ -151,7 +327,7 @@ PAGES = [
             f'<li><a class="tabbar__item" href="#"{P(3)}>{ico("streamline-freehand:messages-bubble-smile")}<span>Чати</span></a></li>'
             f'<li><span class="tabbar__item"{P(4)}>{ico("streamline-freehand:smiley-happy")}<span>Профіль</span></span></li>'
             '</ul></nav>', "bar"), legend=[
-            (1, "Пояс із хвилею", "<code>.tabbar</code> — білий, хвиля зверху маскою <code>--wave-mask</code>, fixed + safe-area"),
+            (1, "Пояс із хвилею", "<code>.tabbar</code> — білий, хвиля зверху маскою <code>--wave-mask</code>, fixed + safe-area; від <code>--bp-desktop</code> — шапка вгорі з межею замість хвилі"),
             (2, "Активний пункт", "<code>aria-current=\"page\"</code> — іконка й підпис кольору посилання, підпис 700, без підкладки"),
             (3, "Неактивний пункт", "<code>.tabbar__item</code> — Streamline Freehand 24, підпис 12 <code>muted</code>"),
             (4, "Без посилання", "«Профіль» — <code>span</code>: власного профілю у вайрфреймах ще немає"),
@@ -159,8 +335,17 @@ PAGES = [
         variants=[
             ("активний «Пошук»", screen(tabbar("search"), "bar"), "phone"),
             ("активні «Чати»", screen(tabbar("chats"), "bar"), "phone"),
+            ("десктоп, від <code>--bp-desktop</code> — шапка вгорі, активний «Пошук»", desk(tabbar("search")), "desk"),
+            ("десктоп — активні «Чати»", desk(tabbar("chats")), "desk"),
         ],
+        widths=("Та сама розмітка <code>nav.tabbar</code>, ті самі три пункти. Телефон і планшет — пояс знизу з хвилею: на планшеті "
+                "сенсор і великий палець лишаються (<code>responsive/width-audit.md</code>, рядок «Оболонка»). Від <code>--bp-desktop</code> — "
+                "шапка вгорі: пункти в рядок, іконка + підпис 14, межа <code>--color-divider</code> замість хвилі.", 
+                widths(header(bar=False) + tabbar(), "shell shell--header shell--tabbar", "bar", "Меню")),
         usage=("<p>Меню стоїть лише на стрічці (listings*): це точки входу, а не кроки. На деталях його місце займає панель дії або поле повідомлення — пояс знизу завжди один.</p>"
+               "<p>На десктопі (від <code>--bp-desktop</code>) нижня панель лише забирає висоту, а «великого пальця» там немає — тож меню стає шапкою сторінки. "
+               "Це не новий компонент: та сама розмітка, той самий список і ті самі стани; <code>tabbar.css</code> міняє тільки розкладку. "
+               "Шапкою меню стає лише на сторінці (<code>body.shell--tabbar</code>): у рамці телефона у вітрині воно лишається поясом знизу.</p>"
                "<p>Назви — за словником: «Чати», а не «Розмови» (T2). Великі мальовані іконки — свідомий характер: смак дизайнера забороняє екрани без іконок, "
                "а мальована лінія робить сервіс про довіру теплішим за дошку оголошень.</p>"),
         sources="<code>DESIGN.md</code> → Components → Navigation; <code>microcopy.md</code> → T2, O-02…O-04; <code>concept.md</code> → Смак дизайнера",
@@ -208,7 +393,7 @@ PAGES = [
         slug="sheet", name="Шторка", group="Навігація", api="sheet",
         files=["sheet.css"],
         classes="<code>details.sheet</code> · <code>__panel</code> <code>__grabber</code> <code>__head</code> <code>__title</code> <code>__body</code> <code>__foot</code>",
-        role="Панель знизу для фільтрів: виїжджає поверх стрічки, не відриваючи людину від результатів. Побудована на <code>&lt;details&gt;</code> — працює без JS.",
+        role="Панель знизу для фільтрів: виїжджає поверх стрічки, і людина не втрачає результатів з поля зору. Побудована на <code>&lt;details&gt;</code> — працює без JS.",
         card_role="Фільтри знизу поверх стрічки, на <code>details</code>.",
         preview=screen('<div class="shell"><div class="shell__main">' + sheet(open_=True) + '</div></div>'), preview_mod="flush",
         anatomy=dict(lead="Живий компонент: «Скасувати», тап поза панеллю або Esc закривають шторку, чип «Фільтри · 3» відкриває знову.",
@@ -229,7 +414,7 @@ PAGES = [
             ("закрита — лише чип", stage(sheet()), "phone"),
             ("відкрита — затемнення під панеллю, плаваюча тінь", screen('<div class="shell"><div class="shell__main">' + sheet(open_=True) + '</div></div>', "tall"), "phone"),
         ],
-        usage=("<p>Шторка — для короткого набору умов, які людина змінює, не покидаючи стрічку: район, бюджет, дата заїзду. Тінь «далеко» і затемнення — "
+        usage=("<p>Шторка — для короткого набору умов, які людина змінює й лишається на стрічці: район, бюджет, дата заїзду. Тінь «далеко» і затемнення — "
                "одне з небагатьох місць, де в системі є глибина: панель справді лежить поверх екрана.</p>"
                "<p>Тексти — «Фільтри · Застосувати фільтри · Змінити фільтри» однаково на всіх listings* (D7); «Скасувати» — текстова кнопка, бо корал-заливка тут одна — «Застосувати».</p>"),
         sources="<code>DESIGN.md</code> → Components → Navigation, Elevation; <code>microcopy.md</code> → D7, «Звірка після переписування»",

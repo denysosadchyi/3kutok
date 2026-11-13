@@ -7,6 +7,33 @@
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR/design-system/_gate.py\" --hook"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/ste/check.py\" --hook-file",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|mcp__.*[Bb]rowser.*|mcp__claude-in-chrome__.*|mcp__playwright__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/design-system/_gate.py\" --guard-browser"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/ste/check.py\" --chat",
+            "timeout": 30
           }
         ]
       }

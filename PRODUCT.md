@@ -8,7 +8,7 @@ web
 
 ## Users
 
-Primary та secondary users наразі описані як синтетичні proto-personas у
+Primary та secondary users зараз описані як синтетичні proto-personas у
 `personas.md`. Їхня поширеність, демографія і пріоритетність не підтверджені
 user research.
 
@@ -29,7 +29,7 @@ hub документує продуктові припущення, джерел
 - Responsive web layout.
 - Позначка `[?]` означає непідтверджене твердження.
 - `research.md` не є user research; інтерв'ю і продуктового тестування не було.
-- Важливість jobs за шкалою 1–3 наразі невідома.
+- Важливість jobs за шкалою 1–3 зараз невідома.
 
 ## Evidence on Hand
 

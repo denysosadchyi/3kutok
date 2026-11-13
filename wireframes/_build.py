@@ -52,16 +52,19 @@ def end_slot(action=""):
 # Усі екрани зібрані з кіта компонентів (урок 7). Система підключається одним
 # пакетом — ../design-system/index.css (tokens.css — primitive + semantic,
 # components/index.css — компоненти, урок 9); screens.css — разові блоки. Іконки — iconify (Streamline Freehand
-# і Solar linear).
+# і Solar linear). split.js — синхронно: слухає pagereveal до першого кадру
+# (перешикування карток спліта лише через transform, split.css).
 HEAD = """
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="../design-system/index.css">
 <link rel="stylesheet" href="screens.css">
-<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>""" + "\n" + THEME_SCRIPT
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<script src="../design-system/components/button.js" defer></script>
+<script src="../design-system/components/split.js"></script>""" + "\n" + THEME_SCRIPT
 # Класи вайрфреймів → модифікатори оболонки кіта. status-dark — лише позначка
 # для хабу уроків (темний статус-бар над світлим скелетоном), стилів не має.
-SHELL = {"has-tabbar": "shell--tabbar", "has-actionbar": "shell--actionbar", "has-composer": "shell--composer", "photo-top": "shell--photo-top", "status-dark": "status-dark"}
+SHELL = {"has-tabbar": "shell--tabbar", "has-actionbar": "shell--actionbar", "has-composer": "shell--composer", "photo-top": "shell--photo-top", "status-dark": "status-dark", "has-split": "shell--split"}
 # Тап за межами шторки (по затемненню) або Escape закриває її. Відкрита
 # шторка модальна: решта сторінки inert, фокус — у панель; після закриття
 # фокус вертається на тригер (урок 9, аудит). «Надіслати» вмикається, коли
@@ -130,7 +133,7 @@ IRYNA = visual("person-iryna")
 
 def page(name, *, title, job, body, body_class="has-tabbar", tab="search"):
     shell = " ".join(["shell"] + [SHELL[c] for c in body_class.split()])
-    tabs = [("search", "Пошук", "listings.html"), ("chats", "Чати", "chat.html"), ("profile", "Профіль", None)]
+    tabs = [("search", "Пошук", "listings.html"), ("chats", "Чати", "chats.html"), ("profile", "Профіль", None)]
     items = []
     for key, label, href in tabs:
         current = ' aria-current="page"' if key == tab else ""
@@ -209,8 +212,36 @@ def filters(district, budget, date, date_label):
 </div></div>"""
 
 
-def search_head(sub):
-    return f'<header class="header"><div class="header__top">{THEME}<h1 class="header__title">Результати пошуку</h1><p class="header__subtitle">{sub}</p></div></header>'
+def search_head(sub, heading=True):
+    tag = "h1" if heading else "p"
+    return f'<header class="header"><div class="header__top">{THEME}<{tag} class="header__title">Результати пошуку</{tag}><p class="header__subtitle">{sub}</p></div></header>'
+
+
+# Split-view (design-system/components/split.css, урок 10): перелік + деталь.
+# Телефон — одна панель за раз (--detail відкриває деталь), на ширині — поруч:
+# чат від --bp-tablet (--tablet), стрічка → оголошення від --bp-desktop.
+# <main> — у поточній панелі, друга панель — div.shell__main.
+def split(list_html, detail_html=None, mods=""):
+    """detail_html=None — деталі немає (нічого не вибрано): перелік на всю ширину (--solo)."""
+    if detail_html is None:
+        mods = (mods + " split--solo").strip()
+    m = f" {mods}" if mods else ""
+    detail = f'<section class="split__pane split__pane--detail">{detail_html}\n</section>\n' if detail_html is not None else ""
+    return (f'<div class="split{m}">\n<section class="split__pane split__pane--list" aria-label="Перелік">{list_html}\n</section>\n'
+            f'{detail}</div>')
+
+
+def nothing(what, name, text):
+    """Права панель на ширині, коли нічого не вибрано (на телефоні її не видно)."""
+    return f"""
+<div class="shell__main">
+<section class="state">
+  <div class="state__icon">{icon(name)}</div>
+  <h2 class="state__title">Обери {what} ліворуч</h2>
+  <p class="state__text">{text}</p>
+</section>
+</div>"""
+
 
 
 def card(title, price, meta, photo, href="listing.html", author=None):
@@ -264,26 +295,78 @@ SORT_SHEET = f"""<details class="sheet">
 
 SEARCH_FILTERS = filters("Шевченківський", "12000", "2026-10-01", "1 жовтня")
 
+# Видача: 9 оголошень, кожне — своя сторінка (перше — listing.html, решта —
+# listing-<slug>.html). Фото — лише з visuals/: нових кімнат у наборі поки п’ять,
+# тож кадри повторюються (visuals/README.md — промпт для нових).
+# (slug, назва, ціна, мета, фото, автор, ім’я в давальному, вік, співмешканці, кімнат, опис, підпис людини)
+ROOM_COVERS = {
+    "bedroom": ROOM_PHOTOS[0], "sofa": ROOM_PHOTOS[1], "armchair": ROOM_PHOTOS[2],
+    "living": (visual("room-lukianivska-living"), "Кімната з диваном, рослинами й книжковою полицею"),
+    "corner": (visual("room-lukianivska-corner"), "Кімната з кріслом, торшером і книжковою полицею"),
+}
+ROOMS = [
+    ("lukianivska", "Кімната біля Лук’янівської", "10 500", "Шевченківський · 2 співмешканці · з 1 жовтня", "bedroom", 0, "Ірині", 29, "2 людини", 3,
+     "Окрема кімната у трикімнатній квартирі. Комунальні платежі оплачуються окремо.", "Живе з одним співмешканцем"),
+    ("tatarka", "Світла кімната на Татарці", "9 800", "Шевченківський · 1 співмешканка · з 5 жовтня", "sofa", 1, "Марині", 26, "1 людина", 2,
+     "Кімната з диваном і комодом у двокімнатній квартирі, вікна на тихий двір.", "Живе сама, працює з дому"),
+    ("kpi", "Кімната поруч із КПІ", "11 500", "Шевченківський · 2 співмешканки · з 12 жовтня", "armchair", 2, "Олі", 24, "2 людини", 3,
+     "Кімната з робочим столом і кріслом. Десять хвилин пішки до метро.", "Живе з подругою, обидві студентки"),
+    ("zoloti-vorota", "Кімната з диваном біля Золотих воріт", "12 000", "Шевченківський · 1 співмешканець · з 1 жовтня", "living", 1, "Марині", 27, "1 людина", 2,
+     "Простора кімната в старому будинку зі стелями 3,2 м. Комунальні включено в ціну.", "Живе з братом"),
+    ("lvivska", "Кімната з кріслом на Львівській площі", "10 000", "Шевченківський · 2 співмешканці · з 15 жовтня", "corner", 2, "Олі", 25, "2 людини", 3,
+     "Затишна кімната з книжковою полицею. У квартирі є пральна машина й посудомийка.", "Живе з двома співмешканцями"),
+    ("universytet", "Тиха кімната біля Університету", "9 500", "Шевченківський · 1 співмешканка · з 3 жовтня", "bedroom", 0, "Ірині", 29, "1 людина", 2,
+     "Тиха кімната з видом на ботанічний сад. Без тварин.", "Живе сама"),
+    ("syrets", "Кімната на Сирці з балконом", "8 700", "Шевченківський · 2 співмешканці · з 10 жовтня", "sofa", 1, "Марині", 26, "2 людини", 3,
+     "Кімната з виходом на балкон. Поруч парк «Сирецький гай».", "Живе з двома співмешканцями"),
+    ("dorohozhychi", "Кімната на Дорогожичах", "11 000", "Шевченківський · 1 співмешканець · з 20 жовтня", "armchair", 2, "Олі", 24, "1 людина", 2,
+     "Кімната з робочим місцем у новому будинку, три хвилини до метро.", "Живе з одним співмешканцем"),
+    ("nyvky", "Простора кімната на Нивках", "9 000", "Шевченківський · 2 співмешканки · з 7 жовтня", "living", 0, "Ірині", 29, "2 людини", 3,
+     "Велика кімната з диваном у тихому районі біля парку «Нивки».", "Живе з двома співмешканками"),
+]
+
+
+# Чат з автором оголошення: Ірина, Марина, Оля (розділ «Чати» нижче).
+CHAT_HREF = ["chat.html", "chat-maryna.html", "chat-olia.html"]
+
+
+def room_href(slug):
+    return "listing.html" if slug == ROOMS[0][0] else f"listing-{slug}.html"
+
+
+def room_cards(current=None):
+    """Картки видачі; current — slug вибраного оголошення (aria-current на посиланні)."""
+    out = []
+    for slug, title, price, meta, cover, who, *_ in ROOMS:
+        c = card(title, f"{price} грн/міс", meta, ROOM_COVERS[cover], href=room_href(slug), author=AUTHORS[who])
+        if slug == current:
+            c = c.replace('class="listing-card__link"', 'class="listing-card__link" aria-current="page"', 1)
+        out.append(c)
+    return "".join(out)
+
+
 page(
     "listings",
     title="Результати пошуку — Куток",
     job=JOB_SEARCH,
-    body=search_head("Київ · кімнати та співмешканці")
+    body_class="has-tabbar has-split",
+    body=split(search_head("Київ · кімнати та співмешканці")
     + f"""
 <main class="shell__main" id="content">
 {SEARCH_FILTERS}
 <div class="results-meta"><span>12 оголошень</span>{SORT_SHEET}</div>
-<ul class="card-list">{card("Кімната біля Лук’янівської", "10 500 грн/міс", "Шевченківський · 2 співмешканці · з 1 жовтня", ROOM_PHOTOS[0], author=AUTHORS[0])}{card("Світла кімната на Татарці", "9 800 грн/міс", "Шевченківський · 1 співмешканка · з 5 жовтня", ROOM_PHOTOS[1], author=AUTHORS[1])}{card("Кімната поруч із КПІ", "11 500 грн/міс", "Шевченківський · 2 співмешканки · з 12 жовтня", ROOM_PHOTOS[2], author=AUTHORS[2])}
+<ul class="card-list">{room_cards()}
 </ul>
-<a class="button button--secondary button--block" href="listings.html">Показати ще 9</a>
-</main>""",
+<a class="button button--secondary button--block" href="listings.html">Показати ще 3</a>
+</main>"""),
 )
 
 page(
     "listings-empty",
     title="Результати пошуку — нічого не знайдено",
     job=JOB_SEARCH,
-    body=search_head("Київ · кімнати та співмешканці")
+    body_class="has-tabbar has-split",
+    body=split(search_head("Київ · кімнати та співмешканці")
     + f"""
 <main class="shell__main" id="content">
 {filters("Подільський", "8500", "2026-09-25", "25 вересня")}
@@ -294,14 +377,15 @@ page(
   <p class="state__text">Зміни бюджет, район або дату заїзду.</p>
   <div class="state__actions"><a class="button button--primary" href="listings.html">Змінити фільтри</a></div>
 </section>
-</main>""",
+</main>"""),
 )
 
 page(
     "listings-error",
     title="Результати пошуку — помилка",
     job=JOB_SEARCH,
-    body=search_head("Київ · кімнати та співмешканці")
+    body_class="has-tabbar has-split",
+    body=split(search_head("Київ · кімнати та співмешканці")
     + f"""
 <main class="shell__main" id="content">
 {SEARCH_FILTERS}
@@ -312,7 +396,7 @@ page(
   <p class="state__text">Перевір з’єднання й спробуй ще.</p>
   <div class="state__actions"><a class="button button--primary" href="listings.html">Спробувати ще</a></div>
 </section>
-</main>""",
+</main>"""),
 )
 
 SK_CARD = """
@@ -322,22 +406,21 @@ page(
     "listings-loading",
     title="Результати пошуку — завантаження",
     job=JOB_SEARCH,
-    body=search_head("Київ · кімнати та співмешканці")
+    body_class="has-tabbar has-split",
+    body=split(search_head("Київ · кімнати та співмешканці")
     + f"""
 <main class="shell__main" id="content" aria-busy="true">
 {SEARCH_FILTERS}
 <div class="results-meta"><span role="status">Завантажуємо оголошення</span></div>
 <ul class="card-list" aria-hidden="true">{SK_CARD * 3}
 </ul>
-</main>""",
+</main>"""),
 )
 
 # ---------- Оголошення ----------
 
 JOB_LISTING = "Related 1 — звузити пошук; Related 2 — зменшити невизначеність; Related 3 — оцінити придатність до спільного побуту; Related 4 — перевести придатний варіант у взаємну домовленість"
 JOB_LISTING_STATE = "Related 1–4 — оцінка кімнати, людини й перехід до контакту"
-LISTING_BAR = appbar("", "listings.html", "результатів")
-LISTING_PHOTO_BAR = appbar("", "listings.html", "результатів", action=REPORT, over_photo=True)
 # Рядок «що підтверджено» — і в оголошенні, і в профілі.
 TRUST_ROW = f"""<li class="group__row verified-note"><span class="verified-note__icon">{lin("shield-check")}</span><span class="verified-note__text"><strong class="verified-note__title">Номер підтверджено 12 вересня</strong><br><span class="verified-note__limit">Це означає лише, що людина має доступ до цього номера.</span></span></li>"""
 # Інші фото тієї ж квартири для каруселі під головним фото.
@@ -348,42 +431,77 @@ GALLERY = [
     (visual("room-lukianivska-bathroom"), "Спільна ванна кімната з пральною машиною"),
 ]
 
-page(
-    "listing",
-    title="Оголошення — Куток",
-    job=JOB_LISTING,
-    body_class="has-actionbar photo-top",
-    body=LISTING_PHOTO_BAR
-    + f"""
+# Стрічка ліворуч від оголошення (від --bp-desktop): та сама видача, вибрана
+# картка — aria-current="page"; на телефоні цієї панелі не видно (--detail).
+def feed_pane(current=ROOMS[0][0]):
+    return search_head("Київ · кімнати та співмешканці", heading=False) + f"""
+<div class="shell__main">
+{SEARCH_FILTERS}
+<div class="results-meta"><span>12 оголошень</span>{SORT_SHEET}</div>
+<ul class="card-list">{room_cards(current)}
+</ul>
+<a class="button button--secondary button--block" href="listings.html">Показати ще 3</a>
+</div>"""
+
+
+FEED_PANE = feed_pane()
+# Закрити оголошення — лише на ширині (split.css): справа в шапці деталі, веде на
+# видачу без вибору; на телефоні той самий шлях — «назад».
+CLOSE = f'<a class="topbar__action split__close" href="listings.html" aria-label="Закрити оголошення">{lin("close")}</a>'
+LISTING_PHOTO_BAR = appbar("", "listings.html", "результатів", action=REPORT + CLOSE, over_photo=True)
+LISTING_BAR = appbar("", "listings.html", "результатів", action=CLOSE)
+
+
+def listing_detail(room):
+    slug, title, price, meta, cover, who, dat, age, mates, flat, about, caption = room
+    name, face = AUTHORS[who]
+    gen = ("Ірини", "Марини", "Олі")[who]
+    src, alt = ROOM_COVERS[cover]
+    district, *_, date = meta.split(" · ")
+    gallery = GALLERY if slug == ROOMS[0][0] else []  # інших фото квартири поки є лише в першого
+    count = f'<span class="photo-count">1 / {len(gallery) + 1}</span>' if gallery else ""
+    strip = (f'<ul class="gallery" tabindex="0" aria-label="Інші фото квартири">'
+             + "".join(f'<li class="gallery__item"><img src="{g}" alt="{a}" loading="lazy"></li>' for g, a in gallery) + "</ul>") if gallery else ""
+    rooms_word = {2: "2 кімнати", 3: "3 кімнати"}[flat]
+    return LISTING_PHOTO_BAR + f"""
 <main class="shell__main" id="content">
-<div class="hero-photo"><img src="{ROOM_PHOTOS[0][0]}" alt="{ROOM_PHOTOS[0][1]}"><p class="price-tag">10 500 грн/міс</p><span class="photo-count">1 / {len(GALLERY) + 1}</span></div>
-<ul class="gallery" tabindex="0" aria-label="Інші фото квартири">{"".join(f'<li class="gallery__item"><img src="{g}" alt="{alt}" loading="lazy"></li>' for g, alt in GALLERY)}</ul>
+<div class="hero-photo"><img src="{src}" alt="{alt}"><p class="price-tag">{price} грн/міс</p>{count}</div>
+{strip}
 <div class="listing-title">
-  <h1 class="listing-title__name">Кімната біля Лук’янівської</h1>
-  <p class="listing-title__meta">Шевченківський район · з 1 жовтня</p>
+  <h1 class="listing-title__name">{title}</h1>
+  <p class="listing-title__meta">{district} район · {date}</p>
 </div>
 <dl class="group">
-  <div class="group__row"><dt class="group__label">Співмешканці</dt><dd class="group__value">2 людини</dd></div>
-  <div class="group__row"><dt class="group__label">Квартира</dt><dd class="group__value">3 кімнати</dd></div>
+  <div class="group__row"><dt class="group__label">Співмешканці</dt><dd class="group__value">{mates}</dd></div>
+  <div class="group__row"><dt class="group__label">Квартира</dt><dd class="group__value">{rooms_word}</dd></div>
   <div class="group__row"><dt class="group__label">Комунальні</dt><dd class="group__value">окремо</dd></div>
 </dl>
-<p class="listing-description">Окрема кімната у трикімнатній квартирі. Комунальні платежі оплачуються окремо.</p>
+<p class="listing-description">{about}</p>
 <h2 class="section-title">Хто живе в квартирі</h2>
 <ul class="group">
-  <li class="group__row"><a class="person-row" href="profile.html" aria-label="Відкрити профіль Ірини"><span class="avatar avatar--md"><img src="{AUTHORS[0][1]}" alt="Фото профілю Ірини">{MARK}</span><span class="person-row__text"><strong class="person-row__name">Ірина, 29 років</strong><span class="person-row__caption">Живе з одним співмешканцем</span></span>{CHEVRON_RIGHT}</a></li>
+  <li class="group__row"><a class="person-row" href="profile.html" aria-label="Відкрити профіль {gen}"><span class="avatar avatar--md"><img src="{face}" alt="Фото профілю {gen}">{MARK}</span><span class="person-row__text"><strong class="person-row__name">{name}, {age} {"роки" if age % 10 in (2, 3, 4) and age // 10 != 1 else "років"}</strong><span class="person-row__caption">{caption}</span></span>{CHEVRON_RIGHT}</a></li>
 </ul>
 <h2 class="section-title">Що підтверджено</h2>
 <ul class="group">{TRUST_ROW}</ul>
 </main>
-<div class="actionbar"><a class="button button--primary" href="chat.html">Написати Ірині</a></div>""",
-)
+<div class="actionbar"><a class="button button--primary" href="{CHAT_HREF[who]}">Написати {dat}</a></div>"""
+
+
+for room in ROOMS:
+    page(
+        room_href(room[0])[:-5],
+        title=f"{room[1]} — Куток",
+        job=JOB_LISTING,
+        body_class="has-tabbar has-actionbar photo-top has-split",
+        body=split(feed_pane(room[0]), listing_detail(room), "split--detail"),
+    )
 
 page(
     "listing-empty",
     title="Оголошення — знято",
     job=JOB_LISTING_STATE,
-    body_class="",
-    body=LISTING_BAR
+    body_class="has-tabbar has-split",
+    body=split(FEED_PANE, LISTING_BAR
     + f"""
 <main class="shell__main" id="content">
 <section class="state">
@@ -392,15 +510,15 @@ page(
   <p class="state__text">Кімната вже недоступна. Інші оголошення — в результатах пошуку.</p>
   <div class="state__actions"><a class="button button--primary" href="listings.html">Назад до результатів</a></div>
 </section>
-</main>""",
+</main>""", "split--detail"),
 )
 
 page(
     "listing-error",
     title="Оголошення — помилка",
     job=JOB_LISTING_STATE,
-    body_class="",
-    body=LISTING_BAR
+    body_class="has-tabbar has-split",
+    body=split(FEED_PANE, LISTING_BAR
     + f"""
 <main class="shell__main" id="content">
 <section class="state state--error" role="alert">
@@ -409,15 +527,15 @@ page(
   <p class="state__text">Перевір з’єднання й спробуй ще.</p>
   <div class="state__actions"><a class="button button--primary" href="listing.html">Спробувати ще</a><a class="button button--secondary" href="listings.html">Назад до результатів</a></div>
 </section>
-</main>""",
+</main>""", "split--detail"),
 )
 
 page(
     "listing-loading",
     title="Оголошення — завантаження",
     job=JOB_LISTING_STATE,
-    body_class="has-actionbar photo-top status-dark",
-    body=LISTING_PHOTO_BAR
+    body_class="has-tabbar has-actionbar photo-top status-dark has-split",
+    body=split(FEED_PANE, LISTING_PHOTO_BAR
     + f"""
 <main class="shell__main" id="content" aria-busy="true">
 <h1 class="sr-only">Оголошення</h1>
@@ -429,7 +547,7 @@ page(
 <div class="skeleton skeleton--line skeleton--w40 skeleton--section" aria-hidden="true"></div>
 <div class="group group--padded skeleton-person" aria-hidden="true"><div class="skeleton skeleton--avatar"></div><div class="skeleton-person__text"><div class="skeleton skeleton--line skeleton--w60"></div><div class="skeleton skeleton--line skeleton--w40"></div></div></div>
 </main>
-<div class="actionbar" aria-hidden="true"><div class="skeleton skeleton--button"></div></div>""",
+<div class="actionbar" aria-hidden="true"><div class="skeleton skeleton--button"></div></div>""", "split--detail"),
 )
 
 # ---------- Профіль ----------
@@ -526,97 +644,209 @@ page(
 <div class="actionbar" aria-hidden="true"><div class="skeleton skeleton--button"></div></div>""",
 )
 
-# ---------- Чат ----------
+
+# ---------- Чати ----------
+# Перелік чатів + чат (split.css, --tablet): на телефоні — два кроки, від
+# --bp-tablet — дві панелі поруч (responsive/width-audit.md, «Перелік розмов» і
+# «Чат із людиною»). Нічого не вибрано — права панель «Обери чат ліворуч»:
+# рядки переліку не займають ширину, як картки, тож --solo тут лише тоді, коли
+# чатів немає, вони не завантажились або ще вантажаться.
 
 JOB_CHAT = "Related 4 — перевести придатний варіант у взаємну домовленість"
-CHAT_BAR = f"""<header class="topbar topbar--person"><a class="topbar__back" href="listing.html" aria-label="Назад до оголошення">{CHEVRON_LEFT}</a><a class="topbar__person" href="profile.html"><span class="avatar"><img src="{AUTHORS[0][1]}" alt=""></span><strong class="topbar__name">Ірина</strong><span class="topbar__verified" title="Номер підтверджено 12 вересня">{lin("shield-check")}<span class="sr-only">Номер підтверджено 12 вересня</span></span></a>{end_slot(REPORT)}</header>
-<h1 class="sr-only">Чат з Іриною</h1>"""
-CHAT_CONTEXT = f"""<a class="chat-context" href="listing.html"><img class="chat-context__thumb" src="{ROOM_PHOTOS[0][0]}" alt=""><span class="chat-context__text"><strong class="chat-context__title">Кімната біля Лук’янівської</strong><span class="chat-context__meta">10\u00a0500\u00a0грн/міс · з\u00a01\u00a0жовтня · номер\u00a0підтверджено 12\u00a0вересня</span></span>{CHEVRON_RIGHT}</a>"""
+JOB_CHATS = "Related 4 — повернутися до потрібного чату й продовжити домовленість"
 
 
-def composer(text, placeholder="Повідомлення", ready=None):
-    # «Надіслати» активна, лише коли є що надіслати й розмова завантажилась.
+def bubble(mine, text, when):
+    cls = "bubble bubble--mine" if mine else "bubble"
+    return f'  <li class="{cls}"><p>{text}</p><time class="bubble__time" datetime="{when}">{when[-5:]}</time></li>'
+
+
+# (сторінка, ім’я, давальний, орудний, автор у AUTHORS, оголошення в ROOMS, день, повідомлення)
+CHATS = [
+    ("chat", "Ірина", "Ірині", "Іриною", 0, 0, ("18 вересня", "2026-09-18"), [
+        (True, "Вітаю! Чи актуальна кімната і чи можна подивитися її цього тижня?", "18:12"),
+        (False, "Так, актуальна. Можу показати в суботу після 12:00. У квартирі живемо вдвох і є кіт.", "18:24"),
+        (True, "Субота о 13:00 підходить. Домовилися?", "18:27"),
+        (False, "Так, домовилися. Напишу адресу в суботу зранку.", "18:31"),
+    ]),
+    ("chat-maryna", "Марина", "Марині", "Мариною", 1, 1, ("20 вересня", "2026-09-20"), [
+        (True, "Привіт! Кімната на Татарці ще вільна? Хочу заїхати з 5 жовтня.", "10:05"),
+        (False, "Привіт! Так, вільна. Я працюю з дому, тож удень у квартирі тихо.", "10:40"),
+        (True, "Мені підходить. Коли можна подивитися?", "10:42"),
+        (False, "Можна в неділю після 11:00.", "11:15"),
+    ]),
+    ("chat-olia", "Оля", "Олі", "Олею", 2, 2, ("21 вересня", "2026-09-21"), [
+        (True, "Вітаю! Я теж навчаюся в КПІ. Чи можна подивитися кімнату цього тижня?", "16:02"),
+        (False, "Привіт! Так, можна. Ми з подругою вдома після 18:00.", "16:20"),
+        (True, "Четвер о 18:30 підходить?", "16:21"),
+        (False, "Так, четвер о 18:30. Чекаємо!", "16:34"),
+    ]),
+]
+CHAT_IRYNA = CHATS[0]
+
+
+def chats_head(heading=True):
+    tag = "h1" if heading else "p"
+    return f'<header class="header"><div class="header__top">{THEME}<{tag} class="header__title">Чати</{tag}></div></header>'
+
+
+def chat_rows(current=None):
+    """Рядки переліку: людина + останнє повідомлення; відкритий чат — aria-current."""
+    rows = []
+    for href, name, _dat, _ins, who, *_, msgs in CHATS:
+        cur = ' aria-current="page"' if href == current else ""
+        face = AUTHORS[who][1]
+        rows.append(f'<li class="group__row"><a class="person-row" href="{href}.html"{cur}><span class="avatar avatar--md"><img src="{face}" alt="">{MARK}</span>'
+                    f'<span class="person-row__text"><strong class="person-row__name">{name}</strong><span class="person-row__caption">{msgs[-1][1]}</span></span>{CHEVRON_RIGHT}</a></li>')
+    return '<ul class="group">' + "".join(rows) + "</ul>"
+
+
+def chats_pane(current=None):
+    """Перелік чатів. current=None — він головний (<main>), інакше — поруч із чатом (div)."""
+    if current is None:
+        return chats_head() + f"""
+<main class="shell__main" id="content">
+{chat_rows()}
+</main>"""
+    return chats_head(heading=False) + f"""
+<div class="shell__main">
+{chat_rows(current)}
+</div>"""
+
+
+def chat_bar(chat):
+    href, name, dat, ins, who, *_ = chat
+    close = f'<a class="topbar__action split__close" href="chats.html" aria-label="Закрити чат">{lin("close")}</a>'
+    return (f'<header class="topbar topbar--person"><a class="topbar__back" href="chats.html" aria-label="Назад до чатів">{CHEVRON_LEFT}</a>'
+            f'<a class="topbar__person" href="profile.html"><span class="avatar"><img src="{AUTHORS[who][1]}" alt=""></span><strong class="topbar__name">{name}</strong>'
+            f'<span class="topbar__verified" title="Номер підтверджено 12 вересня">{lin("shield-check")}<span class="sr-only">Номер підтверджено 12 вересня</span></span></a>'
+            f'{end_slot(REPORT + close)}</header>\n<h1 class="sr-only">Чат з {ins}</h1>')
+
+
+def chat_context(chat):
+    room = ROOMS[chat[5]]
+    slug, title, price, meta, cover = room[:5]
+    date = meta.split(" · ")[-1].replace(" ", " ")
+    price = price.replace(" ", " ")
+    return (f'<a class="chat-context" href="{room_href(slug)}"><img class="chat-context__thumb" src="{ROOM_COVERS[cover][0]}" alt="">'
+            f'<span class="chat-context__text"><strong class="chat-context__title">{title}</strong>'
+            f'<span class="chat-context__meta">{price} грн/міс · {date} · номер підтверджено 12 вересня</span></span>{CHEVRON_RIGHT}</a>')
+
+
+def composer(chat, text="", placeholder="Повідомлення", ready=None):
+    # «Надіслати» активна, лише коли є що надіслати й чат завантажився.
     # Вимкнена — справжній disabled (поза Tab); вмикає скрипт за подією input.
     wait = ready is False
     ready = bool(text) if ready is None else ready
     off = "" if ready else " disabled"
     send = f'<button class="composer__send" type="submit" aria-label="Надіслати"{off}>{lin("plain-2")}</button>'
-    attrs = ' action="chat.html"' + (" data-wait" if wait else "")
-    return f"""<form class="composer"{attrs}><label class="sr-only" for="message">Повідомлення Ірині</label><textarea class="composer__input" id="message" name="message" rows="1" placeholder="{placeholder}">{text}</textarea>{send}</form>"""
+    attrs = f' action="{chat[0]}.html"' + (" data-wait" if wait else "")
+    return f"""<form class="composer"{attrs}><label class="sr-only" for="message">Повідомлення {chat[2]}</label><textarea class="composer__input" id="message" name="message" rows="1" placeholder="{placeholder}">{text}</textarea>{send}</form>"""
+
+
+def chat_page(name, chat, *, title, middle, text="", ready=None, busy=False):
+    b = ' aria-busy="true"' if busy else ""
+    detail = chat_bar(chat) + f"""
+<main class="shell__main" id="content"{b}>
+{chat_context(chat)}
+{middle}
+</main>
+{composer(chat, text, ready=ready)}"""
+    page(name, title=title, job=JOB_CHAT, body_class="has-tabbar has-composer has-split", tab="chats",
+         body=split(chats_pane(chat[0]), detail, "split--tablet split--detail"))
 
 
 page(
-    "chat",
-    title="Чат з Іриною — Куток",
-    job=JOB_CHAT,
-    body_class="has-composer",
-    body=CHAT_BAR
-    + f"""
-<main class="shell__main" id="content">
-{CHAT_CONTEXT}
-<p class="chat-day">18 вересня</p>
-<ol class="messages">
-  <li class="bubble bubble--mine"><p>Вітаю! Чи актуальна кімната і чи можна подивитися її цього тижня?</p><time class="bubble__time" datetime="2026-09-18T18:12">18:12</time></li>
-  <li class="bubble"><p>Так, актуальна. Можу показати в суботу після 12:00. У квартирі живемо вдвох і є кіт.</p><time class="bubble__time" datetime="2026-09-18T18:24">18:24</time></li>
-  <li class="bubble bubble--mine"><p>Субота о 13:00 підходить. Домовилися?</p><time class="bubble__time" datetime="2026-09-18T18:27">18:27</time></li>
-  <li class="bubble"><p>Так, домовилися. Напишу адресу в суботу зранку.</p><time class="bubble__time" datetime="2026-09-18T18:31">18:31</time></li>
-</ol>
-</main>
-{composer("")}""",
+    "chats",
+    title="Чати — Куток",
+    job=JOB_CHATS,
+    body_class="has-tabbar has-split",
+    tab="chats",
+    body=split(chats_pane(), nothing("чат", "messages-bubble-smile", "Тут відкриється переписка й кімната, про яку йдеться."), "split--tablet"),
 )
 
 page(
-    "chat-empty",
-    title="Чат з Іриною — новий",
-    job=JOB_CHAT,
-    body_class="has-composer",
-    body=CHAT_BAR
-    + f"""
+    "chats-empty",
+    title="Чати — порожньо",
+    job=JOB_CHATS,
+    body_class="has-tabbar has-split",
+    tab="chats",
+    body=split(chats_head() + f"""
 <main class="shell__main" id="content">
-{CHAT_CONTEXT}
 <section class="state">
+  <div class="state__icon">{icon("messages-bubble-smile")}</div>
+  <h2 class="state__title">Чатів ще немає</h2>
+  <p class="state__text">Знайди кімнату чи співмешканця й напиши першим — чат з’явиться тут.</p>
+  <div class="state__actions"><a class="button button--primary" href="listings.html">Перейти до пошуку</a></div>
+</section>
+</main>""", mods="split--tablet"),
+)
+
+page(
+    "chats-error",
+    title="Чати — помилка",
+    job=JOB_CHATS,
+    body_class="has-tabbar has-split",
+    tab="chats",
+    body=split(chats_head() + f"""
+<main class="shell__main" id="content">
+<section class="state state--error" role="alert">
+  <div class="state__icon">{icon("alerts-warning-triangle")}</div>
+  <h2 class="state__title">Не вдалося завантажити чати</h2>
+  <p class="state__text">Перевір з’єднання й спробуй ще.</p>
+  <div class="state__actions"><a class="button button--primary" href="chats.html">Спробувати ще</a></div>
+</section>
+</main>""", mods="split--tablet"),
+)
+
+SK_CHAT_ROW = '<div class="group__row skeleton-person"><div class="skeleton skeleton--avatar"></div><div class="skeleton-person__text"><div class="skeleton skeleton--line skeleton--w40"></div><div class="skeleton skeleton--line skeleton--w60"></div></div></div>'
+
+page(
+    "chats-loading",
+    title="Чати — завантаження",
+    job=JOB_CHATS,
+    body_class="has-tabbar has-split",
+    tab="chats",
+    body=split(chats_head() + f"""
+<main class="shell__main" id="content" aria-busy="true">
+<p class="sr-only" role="status">Завантажуємо чати</p>
+<div class="group" aria-hidden="true">{SK_CHAT_ROW * 3}</div>
+</main>""", mods="split--tablet"),
+)
+
+for chat in CHATS:
+    href, name, dat, ins, who, room, (day, iso), msgs = chat
+    chat_page(href, chat, title=f"Чат з {ins} — Куток",
+              middle=f'<p class="chat-day">{day}</p>\n<ol class="messages">\n'
+              + "\n".join(bubble(m, t, f"{iso}T{h}") for m, t, h in msgs) + "\n</ol>")
+
+chat_page(
+    "chat-empty", CHAT_IRYNA, title="Чат з Іриною — новий",
+    text="Вітаю! Мене звати Марта. Чи актуальна кімната і чи можна домовитися про перегляд?",
+    middle=f"""<section class="state">
   <div class="state__icon">{icon("messages-bubble-smile")}</div>
   <h2 class="state__title">Повідомлень з Іриною ще немає</h2>
   <p class="state__text">Представся й запитай, чи кімната ще вільна і коли можна прийти на перегляд.</p>
-</section>
-</main>
-{composer("Вітаю! Мене звати Марта. Чи актуальна кімната і чи можна домовитися про перегляд?")}""",
+</section>""",
 )
 
-page(
-    "chat-error",
-    title="Чат з Іриною — помилка",
-    job=JOB_CHAT,
-    body_class="has-composer",
-    body=CHAT_BAR
-    + f"""
-<main class="shell__main" id="content">
-{CHAT_CONTEXT}
-<section class="state state--error" role="alert">
+chat_page(
+    "chat-error", CHAT_IRYNA, title="Чат з Іриною — помилка",
+    text="Чи можна подивитися кімнату в суботу?", ready=False,
+    middle=f"""<section class="state state--error" role="alert">
   <div class="state__icon">{icon("alerts-warning-triangle")}</div>
   <h2 class="state__title">Не вдалося завантажити повідомлення</h2>
   <p class="state__text">Перевір з’єднання й спробуй ще. Чернетку збережено — її не надіслано.</p>
   <div class="state__actions"><a class="button button--primary" href="chat.html">Спробувати ще</a><a class="button button--secondary" href="listings.html">Назад до результатів</a></div>
-</section>
-</main>
-{composer("Чи можна подивитися кімнату в суботу?", ready=False)}""",
+</section>""",
 )
 
-page(
-    "chat-loading",
-    title="Чат з Іриною — завантаження",
-    job=JOB_CHAT,
-    body_class="has-composer",
-    body=CHAT_BAR
-    + f"""
-<main class="shell__main" id="content" aria-busy="true">
-{CHAT_CONTEXT}
-<p class="sr-only" role="status">Завантажуємо повідомлення</p>
+chat_page(
+    "chat-loading", CHAT_IRYNA, title="Чат з Іриною — завантаження", busy=True,
+    middle="""<p class="sr-only" role="status">Завантажуємо повідомлення</p>
 <div class="skeleton-stack" aria-hidden="true">
   <div class="skeleton skeleton--bubble skeleton--mine"></div>
   <div class="skeleton skeleton--bubble skeleton--bubble-tall"></div>
   <div class="skeleton skeleton--bubble skeleton--mine skeleton--bubble-short"></div>
-</div>
-</main>
-{composer("")}""",
+</div>""",
 )

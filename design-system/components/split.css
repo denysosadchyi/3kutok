@@ -1,0 +1,137 @@
+/* Split-view — «список + деталь»: на телефоні одна панель за раз, на ширині — поруч
+   Колір — лише semantic-токени з tokens.css, геометрія — primitive.
+
+   Розмітка: div.split > section.split__pane--list + section.split__pane--detail,
+   меню (.tabbar) — після .split. Кожна панель — звичайна оболонка: шапка,
+   .shell__main, свій нижній пояс (панель дії, поле повідомлення).
+   Модифікатори: --detail — відкрита деталь (на телефоні видно її, а не список);
+   --solo — деталі немає взагалі (порожньо / помилка переліку), список на всю
+   ширину; --tablet — поруч уже від --bp-tablet (чат), без нього — від --bp-desktop
+   (стрічка → оголошення). Чому саме так — responsive/width-audit.md. */
+
+/* Телефон (і зразки в рамці телефона у вітрині): одна панель за раз */
+.split:not(.split--detail) > .split__pane--detail,
+.split--detail > .split__pane--list,
+.split--solo > .split__pane--detail { display: none; }
+/* Деталь на телефоні — крок углиб: меню ховається, як на окремому екрані */
+.split--detail ~ .tabbar { display: none; }
+/* Список під фото-шапкою деталі (shell--photo-top) — своє верхнє поле */
+.shell--photo-top .split__pane--list .shell__main { padding-top: var(--space-2); }
+/* «Закрити» деталь (×) — лише коли панелі поруч: веде на перелік без вибору.
+   На телефоні той самий шлях дає «назад», тож хрестик схований. */
+.split .split__close { display: none; }
+
+/* Поруч. Числа = --bp-tablet / --bp-desktop (var() у @media не працює — звіряє гейт).
+   Лише на сторінці (body.shell > .split): у рамці телефона — одна панель.
+   Split займає вікно під/над меню, кожна панель прокручується сама;
+   пояси, що на телефоні fixed, стають sticky низом своєї панелі. */
+@media (min-width: 48rem) {
+  body.shell.shell--split:has(> .split--tablet) { padding: 0; }
+  body.shell > .split--tablet {
+    position: fixed;
+    inset: 0 0 calc(var(--size-56) + var(--safe-bottom));
+    display: grid;
+    grid-template-columns: repeat(var(--col-count-tablet), minmax(0, 1fr));
+  }
+  body.shell > .split--tablet > .split__pane {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  body.shell > .split--tablet > .split__pane--list { box-shadow: var(--stroke-1) 0 0 var(--color-divider); }
+  body.shell > .split--tablet > .split__pane--detail { grid-column: 2 / -1; }
+  body.shell > .split--tablet.split--solo > .split__pane--list { grid-column: 1 / -1; }
+  body.shell > .split--tablet.split--solo > .split__pane--detail { display: none; }
+  body.shell > .split--tablet ~ .tabbar { display: block; }
+  body.shell > .split--tablet > .split__pane > .shell__main { flex: 1 0 auto; }
+  body.shell > .split--tablet > .split__pane > .shell__main:has(> .state) { min-height: 0; }
+  body.shell > .split--tablet > .split__pane > :is(.actionbar, .composer) { position: sticky; bottom: 0; margin-top: auto; }
+  /* Перелік уже видно ліворуч — «назад» до нього зайвий (місце в сітці шапки лишається) */
+  body.shell > .split--tablet > .split__pane--detail .topbar__back { visibility: hidden; }
+  body.shell > .split--tablet > .split__pane--detail .split__close { display: inline-flex; }
+  /* Картки в панелі переліку — одна колонка: це перелік, не сітка */
+  body.shell > .split--tablet:not(.split--solo) > .split__pane--list .card-list { grid-template-columns: minmax(0, 1fr); }
+}
+@media (min-width: 72rem) {
+  body.shell.shell--split { padding: 0; }
+  body.shell > .split {
+    position: fixed;
+    inset: var(--size-56) 0 0;
+    display: grid;
+    grid-template-columns: repeat(var(--col-count-desktop), minmax(0, 1fr));
+    max-width: var(--container-max);
+    margin-inline: auto;
+  }
+  body.shell > .split > .split__pane {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  body.shell > .split > .split__pane--list { box-shadow: var(--stroke-1) 0 0 var(--color-divider); }
+  body.shell > .split > .split__pane--detail { grid-column: 2 / -1; }
+  body.shell > .split--solo > .split__pane--list { grid-column: 1 / -1; }
+  body.shell > .split--solo > .split__pane--detail { display: none; }
+  body.shell > .split ~ .tabbar { display: block; }
+  body.shell > .split > .split__pane > .shell__main { flex: 1 0 auto; }
+  body.shell > .split > .split__pane > .shell__main:has(> .state) { min-height: 0; }
+  body.shell > .split > .split__pane > :is(.actionbar, .composer) { position: sticky; bottom: 0; margin-top: auto; }
+  body.shell > .split > .split__pane--detail .topbar__back { visibility: hidden; }
+  body.shell > .split > .split__pane--detail .split__close { display: inline-flex; }
+  body.shell > .split:not(.split--solo) > .split__pane--list .card-list { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ── Рух (DESIGN.md «Анімація» → «Спліт»): відкрити й закрити деталь ──
+   Картка → оголошення і «Закрити» — це переходи між сторінками, тож рух дає
+   браузерний View Transition між документами (деталь — без JS; картки — разом
+   із components/split.js, див. нижче). Лише на десктопі, де
+   панелі стоять поруч (--bp-desktop), і лише без prefers-reduced-motion: з ним
+   перехід вимкнено, сторінка міняється одразу — кінцевий стан той самий.
+   Решта сторінки (шапка, меню, фільтри) міняється миттєво, рухаються лише:
+   — деталь (зв'язок): проступає й приїжджає на --move-md справа, звідки
+     відкрилась, --dur-slow / --ease-enter; закриття — назад, --dur-base / --ease-exit;
+   — картки (зв'язок): з сітки стрічки перешиковуються в колонку переліку й назад,
+     --dur-slow / --ease-standard. Кожній картці — своє ім'я за порядком (12 —
+     довжина видачі з «Показати ще»): переліки на обох сторінках однакові.
+     Лише transform і opacity: браузер за замовчуванням тягне групу знімка
+     картки через width/height — components/split.js підміняє це на transform
+     (група одразу кінцевого розміру, старий дає scale від лівого верхнього
+     кута, звідси transform-origin нижче). Імена картки отримують лише з класом
+     split-vt на <html>, який ставить цей скрипт: без нього картки не рухаються,
+     сторінка міняється одразу, а width/height не анімується ніде. */
+@media (min-width: 72rem) and (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  body.shell > .split > .split__pane--detail { view-transition-name: split-detail; }
+  .split-vt body.shell > .split .card-list > :nth-child(1) { view-transition-name: split-card-1; }
+  .split-vt body.shell > .split .card-list > :nth-child(2) { view-transition-name: split-card-2; }
+  .split-vt body.shell > .split .card-list > :nth-child(3) { view-transition-name: split-card-3; }
+  .split-vt body.shell > .split .card-list > :nth-child(4) { view-transition-name: split-card-4; }
+  .split-vt body.shell > .split .card-list > :nth-child(5) { view-transition-name: split-card-5; }
+  .split-vt body.shell > .split .card-list > :nth-child(6) { view-transition-name: split-card-6; }
+  .split-vt body.shell > .split .card-list > :nth-child(7) { view-transition-name: split-card-7; }
+  .split-vt body.shell > .split .card-list > :nth-child(8) { view-transition-name: split-card-8; }
+  .split-vt body.shell > .split .card-list > :nth-child(9) { view-transition-name: split-card-9; }
+  .split-vt body.shell > .split .card-list > :nth-child(10) { view-transition-name: split-card-10; }
+  .split-vt body.shell > .split .card-list > :nth-child(11) { view-transition-name: split-card-11; }
+  .split-vt body.shell > .split .card-list > :nth-child(12) { view-transition-name: split-card-12; }
+  .split-vt body.shell > .split .card-list > * { view-transition-class: split-card; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+  ::view-transition-group(*.split-card) { transform-origin: 0 0; animation-duration: var(--dur-slow); animation-timing-function: var(--ease-standard); }
+  ::view-transition-group(split-detail) { animation-duration: var(--dur-base); animation-timing-function: var(--ease-standard); }
+  ::view-transition-old(split-detail),
+  ::view-transition-new(split-detail) { animation-duration: var(--dur-base); }
+  ::view-transition-new(split-detail):only-child { animation: split-detail-in var(--dur-slow) var(--ease-enter) both; }
+  ::view-transition-old(split-detail):only-child { animation: split-detail-out var(--dur-base) var(--ease-exit) both; }
+}
+@keyframes split-detail-in {
+  from { opacity: 0; transform: translateX(var(--move-md)); }
+}
+@keyframes split-detail-out {
+  to { opacity: 0; transform: translateX(var(--move-md)); }
+}

@@ -18,9 +18,10 @@
 |---|---|---|
 | [`search-panel.html`](search-panel.html) | Панель пошуку: шапка → чипи зі шторкою фільтрів → підсумок | `listings`, `listings-empty`, `listings-error`, `listings-loading` |
 | [`card-feed.html`](card-feed.html) | Стрічка карток оголошень з биркою ціни | `listings`, `listings-loading`, `profile`, `profile-empty` |
-| [`section-group.html`](section-group.html) | Розділ зі списком: заголовок → `group` («Що підтверджено» тощо) | `listing`, `profile`, `profile-empty` |
+| [`section-group.html`](section-group.html) | Розділ зі списком: заголовок → `group` (наприклад, «Що підтверджено») | `listing`, `profile`, `profile-empty` |
 | [`contact-frame.html`](contact-frame.html) | Деталі з контактом: шапка з ⋯ → вміст → панель «Написати Ірині» | `listing`, `profile`, `profile-empty` |
 | [`chat-frame.html`](chat-frame.html) | Рамка чату: шапка з людиною → контекст оголошення → поле повідомлення | `chat`, `chat-empty`, `chat-error`, `chat-loading` |
+| [`split-view.html`](split-view.html) | Список і деталь: перелік ліворуч → деталь праворуч → меню; на телефоні по черзі, на ширині поруч | `chat*`, `listing*` (з деталлю); `chats`, `chats-*`, `listings*` — без деталі |
 | [`screen-state.html`](screen-state.html) | Стан замість екрана: шапка «назад» → стан з діями, без нижнього поясу | `listing-empty`, `listing-error`, `profile-error` |
 
 Що не стало патерном (менше трьох екранів): фото + галерея + назва

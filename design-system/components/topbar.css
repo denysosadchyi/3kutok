@@ -27,12 +27,24 @@
   text-decoration: none;
   cursor: pointer;
 }
-.topbar__back:hover,
-.topbar__action:hover,
-.topbar__person:hover { background: var(--color-ghost-hover); }
-.topbar__back:active,
-.topbar__action:active,
-.topbar__person:active { background: var(--color-ghost-active); }
+/* Наведення й натискання — шари-підложки (::before / ::after), у яких росте
+   лише opacity (як у .button): відповідь на дію, --dur-fast. Колір не анімується. */
+:is(.topbar__back, .topbar__action, .topbar__person) { position: relative; isolation: isolate; }
+:is(.topbar__back, .topbar__action, .topbar__person)::before,
+:is(.topbar__back, .topbar__action, .topbar__person)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-minus-1);
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+:is(.topbar__back, .topbar__action, .topbar__person)::before { background: var(--color-ghost-hover); }
+:is(.topbar__back, .topbar__action, .topbar__person)::after { background: var(--color-ghost-active); }
+:is(.topbar__back, .topbar__action, .topbar__person):hover::before,
+:is(.topbar__back, .topbar__action, .topbar__person):active::after { opacity: 1; }
 .topbar__back { justify-self: start; }
 .topbar__back iconify-icon { font-size: var(--size-22); }
 .topbar__action { justify-self: end; }
@@ -78,11 +90,17 @@
   min-width: var(--size-48);
   height: var(--size-48);
   border-radius: var(--radius-round);
-  background: var(--color-over-photo-dim);
+  background: none;
   color: var(--color-text-on-photo);
   backdrop-filter: blur(var(--size-8));
 }
-.topbar--over-photo :is(.topbar__back, .topbar__action):is(:hover, :active) { background: var(--color-over-photo-dim-hover); }
+/* Затемнення напівпрозоре: шар на шар дав би темніше за --color-over-photo-dim-hover.
+   Тому шари міняються місцями — спокійний (::before) гасне, наведений (::after)
+   проступає; кінцеві кольори точно ролі, 4.70 і 9.7 (tokens.css). */
+.topbar--over-photo :is(.topbar__back, .topbar__action)::before { background: var(--color-over-photo-dim); opacity: 1; }
+.topbar--over-photo :is(.topbar__back, .topbar__action)::after { background: var(--color-over-photo-dim-hover); }
+.topbar--over-photo :is(.topbar__back, .topbar__action):is(:hover, :active)::before { opacity: 0; }
+.topbar--over-photo :is(.topbar__back, .topbar__action):is(:hover, :active)::after { opacity: 1; }
 /* Фокус на фото: зелене кільце лягло б просто на знімок без гарантії 3:1.
    Тут кільце біле, впритул до кола, а зовні — ореол затемнення: біле між
    двома --color-over-photo-dim, 4.70:1 на будь-якому фото, в обох темах. */
@@ -90,4 +108,10 @@
   outline-color: var(--color-text-on-photo);
   outline-offset: 0;
   box-shadow: 0 0 0 calc(var(--stroke-2) * 2) var(--color-over-photo-dim);
+}
+
+/* Менше руху: шари міняються одразу — стан той самий, без переходу */
+@media (prefers-reduced-motion: reduce) {
+  :is(.topbar__back, .topbar__action, .topbar__person)::before,
+  :is(.topbar__back, .topbar__action, .topbar__person)::after { transition: none; }
 }

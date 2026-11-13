@@ -61,8 +61,46 @@
 .doc-variants { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: flex-start; }
 .doc-spec { display: grid; gap: var(--space-2); align-content: start; margin: 0; }
 .doc-spec > figcaption { color: var(--color-text-secondary); font-size: var(--text-xs); }
+/* «Рух»: показати появу ще раз — <details> заново вставляє вміст, анімація стартує знову */
+.doc-replay { display: grid; gap: var(--space-3); }
+.doc-replay > summary { justify-self: start; list-style: none; }
+.doc-replay > summary::-webkit-details-marker { display: none; }
+/* Повзунки підбору руху (docs/_motion.py → TUNER, поведінка — docs.js) */
+.doc-tuner { display: grid; gap: var(--space-4); padding: var(--space-4); border: var(--stroke-1) solid var(--color-divider); border-radius: var(--radius-18); background: var(--color-card); }
+.doc-tuner__controls { display: grid; gap: var(--space-3); }
+.doc-tuner__row { display: grid; grid-template-columns: minmax(12rem, 1fr) minmax(8rem, 2fr) minmax(5rem, auto); gap: var(--space-3); align-items: center; }
+.doc-tuner__row input, .doc-tuner__row select { width: 100%; accent-color: var(--color-action); }
+.doc-tuner__name { display: grid; color: var(--color-text); font-size: var(--text-sm); }
+.doc-tuner__name small { color: var(--color-text-secondary); font-size: var(--text-xs); }
+.doc-tuner__value { color: var(--color-text-secondary); font-size: var(--text-sm); }
+.doc-tuner__foot { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-start; justify-content: space-between; }
+.doc-tuner__code { flex: 1 1 20rem; margin: 0; white-space: pre-wrap; color: var(--color-text-secondary); font-size: var(--text-xs); }
+@media (max-width: 48rem) { .doc-tuner__row { grid-template-columns: 1fr; } }
 .doc-spec--phone { width: min(22.5rem, 100%); }
 .doc-spec--field { width: min(18.75rem, 100%); }
+
+/* ── Три ширини (урок 10): iframe справжньої ширини, зменшений у 0.44 раза,
+   щоб телефон, планшет і десктоп стали поруч у колонці доків (68rem).
+   Ширини — 390 (база мобільних макетів), --bp-tablet 48rem, --bp-desktop 72rem;
+   var() у медіазапиті iframe не допоможе, тож тут ті самі числа. ── */
+.doc-widths { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: flex-start; }
+.doc-width { display: grid; gap: var(--space-2); margin: 0; }
+.doc-width > figcaption { color: var(--color-text-secondary); font-size: var(--text-xs); }
+.doc-width__view { max-width: 100%; height: calc(32rem * 0.44); overflow: hidden; border: var(--stroke-1) solid var(--color-divider); border-radius: var(--radius-8); background: var(--color-page); }
+.doc-width__view > iframe { display: block; height: 32rem; border: 0; transform: scale(0.44); transform-origin: 0 0; }
+.doc-widths--bar .doc-width__view { height: calc(10rem * 0.44); }
+.doc-widths--bar .doc-width__view > iframe { height: 10rem; }
+.doc-width--phone .doc-width__view { width: calc(24.375rem * 0.44); }
+.doc-width--phone iframe { width: 24.375rem; }
+.doc-width--tablet .doc-width__view { width: calc(48rem * 0.44); }
+.doc-width--tablet iframe { width: 48rem; }
+.doc-width--desktop .doc-width__view { width: calc(72rem * 0.44); }
+.doc-width--desktop iframe { width: 72rem; }
+
+/* Смуга десктопа в натуральну величину (стани меню-шапки): видно лівий край 72rem */
+.doc-spec--desk { width: 100%; }
+.doc-desk { height: 4rem; overflow: hidden; border: var(--stroke-1) solid var(--color-divider); border-radius: var(--radius-8); background: var(--color-page); }
+.doc-desk > iframe { display: block; width: 72rem; height: 4rem; border: 0; }
 
 /* ── Анатомія: живий компонент + мітки ── */
 .doc-anatomy { display: grid; gap: var(--space-5); align-items: start; }
@@ -162,18 +200,21 @@
 
 /* ── Нерухомі стани для показу (як у ui/kit.html) ──
    У продукті стани дає CSS компонентів (:hover, :focus-visible, :active). */
-.is-hover.button--primary, .is-hover.composer__send { background: var(--color-action-hover); }
-.is-active.button--primary, .is-active.composer__send { background: var(--color-action-active); }
-.is-hover.button--secondary, .is-hover.chip { background: var(--color-control-hover); }
-.is-active.button--secondary, .is-active.chip { background: var(--color-control-active); }
-.is-hover.button--text, .is-active.button--text,
-.is-hover:is(.topbar__back, .topbar__action, .topbar__person) { background: var(--color-ghost-hover); }
-.is-active:is(.topbar__back, .topbar__action, .topbar__person), .is-active.tabbar__item iconify-icon { background: var(--color-ghost-active); }
+/* Кнопки, чипи, «Надіслати», шапка, капсула меню: фон стану — шар-підложка
+   компонента (::before — наведення, ::after — натискання), тут його лише вмикаємо */
+:is(.button, .chip, .composer__send, .topbar__back, .topbar__action, .topbar__person).is-hover::before,
+:is(.button, .chip, .composer__send, .topbar__back, .topbar__action, .topbar__person).is-active::after,
+.button--text.is-active::before,
+.is-active.tabbar__item iconify-icon::before { opacity: 1; }
+/* у .button наведення — круг (scale 0 → 1), нерухомий стан — розкритий круг */
+.button.is-hover::before,
+.button--text.is-active::before { transform: scale(1); }
+.topbar--over-photo :is(.topbar__back, .topbar__action):is(.is-hover, .is-active)::before { opacity: 0; }
+.topbar--over-photo :is(.topbar__back, .topbar__action):is(.is-hover, .is-active)::after { opacity: 1; }
 .is-hover.tabbar__item { color: var(--color-text); }
 .is-hover:is(.person-row, .chat-context) { background: var(--color-card-hover); }
 .is-hover.listing-card__link { color: var(--color-link-hover); }
 .is-hover:is(.input, .composer__input) { border-color: var(--color-field-edge-hover); }
-.topbar--over-photo .is-hover:is(.topbar__back, .topbar__action) { background: var(--color-over-photo-dim-hover); }
 .is-focus { outline: var(--stroke-2) solid var(--color-focus); outline-offset: var(--stroke-2); }
 .is-focus.listing-card__link { outline: none; }
 .is-focus.listing-card__link::after { outline: var(--stroke-2) solid var(--color-focus); outline-offset: var(--space-1); }

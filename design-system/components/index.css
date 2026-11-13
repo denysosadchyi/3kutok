@@ -15,6 +15,7 @@
 @import url("tabbar.css");
 @import url("actionbar.css");
 @import url("sheet.css");
+@import url("split.css");
 
 /* Картки й списки */
 @import url("card-list.css");

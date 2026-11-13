@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="../design-system/index.css">
 <link rel="stylesheet" href="screens.css">
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<script src="../design-system/components/button.js" defer></script>
+<script src="../design-system/components/split.js"></script>
 <script>
 /* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23 */
 (function () {
@@ -36,8 +38,9 @@
 })();
 </script>
 </head>
-<body class="shell shell--tabbar">
-<header class="header"><div class="header__top"><button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button><h1 class="header__title">Результати пошуку</h1><p class="header__subtitle">Київ · кімнати та співмешканці</p></div></header>
+<body class="shell shell--tabbar shell--split">
+<div class="split split--solo">
+<section class="split__pane split__pane--list" aria-label="Перелік"><header class="header"><div class="header__top"><button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button><h1 class="header__title">Результати пошуку</h1><p class="header__subtitle">Київ · кімнати та співмешканці</p></div></header>
 <main class="shell__main" id="content">
 
 <div class="chip-row"><div class="chip-row__track" tabindex="0" role="group" aria-label="Активні фільтри">
@@ -69,7 +72,9 @@
   <div class="state__actions"><a class="button button--primary" href="listings.html">Змінити фільтри</a></div>
 </section>
 </main>
-<nav class="tabbar" aria-label="Головна навігація"><ul class="tabbar__list"><li><a class="tabbar__item" href="listings.html" aria-current="page"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon><span>Пошук</span></a></li><li><a class="tabbar__item" href="chat.html"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li><li><a class="tabbar__item" aria-disabled="true"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></a></li></ul></nav>
+</section>
+</div>
+<nav class="tabbar" aria-label="Головна навігація"><ul class="tabbar__list"><li><a class="tabbar__item" href="listings.html" aria-current="page"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon><span>Пошук</span></a></li><li><a class="tabbar__item" href="chats.html"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li><li><a class="tabbar__item" aria-disabled="true"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></a></li></ul></nav>
 <script>
 document.addEventListener("toggle", function (e) {
   var d = e.target;

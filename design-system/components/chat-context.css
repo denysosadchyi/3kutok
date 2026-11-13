@@ -9,7 +9,6 @@
   border-radius: var(--radius-14); /* [D5] 14, а не 18, як інші картки на сірому */
   background: var(--color-card);
   text-decoration: none;
-  transition: background-color var(--duration-180) var(--ease-out);
 }
 a.chat-context:is(:hover, :active) { background: var(--color-card-hover); }
 .chat-context__thumb { width: var(--size-48); height: var(--size-48); flex: none; border-radius: var(--radius-8); object-fit: cover; }

@@ -493,7 +493,7 @@
         top: 0;
         left: 0;
         display: block;
-        width: 390px;
+        width: var(--frame-w, 390px);
         height: calc(100% / var(--s) + 2px); /* без шва між екраном і home-панеллю */
         border: 0;
         background: var(--paper);
@@ -515,6 +515,71 @@
         border-radius: 3px;
         background: #111;
         transform: translateX(-50%);
+      }
+      /* Режими перемикача: та сама рамка, інша ширина розкладки.
+         Екран у iframe завжди верстається на справжній ширині пристрою
+         (390 / 834 / 1440) і масштабується — тож брейкпоінти --bp-tablet
+         і --bp-desktop спрацьовують по-справжньому. */
+      .browser-bar { display: none; }
+      .wireframe-preview[data-device="tablet"] .phone-mockup {
+        --bezel: 12px;
+        width: min(100%, calc((100vh - 112px) * 834 / 1194));
+        aspect-ratio: 834 / 1194;
+        border-radius: 30px;
+      }
+      .wireframe-preview[data-device="desktop"] .phone-mockup {
+        --bezel: 0px;
+        width: min(100%, calc((100vh - 112px) * 1440 / 940));
+        aspect-ratio: 1440 / 940;
+        border-radius: 10px;
+        background: var(--wash);
+        box-shadow:
+          0 0 0 1px var(--line2),
+          0 24px 48px -16px rgb(32 30 26 / 30%),
+          0 8px 16px -8px rgb(32 30 26 / 20%);
+      }
+      .wireframe-preview:not([data-device="phone"]) .phone-mockup::before,
+      .wireframe-preview:not([data-device="phone"]) .phone-mockup::after,
+      .wireframe-preview:not([data-device="phone"]) .phone-buttons,
+      .wireframe-preview:not([data-device="phone"]) .phone-status,
+      .wireframe-preview:not([data-device="phone"]) .phone-home {
+        display: none;
+      }
+      .wireframe-preview[data-device="tablet"] .phone-screen { border-radius: 18px; }
+      .wireframe-preview[data-device="desktop"] .phone-screen { border-radius: 10px; }
+      .wireframe-preview[data-device="desktop"] .browser-bar {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: 12px;
+        height: 34px;
+        padding: 0 12px;
+        border-bottom: 1px solid var(--line);
+        background: var(--wash);
+      }
+      .browser-dots { display: flex; gap: 6px; }
+      .browser-dots i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--line2);
+      }
+      .browser-url {
+        flex: 0 1 360px;
+        margin: 0 auto;
+        padding: 3px 12px;
+        overflow: hidden;
+        border-radius: 6px;
+        background: var(--white);
+        color: var(--muted);
+        font-size: 11px;
+        text-align: center;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .browser-bar::after { content: ""; width: 42px; }
+      .wireframe-preview:not([data-device="phone"]) .wireframe-frame {
+        height: calc(100% / var(--s));
       }
       .hero {
         max-width: 880px;
@@ -1348,7 +1413,7 @@
           </button>
         </div>
         <p class="progress" id="progress">Урок 2 із 12</p>
-        <div class="course-meter" aria-hidden="true"><i data-status="done"></i><i data-status="done"></i><i data-status="done"></i><i data-status="done"></i><i data-status="active"></i><i data-status="active"></i><i data-status="active"></i><i data-status="active"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i><i data-status="upcoming"></i></div>
+        <div class="course-meter" aria-hidden="true"><i data-status="done"></i><i data-status="done"></i><i data-status="done"></i><i data-status="done"></i><i data-status="active"></i><i data-status="active"></i><i data-status="active"></i><i data-status="active"></i><i data-status="active"></i><i data-status="active"></i><i data-status="active"></i><i data-status="upcoming"></i></div>
         <nav class="course-tree" id="lesson-navigation" aria-label="Уроки курсу">
           <ol>
             <li class="ct-lesson" data-status="done">
@@ -1407,6 +1472,7 @@
                 <li><a href="?lesson=4&wireframe=listing" data-wireframe="listing.html">Оголошення про кімнату</a></li>
                 <li><a href="?lesson=4&wireframe=profile" data-wireframe="profile.html">Профіль іншої людини</a></li>
                 <li><a href="?lesson=4&wireframe=chat" data-wireframe="chat.html">Чат із людиною</a></li>
+                <li><a href="?lesson=4&wireframe=chats" data-wireframe="chats.html">Чати</a></li>
               </ul>
             </li>
             <li class="ct-lesson" data-status="active">
@@ -1466,6 +1532,7 @@
                 <li><a href="?lesson=8#primitive" data-target="primitive">Колір</a></li>
                 <li><a href="?lesson=8#scales" data-target="scales">Геометрія</a></li>
                 <li><a href="?lesson=8#semantic" data-target="semantic">Ролі кольору</a></li>
+                <li><a href="?lesson=8#motion" data-target="motion">Рух</a></li>
                 <li><a href="?lesson=8#contrast" data-target="contrast">Контраст</a></li>
                 <li><a href="?lesson=8#fixes" data-target="fixes">Правки</a></li>
                 <li><a href="?lesson=8#decision" data-target="decision">Що відкрито</a></li>
@@ -1476,15 +1543,38 @@
                 <a class="ct-link" href="?lesson=9" data-lesson="9" title="09 · Дизайн-система"><span class="ct-glyph" aria-hidden="true">9</span><span class="ct-title">Дизайн-система</span><span class="ct-state">, у роботі</span></a>
               </div>
             </li>
-            <li class="ct-lesson" data-status="upcoming">
+            <li class="ct-lesson" data-status="active">
               <div class="ct-row">
-                <a class="ct-link" href="?lesson=10" data-lesson="10" title="10 · Responsive"><span class="ct-glyph" aria-hidden="true">10</span><span class="ct-title">Responsive</span><span class="ct-state">, незабаром</span></a>
+                <a class="ct-link" href="?lesson=10" data-lesson="10" title="10 · Responsive"><span class="ct-glyph" aria-hidden="true">10</span><span class="ct-title">Responsive</span><span class="ct-state">, у роботі</span></a>
+                <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-10" aria-label="Розділи: Responsive"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               </div>
+              <ul class="ct-sub" id="ct-sub-10" data-for="10" hidden>
+                <li><a href="?lesson=10#audit" data-target="audit">Аудит ширини</a></li>
+                <li><a href="?lesson=10#verdicts" data-target="verdicts">Вердикти</a></li>
+                <li><a href="?lesson=10#breakpoints" data-target="breakpoints">Дві точки</a></li>
+                <li><a href="?lesson=10#why-rem" data-target="why-rem">Чому ці числа</a></li>
+                <li><a href="?lesson=10#components" data-target="components">Адаптивні компоненти</a></li>
+                <li><a href="?lesson=10#split" data-target="split">Спліт</a></li>
+                <li><a href="?lesson=10#screens" data-target="screens">Нові екрани</a></li>
+                <li><a href="?lesson=10#open-10" data-target="open-10">Що відкрито</a></li>
+              </ul>
             </li>
-            <li class="ct-lesson" data-status="upcoming">
+            <li class="ct-lesson" data-status="active">
               <div class="ct-row">
-                <a class="ct-link" href="?lesson=11" data-lesson="11" title="11 · Анімація і мікроінтеракції"><span class="ct-glyph" aria-hidden="true">11</span><span class="ct-title">Анімація і мікроінтеракції</span><span class="ct-state">, незабаром</span></a>
+                <a class="ct-link" href="?lesson=11" data-lesson="11" title="11 · Анімація і мікроінтеракції"><span class="ct-glyph" aria-hidden="true">11</span><span class="ct-title">Анімація і мікроінтеракції</span><span class="ct-state">, у роботі</span></a>
+                <button class="ct-twisty" type="button" aria-expanded="false" aria-controls="ct-sub-11" aria-label="Розділи: Анімація і мікроінтеракції"><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               </div>
+              <ul class="ct-sub" id="ct-sub-11" data-for="11" hidden>
+                <li><a href="?lesson=11#inventory" data-target="inventory">Інвентар руху</a></li>
+                <li><a href="?lesson=11#roles" data-target="roles">Три ролі</a></li>
+                <li><a href="?lesson=11#rules" data-target="rules">Правила</a></li>
+                <li><a href="?lesson=11#components-motion" data-target="components-motion">Де живе рух</a></li>
+                <li><a href="?lesson=11#button-motion" data-target="button-motion">Кнопка</a></li>
+                <li><a href="?lesson=11#split-motion" data-target="split-motion">Спліт</a></li>
+                <li><a href="?lesson=11#frame" data-target="frame">Ціна кадру</a></li>
+                <li><a href="?lesson=11#check-motion" data-target="check-motion">Як перевірити</a></li>
+                <li><a href="?lesson=11#not-animated" data-target="not-animated">Чого не анімуємо</a></li>
+              </ul>
             </li>
             <li class="ct-lesson" data-status="upcoming">
               <div class="ct-row">
@@ -1497,6 +1587,8 @@
       <main id="content">
         <details class="mobile-nav">
           <summary id="mobile-summary">Урок 02 із 12 · Персони і JTBD</summary>
+          <!-- Перелік назв уроків, а не речення: лінтер STE його не читає. -->
+          <!-- ste-off -->
           <nav>
             <a href="../research/research.html">01 · Ресерч і бенчмарк</a
             ><a href="?lesson=2" data-lesson="2">02 · Персони і JTBD</a
@@ -1513,6 +1605,7 @@
             ><a href="?lesson=11" data-lesson="11">11 · Анімація</a
             ><a href="?lesson=12" data-lesson="12">12 · Хендофф</a>
           </nav>
+          <!-- ste-on -->
         </details>
         <details class="mobile-toc">
           <summary>Зміст цього уроку</summary>
@@ -1523,13 +1616,33 @@
             ><a href="#research-next">Що перевіряємо</a>
           </nav>
         </details>
+        <details class="mobile-toc hidden" data-toc="10">
+          <summary>Зміст цього уроку</summary>
+          <nav>
+            <a href="#audit">Аудит</a><a href="#verdicts">Вердикти</a
+            ><a href="#breakpoints">Точки</a><a href="#why-rem">Числа</a
+            ><a href="#components">Компоненти</a><a href="#split">Спліт</a
+            ><a href="#screens">Екрани</a><a href="#open-10">Відкрито</a>
+          </nav>
+        </details>
+        <details class="mobile-toc hidden" data-toc="11">
+          <summary>Зміст цього уроку</summary>
+          <nav>
+            <a href="#inventory">Інвентар</a><a href="#roles">Ролі</a
+            ><a href="#rules">Правила</a><a href="#components-motion">Компоненти</a
+            ><a href="#button-motion">Кнопка</a><a href="#split-motion">Спліт</a
+            ><a href="#frame">Кадр</a><a href="#check-motion">Перевірка</a
+            ><a href="#not-animated">Без руху</a>
+          </nav>
+        </details>
         <article id="lesson-two">
           <header class="hero">
             <h1>Урок 2. Персони і JTBD</h1>
             <p>
-              Від припущень про людей — до перевірюваних jobs: три ситуації
-              пошуку житла, потреби людей і рішення, які вже можна обговорювати
-              — або ще рано приймати без розмов із людьми.
+              Від припущень про людей — до jobs, які можна перевірити. Тут три
+              ситуації пошуку житла, потреби людей і рішення. Частину рішень
+              уже можна обговорювати, для інших спершу треба поговорити з
+              людьми.
             </p>
             <div class="hero-meta">
               <span class="pill">2 робочі персони</span
@@ -1617,7 +1730,7 @@
                   </p>
                 </div>
                 <details>
-                  <summary>Контекст, болі й докази</summary>
+                  <summary>Контекст, проблеми й докази</summary>
                   <div class="persona-body">
                     <div class="persona-block">
                       <h4>Контекст</h4>
@@ -1637,7 +1750,7 @@
                       </ul>
                     </div>
                     <div class="persona-block">
-                      <h4>Болі</h4>
+                      <h4>Проблеми</h4>
                       <p>
                         OLX не сегментований під співмешканців; у Facebook
                         задокументовані випадки шахрайства. Наслідки для Марти —
@@ -1678,12 +1791,12 @@
                   </div>
                   <p class="persona-summary">
                     <b class="unknown">[? змодельована потреба]</b> Хоче описати
-                    вільне місце, оцінити кандидатів і домовитися, не втрачаючи
-                    контроль над контактом.
+                    вільне місце, оцінити кандидатів і домовитися. Контроль над
+                    контактом при цьому лишається в нього.
                   </p>
                 </div>
                 <details>
-                  <summary>Контекст, болі й докази</summary>
+                  <summary>Контекст, проблеми й докази</summary>
                   <div class="persona-body">
                     <div class="persona-block">
                       <h4>Контекст</h4>
@@ -1703,7 +1816,7 @@
                       </ul>
                     </div>
                     <div class="persona-block">
-                      <h4>Болі</h4>
+                      <h4>Проблеми</h4>
                       <p>
                         <b class="unknown">[? потреба]</b> Неструктуровані
                         профілі можуть створювати ручний відсів і повторні
@@ -1835,10 +1948,9 @@
                 <div>
                   <h3>Зменшити невизначеність щодо іншої сторони</h3>
                   <p class="statement">
-                    Коли я розглядаю незнайому людину або оголошення, я хочу
-                    зменшити невизначеність щодо їхньої реальності й намірів,
-                    щоб вирішити, чи варто вкладати час і переходити до
-                    контакту.
+                    Коли я бачу незнайому людину або оголошення, я хочу
+                    зрозуміти, чи вони реальні й які мають наміри, щоб
+                    вирішити, чи варто витрачати час і писати.
                   </p>
                   <div class="job-meta">
                     <span class="evidence market">Trust-сигнали поширені</span
@@ -1943,7 +2055,7 @@
               <article class="hypothesis-job">
                 <h3>S1 · Соціальний [?] · усі сценарії</h3>
                 <p>
-                  Коли я представляю себе іншій стороні, я хочу виглядати
+                  Коли я розповідаю про себе іншій стороні, я хочу виглядати
                   надійним кандидатом, щоб мене не відсіяли як незрозумілий
                   ризик.
                 </p>
@@ -1959,8 +2071,8 @@
                 <h3>H1 · Практичний [?] · Олена</h3>
                 <p>
                   Коли ми знайшли одне одного, але ще не маємо житла, я хочу
-                  узгодити спільні критерії та наступні дії, щоб шукати квартиру
-                  без дублювання й суперечливих домовленостей.
+                  узгодити спільні критерії й кроки, щоб шукати квартиру без
+                  дублювання й суперечливих домовленостей.
                 </p>
               </article>
               <article class="hypothesis-job">
@@ -2424,6 +2536,959 @@
             людьми.
           </p>
         </article>
+        <article id="lesson-ten" class="hidden">
+          <header class="hero">
+            <h1>Урок 10. Responsive</h1>
+            <p>
+              Телефон — база, ширший екран лише додає. Урок показує, що ширина
+              дає кожному екрану. Тут дві точки переходу і компонент спліт: він
+              ставить список і деталь поруч.
+            </p>
+            <div class="hero-meta">
+              <span class="pill">2 breakpoints</span
+              ><span class="pill">1 новий компонент · split</span
+              ><span class="pill">14 нових екранів</span>
+            </div>
+          </header>
+          <div class="outcome">
+            <strong>Після уроку</strong>
+            <div>
+              <p>
+                Ви побачите шлях від аудиту ширини до токенів
+                <code>--bp-*</code>, а від токенів — до поведінки компонентів.
+                На екранах медіазапитів немає: адаптив живе в
+                <code>components/</code>.
+              </p>
+              <div class="legend">
+                <span class="pill">Телефон 390</span
+                ><span class="pill">Планшет 834</span
+                ><span class="pill">Десктоп 1440</span
+                ><span class="legend-note"
+                  >Три ширини показує перемикач пристрою в уроці 4. Кожне
+                  посилання на екран нижче відкриває його на потрібній
+                  ширині.</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <section id="audit">
+            <div class="section-head">
+              <h2>Аудит ширини</h2>
+              <p>
+                Ми не питаємо, як стиснути десктоп до телефона. Ми питаємо, що
+                ширина дає дії людини на кожному екрані.
+              </p>
+            </div>
+            <div class="method">
+              <div>
+                <b>Однаково</b>
+                <p>
+                  Ширина нічого не додає, лише повітря. Одна колонка
+                  читабельної ширини стоїть по центру.
+                </p>
+              </div>
+              <div>
+                <b>Розкладка ширше</b>
+                <p>
+                  Той самий вміст і ті самі кроки. Вміст стоїть у кілька
+                  колонок.
+                </p>
+              </div>
+              <div>
+                <b>Нова поведінка</b>
+                <p>
+                  Ширина відкриває те, чого на телефоні не було. Дві зони стоять
+                  поруч, і переходити між екранами не треба.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="verdicts">
+            <div class="section-head">
+              <h2>Вердикти по екранах</h2>
+              <p>
+                Стани беруть вердикт свого екрана. Нових функцій на десктопі
+                немає: ширина змінює розкладку, а не обсяг продукту.
+              </p>
+            </div>
+            <div
+              class="matrix-wrap"
+              tabindex="0"
+              role="region"
+              aria-label="Вердикти аудиту ширини"
+            >
+              <table>
+                <caption>
+                  Що дає планшет і десктоп кожному екрану
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Екран</th>
+                    <th scope="col">Що робить людина</th>
+                    <th scope="col">Планшет</th>
+                    <th scope="col">Десктоп</th>
+                    <th scope="col">Вердикт</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Результати пошуку кімнат</th>
+                    <td>Задає критерії, переглядає видачу, відсіює зайве й відкриває оголошення.</td>
+                    <td>Картки у 2 колонки. Фільтри й сортування лишаються шторками.</td>
+                    <td>Фільтри — постійна панель зліва. Людина міняє бюджет і одразу бачить нову видачу поруч.</td>
+                    <td class="relevance">Нова поведінка</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Оголошення про кімнату</th>
+                    <td>Перевіряє умови, дивиться, хто живе, і вирішує, чи писати.</td>
+                    <td>Ширша галерея. Решта — одна колонка, панель дії знизу.</td>
+                    <td>Дві колонки. Праворуч липка картка: ціна, сигнал довіри і «Написати Ірині» в одному місці.</td>
+                    <td>Розкладка ширше</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Профіль іншої людини</th>
+                    <td>Читає анкету згори вниз і вирішує, чи писати.</td>
+                    <td>Одна колонка по центру.</td>
+                    <td>Те саме. Анкета коротка, і в колонках текст читати важче.</td>
+                    <td class="not-core">Однаково</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Перелік розмов</th>
+                    <td>Обирає розмову, до якої повернутися.</td>
+                    <td>Стає лівою панеллю чату.</td>
+                    <td>Те саме.</td>
+                    <td class="relevance">Нова поведінка</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Чат із людиною</th>
+                    <td>Пише, чекає відповіді й узгоджує перегляд.</td>
+                    <td>Дві панелі: перелік ліворуч, чат праворуч. Кнопка «назад» зникає.</td>
+                    <td>Дві панелі. Ширина бульбашок обмежена, картка контексту лишається над повідомленнями.</td>
+                    <td class="relevance">Нова поведінка</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Оболонка</th>
+                    <td>Переходить між пошуком, чатами й профілем.</td>
+                    <td>Таб-бар лишається знизу.</td>
+                    <td>Таб-бар стає верхньою навігацією. Нижня панель на десктопі забирає висоту.</td>
+                    <td>Розкладка ширше</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="breakpoints">
+            <div class="section-head">
+              <h2>Дві точки переходу</h2>
+              <p>
+                Точок дві, бо аудит назвав дві різні поведінки. Кількість
+                пристроїв тут ні до чого.
+              </p>
+            </div>
+            <div class="method">
+              <div>
+                <b><code>--bp-tablet</code> · 48rem</b>
+                <p>
+                  Вміщаються дві колонки. Видача стає на 2 колонки, чати й чат
+                  стають двома панелями.
+                </p>
+              </div>
+              <div>
+                <b><code>--bp-desktop</code> · 72rem</b>
+                <p>
+                  Вміщаються три колонки. Стрічка й оголошення стають двома
+                  панелями, таб-бар — шапкою.
+                </p>
+              </div>
+              <div>
+                <b><code>--container-max</code> · 76rem</b>
+                <p>
+                  Колонка росте до 24rem і далі не тягнеться. Решта ширини —
+                  повітря.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="why-rem">
+            <div class="section-head">
+              <h2>Чому саме ці числа</h2>
+              <p>
+                Точку ставить колонка, а не пристрій. Кожна колонка не вужча за
+                вміст телефона 390 без бокових полів.
+              </p>
+            </div>
+            <div class="decision-grid">
+              <article class="decision">
+                <h3>Колонка — 22rem</h3>
+                <ul>
+                  <li>358px ≈ 22rem: на цій ширині ми перевірили всі компоненти.</li>
+                  <li>Планшет: 2 × 22 + зазор + поля = 48rem.</li>
+                  <li>Десктоп: 3 × 22 + 2 зазори + поля = 72rem.</li>
+                </ul>
+                <span class="source">Зазор — наявний <code>--space-6</code>, нового відступу немає.</span>
+              </article>
+              <article class="decision later">
+                <h3>Гіпотеза «≥ 1024» не пройшла</h3>
+                <ul>
+                  <li>На 64rem три колонки мають по 19rem, це ≈ 309px.</li>
+                  <li>Це вужче за найвужчий перевірений телефон 320.</li>
+                  <li>Планшет у ландшафті лишається планшетом: сенсор і шторки.</li>
+                </ul>
+                <span class="source">Тому десктоп починається з 72rem.</span>
+              </article>
+              <article class="decision differentiator">
+                <h3>rem, а не px</h3>
+                <ul>
+                  <li>Людина збільшує шрифт — точки зсуваються разом із ним.</li>
+                  <li>Колонки довше стоять одна під одною і не стають вузькими.</li>
+                </ul>
+                <span class="source">Так текст лишається читабельним на будь-якому масштабі.</span>
+              </article>
+              <article class="decision safety">
+                <h3><code>var()</code> у <code>@media</code> не працює</h3>
+                <ul>
+                  <li>Медіазапит пише те саме число, що й <code>--bp-*</code>.</li>
+                  <li>Гейт звіряє ці числа в <code>components/</code>, <code>screens.css</code> і патернах.</li>
+                </ul>
+                <span class="source">Нова межа спершу стає токеном, потім іде в медіазапит.</span>
+              </article>
+            </div>
+          </section>
+
+          <section id="components">
+            <div class="section-head">
+              <h2>Що вже адаптивне</h2>
+              <p>
+                Поведінка живе в компоненті. Ви правите файл у
+                <code>components/</code>, і правка йде на кожен екран із цим
+                компонентом.
+              </p>
+            </div>
+            <div
+              class="matrix-wrap"
+              tabindex="0"
+              role="region"
+              aria-label="Адаптивні компоненти"
+            >
+              <table>
+                <caption>
+                  Компоненти й їхня поведінка на трьох ширинах
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Компонент</th>
+                    <th scope="col">Телефон</th>
+                    <th scope="col">Від --bp-tablet</th>
+                    <th scope="col">Від --bp-desktop</th>
+                    <th scope="col">Чому</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row"><code>.card-list</code></th>
+                    <td>1 колонка</td>
+                    <td>2 колонки</td>
+                    <td>3 колонки</td>
+                    <td>Аудит видачі: картки у 2 колонки вже на планшеті.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><code>.tabbar</code></th>
+                    <td>Пояс знизу з хвилею</td>
+                    <td>Пояс знизу</td>
+                    <td>Шапка вгорі: пункти в рядок, межа замість хвилі</td>
+                    <td>На десктопі нижня панель забирає висоту, а до великого пальця вона не ближча.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><code>.shell--tabbar</code></th>
+                    <td>Резерв висоти меню знизу</td>
+                    <td>Знизу</td>
+                    <td>Зверху</td>
+                    <td>Іде слідом за <code>.tabbar</code>.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><code>.split--tablet</code> · чати й чат</th>
+                    <td>Одна панель: перелік або чат</td>
+                    <td>Дві панелі поруч, «назад» сховано, × закриває чат</td>
+                    <td>Так само</td>
+                    <td>Аудит переліку й чату: дві панелі вже на планшеті.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><code>.split</code> · стрічка й оголошення</th>
+                    <td>Одна панель: стрічка або оголошення</td>
+                    <td>Одна панель</td>
+                    <td>Стрічка ліворуч, оголошення праворуч, × закриває оголошення</td>
+                    <td>Картці й оголошенню на двох колонках потрібні три колонки.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="split">
+            <div class="section-head">
+              <h2>Спліт: список і деталь</h2>
+              <p>
+                Один компонент обгортає обидві пари. Чат без переліку на ширині
+                — вузька колонка посеред порожнього місця.
+              </p>
+            </div>
+            <div class="decision-grid">
+              <article class="decision">
+                <h3>Коли панелі стоять поруч</h3>
+                <ul>
+                  <li>Чати — від <code>--bp-tablet</code>: рядку чату й чату вистачає по колонці.</li>
+                  <li>Стрічка — від <code>--bp-desktop</code>: картці й оголошенню треба три колонки.</li>
+                  <li>Правила діють лише для <code>body.shell &gt; .split</code>.</li>
+                </ul>
+                <span class="source">Рамка телефона в доках так і лишається телефоном.</span>
+              </article>
+              <article class="decision differentiator">
+                <h3>× замість «назад»</h3>
+                <ul>
+                  <li>Коли перелік видно поруч, «назад» нікуди не веде.</li>
+                  <li>Кнопка «назад» ховається, з'являється × з підписом «Закрити чат» або «Закрити оголошення».</li>
+                  <li>Обидві кнопки — посилання, тож без JS усе працює.</li>
+                </ul>
+                <span class="source">× веде на перелік без вибраного елемента.</span>
+              </article>
+              <article class="decision safety">
+                <h3>Нічого не вибрано</h3>
+                <ul>
+                  <li>Чати: праворуч стан «Обери чат ліворуч».</li>
+                  <li>Стрічка: модифікатор <code>--solo</code>, картки на всю ширину.</li>
+                  <li>Стани переліку чатів — теж <code>--solo</code>: вибирати нема з чого.</li>
+                </ul>
+                <span class="source">Заглушка в стрічці забрала б дві колонки з трьох.</span>
+              </article>
+              <article class="decision later">
+                <h3>Доступність</h3>
+                <ul>
+                  <li>Вибраний рядок чи картка мають <code>aria-current="page"</code>, як пункт меню.</li>
+                  <li>На сторінці один <code>main</code>: у панелі, яку показує телефон.</li>
+                  <li>Друга панель — <code>div.shell__main</code>, її заголовок — <code>p</code>.</li>
+                </ul>
+                <span class="source">Так читач екрана бачить один головний регіон.</span>
+              </article>
+            </div>
+          </section>
+
+          <section id="screens">
+            <div class="section-head">
+              <h2>Нові екрани</h2>
+              <p>
+                Для спліта треба було намалювати перелік чатів, ще дві розмови
+                й вісім кімнат стрічки. Посилання відкривають екран у
+                перегляді уроку 4.
+              </p>
+            </div>
+            <div class="decision-grid">
+              <article class="decision">
+                <h3>Чати · планшет</h3>
+                <ul>
+                  <li><a href="?lesson=4&amp;wireframe=chats&amp;device=tablet">Чати, нічого не вибрано</a></li>
+                  <li><a href="?lesson=4&amp;wireframe=chats-empty&amp;device=tablet">Чатів ще немає</a></li>
+                  <li><a href="?lesson=4&amp;wireframe=chats-error&amp;device=tablet">Перелік не завантажився</a></li>
+                  <li><a href="?lesson=4&amp;wireframe=chats-loading&amp;device=tablet">Перелік завантажується</a></li>
+                </ul>
+                <span class="source">Склад станів — у <a href="../wireframes/_screens.md">_screens.md</a>.</span>
+              </article>
+              <article class="decision differentiator">
+                <h3>Розмови · планшет</h3>
+                <ul>
+                  <li><a href="?lesson=4&amp;wireframe=chat&amp;device=tablet">Чат з Іриною</a></li>
+                  <li><a href="?lesson=4&amp;wireframe=chat-maryna&amp;device=tablet">Чат з Мариною</a></li>
+                  <li><a href="?lesson=4&amp;wireframe=chat-olia&amp;device=tablet">Чат з Олею</a></li>
+                </ul>
+                <span class="source">Вибраний рядок у переліку ліворуч змінюється разом із розмовою.</span>
+              </article>
+              <article class="decision safety">
+                <h3>Кімнати стрічки · десктоп</h3>
+                <ul>
+                  <li><a href="?lesson=4&amp;wireframe=listing-tatarka&amp;device=desktop">Татарка</a> · <a href="?lesson=4&amp;wireframe=listing-kpi&amp;device=desktop">КПІ</a></li>
+                  <li><a href="?lesson=4&amp;wireframe=listing-zoloti-vorota&amp;device=desktop">Золоті ворота</a> · <a href="?lesson=4&amp;wireframe=listing-lvivska&amp;device=desktop">Львівська площа</a></li>
+                  <li><a href="?lesson=4&amp;wireframe=listing-universytet&amp;device=desktop">Університет</a> · <a href="?lesson=4&amp;wireframe=listing-syrets&amp;device=desktop">Сирець</a></li>
+                  <li><a href="?lesson=4&amp;wireframe=listing-dorohozhychi&amp;device=desktop">Дорогожичі</a> · <a href="?lesson=4&amp;wireframe=listing-nyvky&amp;device=desktop">Нивки</a></li>
+                </ul>
+                <span class="source">Кожна картка стрічки відкриває своє оголошення праворуч.</span>
+              </article>
+              <article class="decision later">
+                <h3>Компонент і патерн</h3>
+                <ul>
+                  <li><a href="../design-system/docs/split.html">Сторінка компонента split</a> — анатомія, варіанти, стани в обох темах.</li>
+                  <li><a href="../design-system/patterns/split-view.html">Патерн split-view</a> — перелік, деталь і меню.</li>
+                  <li><a href="../design-system/components/split.css">split.css</a> — правила на дві точки.</li>
+                </ul>
+                <span class="source">Нове спершу з'явилось у системі, потім на екранах.</span>
+              </article>
+            </div>
+          </section>
+
+          <section id="open-10">
+            <div class="section-head">
+              <h2>Що відкрито</h2>
+              <p>
+                Ці питання аудит лишив на рішення. Біля кожного — порада й те,
+                що можна перевірити.
+              </p>
+            </div>
+            <div class="research-next">
+              <article class="question">
+                <h3>Результати й оголошення поруч?</h3>
+                <p>
+                  Порада — ні. Оголошення тримається на фото, а в бічній панелі
+                  фото стануть мініатюрами.
+                </p>
+                <p class="changes">
+                  <b>Проти:</b> поруч швидше відсіювати кілька варіантів
+                  підряд. Можна перевірити прототипом.
+                </p>
+              </article>
+              <article class="question">
+                <h3>Профіль як панель над оголошенням?</h3>
+                <p>
+                  Це скоротить шлях «оголошення → профіль → чат». Порада —
+                  відкласти: у MVP профіль — необов'язкова гілка.
+                </p>
+                <p class="changes">
+                  <b>Змінить:</b> головний шлях на десктопі.
+                </p>
+              </article>
+              <article class="question">
+                <h3>Третя колонка в чаті?</h3>
+                <p>
+                  Від 1280 поруч можна поставити оголошення й профіль. Порада —
+                  лишити картку контексту над повідомленнями.
+                </p>
+                <p class="changes">
+                  <b>Проти:</b> це третя зона на екрані.
+                </p>
+              </article>
+              <article class="question">
+                <h3>Фільтри: одразу чи кнопкою?</h3>
+                <p>
+                  Порада — одразу, з паузою для поля бюджету. Інакше постійна
+                  панель нічого не дає.
+                </p>
+                <p class="changes">
+                  <b>Змінить:</b> панель фільтрів на десктопі. Її ще не
+                  намальовано.
+                </p>
+              </article>
+              <article class="question">
+                <h3>Порядок фокусу</h3>
+                <p>
+                  Меню в розмітці стоїть після <code>main</code>. На десктопі
+                  меню вгорі, а Tab доходить до нього останнім.
+                </p>
+                <p class="changes">
+                  <b>Правка:</b> поставити меню перед <code>main</code> у
+                  <code>wireframes/_build.py</code>. Це окреме рішення.
+                </p>
+              </article>
+            </div>
+          </section>
+          <p class="footer">
+            Робочі матеріали:
+            <a href="../responsive/width-audit.md">width-audit.md</a> ·
+            <a href="../DESIGN.md">DESIGN.md → «Адаптив»</a> ·
+            <a href="../design-system/tokens.css">tokens.css</a> ·
+            <a href="../design-system/components/split.css">split.css</a> ·
+            <a href="../design-system/docs/split.html">docs/split.html</a> ·
+            <a href="../design-system/patterns/split-view.html">patterns/split-view.html</a>.
+          </p>
+        </article>
+        <article id="lesson-eleven" class="hidden">
+          <header class="hero">
+            <h1>Урок 11. Анімація і мікроінтеракції</h1>
+            <p>
+              Рух у продукті пояснює, що сталося: відповідь на дію, зміну
+              стану, появу чи зникнення. Декоративного руху немає. Рух не
+              затримує людину перед дією.
+            </p>
+            <div class="hero-meta">
+              <span class="pill">3 ролі руху</span
+              ><span class="pill">29 моментів в інвентарі</span
+              ><span class="pill">9 компонентів із рухом</span
+              ><span class="pill">2 скрипти</span>
+            </div>
+          </header>
+          <div class="outcome">
+            <strong>Після уроку</strong>
+            <div>
+              <p>
+                Ви побачите шлях від моменту на екрані до ролі руху, а від
+                ролі — до токена й компонента. Також буде видно, чого ми
+                свідомо не анімуємо.
+              </p>
+              <div class="legend">
+                <span class="pill">Відповідь</span
+                ><span class="pill">Статус</span
+                ><span class="pill">Зв'язок</span
+                ><span class="legend-note"
+                  >Робота руху — навіщо він тут. Без роботи руху немає.</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <section id="inventory">
+            <div class="section-head">
+              <h2>Інвентар руху</h2>
+              <p>
+                Спершу ми виписали всі моменти, які вже є на екранах. Нових
+                станів і компонентів інвентар не додає.
+              </p>
+            </div>
+            <div class="method">
+              <div>
+                <b>Зв'язок</b>
+                <p>
+                  Показати, звідки взявся елемент і куди він повернеться.
+                  Приклад: шторка фільтрів виїжджає знизу.
+                </p>
+              </div>
+              <div>
+                <b>Статус</b>
+                <p>
+                  Показати, що стан змінився. Приклад: скелетон пульсує, поки
+                  вантажаться дані.
+                </p>
+              </div>
+              <div>
+                <b>Відповідь</b>
+                <p>
+                  Підтвердити, що дію людини прийнято. Приклад: підложка
+                  кнопки темнішає під курсором.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="roles">
+            <div class="section-head">
+              <h2>Три ролі руху</h2>
+              <p>
+                Компонент бере лише ролі. Сирі тривалості й криві живуть у
+                primitive-рівні <code>tokens.css</code>.
+              </p>
+            </div>
+            <div
+              class="matrix-wrap"
+              tabindex="0"
+              role="region"
+              aria-label="Ролі руху"
+            >
+              <table>
+                <caption>
+                  Ролі руху, тривалості, криві й місця вживання
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Роль</th>
+                    <th scope="col">Тривалість</th>
+                    <th scope="col">Крива</th>
+                    <th scope="col">Де</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Відповідь на дію</th>
+                    <td><code>--dur-fast</code> · 120 мс</td>
+                    <td><code>--ease-standard</code></td>
+                    <td>Наведення й натискання: прозорість шару-підложки. Розмір і положення елемента не змінюються.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Перехід у компоненті</th>
+                    <td><code>--dur-base</code> · 200 мс</td>
+                    <td><code>--ease-standard</code></td>
+                    <td>Елемент був і лишається: перемикач, розгортання вмісту, зміна стану.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Поява</th>
+                    <td><code>--dur-slow</code> · 320 мс</td>
+                    <td><code>--ease-enter</code> · гальмує в кінці</td>
+                    <td>Шторка, тост, новий рядок. Зсув <code>--move-sm</code> (4) для дрібного, <code>--move-md</code> (8) для великого.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Зникнення</th>
+                    <td><code>--dur-base</code> · 200 мс</td>
+                    <td><code>--ease-exit</code> · пришвидшується</td>
+                    <td>Зникнення коротше за появу: те, що йде, людині вже не потрібне.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Без руху</th>
+                    <td><code>--dur-instant</code> · 0.01 мс</td>
+                    <td>—</td>
+                    <td>Лише глобальний блок <code>prefers-reduced-motion</code> у <code>base.css</code>. Не 0, бо з нулем браузер не шле подію кінця переходу.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="rules">
+            <div class="section-head">
+              <h2>Правила руху</h2>
+              <p>
+                Чотири правила з <code>DESIGN.md</code>. Гейт перевіряє кожне з
+                них у кожному файлі з рухом.
+              </p>
+            </div>
+            <div class="decision-grid">
+              <article class="decision">
+                <h3>Лише transform і opacity</h3>
+                <ul>
+                  <li>Колір, фон, рамка, тінь, розмір і відступи міняються миттєво.</li>
+                  <li>Ці дві властивості не перераховують розкладку на слабкому телефоні.</li>
+                  <li>Проміжні кольори переходу ніхто не перевіряв на контраст.</li>
+                </ul>
+                <span class="source">The Transform-Opacity Rule.</span>
+              </article>
+              <article class="decision differentiator">
+                <h3>Фокус — миттєво</h3>
+                <ul>
+                  <li>Кільце фокусу з'являється без переходу.</li>
+                  <li>Людина з клавіатури бачить, де вона, у тому самому кадрі.</li>
+                </ul>
+                <span class="source">The Instant-Focus Rule.</span>
+              </article>
+              <article class="decision safety">
+                <h3>Без пружини</h3>
+                <ul>
+                  <li>Усі криві тримають y у межах 0…1.</li>
+                  <li>Елемент не перелітає кінцеву точку й не відскакує.</li>
+                </ul>
+                <span class="source">No Spring.</span>
+              </article>
+              <article class="decision later">
+                <h3>Менше руху — обов'язково</h3>
+                <ul>
+                  <li>Кожен файл із рухом має <code>prefers-reduced-motion</code>: зсуви й масштаб вимкнено.</li>
+                  <li>Глобальний блок у <code>base.css</code> ловить і забутий рух.</li>
+                  <li>Статус лишається видимим: завантаження називає текст «Завантажуємо…», а не пульс.</li>
+                </ul>
+                <span class="source">Reduced Motion Is Required.</span>
+              </article>
+            </div>
+          </section>
+
+          <section id="components-motion">
+            <div class="section-head">
+              <h2>Де живе рух</h2>
+              <p>
+                Рух живе у файлі компонента, тож він однаковий на кожному
+                екрані. Кожна сторінка документації має живий приклад у блоці
+                «Рух».
+              </p>
+            </div>
+            <div
+              class="matrix-wrap"
+              tabindex="0"
+              role="region"
+              aria-label="Компоненти з рухом"
+            >
+              <table>
+                <caption>
+                  Компоненти, які рухаються, і їхні ролі руху
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Компонент</th>
+                    <th scope="col">Що рухається</th>
+                    <th scope="col">Робота</th>
+                    <th scope="col">Роль</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row"><a href="../design-system/docs/button.html#motion">Кнопка</a></th>
+                    <td>Круг наведення розходиться з точки входу курсора. Літери напису хвилею перекочуються вгору.</td>
+                    <td>відповідь</td>
+                    <td>Круг <code>--dur-slow</code>, літери <code>--dur-base</code>, вихід <code>--dur-fast</code></td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><a href="../design-system/docs/chip.html#motion">Чип</a>, <a href="../design-system/docs/topbar.html#motion">шапка</a></th>
+                    <td>Підложка проступає на наведенні й натисканні.</td>
+                    <td>відповідь</td>
+                    <td><code>--dur-fast</code>, <code>--ease-standard</code></td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><a href="../design-system/docs/composer.html#motion">Поле повідомлення</a></th>
+                    <td>Кнопка надсилання темнішає на наведенні. Коли вона стає активною, вона розвиднюється.</td>
+                    <td>відповідь, статус</td>
+                    <td><code>--dur-fast</code></td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><a href="../design-system/docs/tabbar.html#motion">Таб-бар</a></th>
+                    <td>Капсула під іконкою проступає, поки вкладку натиснуто.</td>
+                    <td>відповідь</td>
+                    <td><code>--dur-fast</code></td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><a href="../design-system/docs/sheet.html#motion">Шторка</a></th>
+                    <td>Затемнення проступає, панель піднімається на <code>--move-md</code> знизу.</td>
+                    <td>зв'язок</td>
+                    <td><code>--dur-slow</code>, <code>--ease-enter</code></td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><a href="../design-system/docs/state.html#motion">Стан</a></th>
+                    <td>Стан проступає на місці вмісту, без зсуву.</td>
+                    <td>статус</td>
+                    <td><code>--dur-base</code>, <code>--ease-enter</code></td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><a href="../design-system/docs/skeleton.html#motion">Скелетон</a></th>
+                    <td>Рівний пульс прозорості, поки вантажаться дані.</td>
+                    <td>статус</td>
+                    <td>Три <code>--dur-slow</code> на півхвилі</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><a href="../design-system/docs/split.html">Спліт</a> · десктоп</th>
+                    <td>Деталь приїжджає справа на <code>--move-md</code>. Картки перешиковуються із сітки в колонку.</td>
+                    <td>зв'язок</td>
+                    <td>Поява <code>--dur-slow</code>, закриття <code>--dur-base</code> і <code>--ease-exit</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="button-motion">
+            <div class="section-head">
+              <h2>Кнопка: круг і перекат</h2>
+              <p>
+                Користувач попросив явнішу зміну стану. Колір не анімується, тож
+                стан дає шар-підложка, у якому росте лише масштаб.
+              </p>
+            </div>
+            <div class="decision-grid">
+              <article class="decision">
+                <h3>Круг наведення</h3>
+                <ul>
+                  <li>Круг розходиться з того боку, звідки зайшов курсор, і накриває кнопку за 320 мс.</li>
+                  <li>За 200 мс круг читався як звичайна зміна фону.</li>
+                  <li>На виході круг стягується туди, куди пішов курсор, за 120 мс.</li>
+                </ul>
+                <span class="source">Точку входу пише <a href="../design-system/components/button.js">button.js</a> у змінні <code>--button-hover-x</code> і <code>--button-hover-y</code>.</span>
+              </article>
+              <article class="decision differentiator">
+                <h3>Перекат літер</h3>
+                <ul>
+                  <li>Скрипт розбиває напис на літери, поруч ставить ціле слово для читача екрана.</li>
+                  <li>Кожна літера зсувається вгору, її копія виїжджає знизу.</li>
+                  <li>Крок хвилі — <code>--dur-fast</code> × 0.12 на літеру, це ≈ 14 мс.</li>
+                </ul>
+                <span class="source">Напис «Застосувати фільтри» закінчує рух приблизно за 0.5 с.</span>
+              </article>
+              <article class="decision safety">
+                <h3>Без скрипта і з «менше руху»</h3>
+                <ul>
+                  <li>Без скрипта й з клавіатури круг росте з центру, напис стоїть.</li>
+                  <li>З <code>prefers-reduced-motion</code> фон з'являється одразу, без круга й перекату.</li>
+                </ul>
+                <span class="source">Кінцевий вигляд у всіх випадках той самий.</span>
+              </article>
+              <article class="decision later">
+                <h3>Специфікація кнопки</h3>
+                <ul>
+                  <li><a href="../design-system/specs/button.yaml">button.yaml</a> — джерело правди для <code>.button</code>.</li>
+                  <li>Порядок зміни: специфікація → <code>button.css</code> → документація → вітрина → екрани.</li>
+                  <li>Код, що розходиться зі специфікацією, — дефект коду.</li>
+                </ul>
+                <span class="source">Або привід переглянути специфікацію з причиною в <code>DESIGN.md</code>.</span>
+              </article>
+            </div>
+          </section>
+
+          <section id="split-motion">
+            <div class="section-head">
+              <h2>Спліт: перехід між сторінками</h2>
+              <p>
+                Відкрити чи закрити оголошення — це перехід на іншу сторінку.
+                Рух дає браузерний View Transition між документами.
+              </p>
+            </div>
+            <div class="decision-grid">
+              <article class="decision">
+                <h3>Що рухається</h3>
+                <ul>
+                  <li>Лише деталь і картки, решта сторінки міняється одразу.</li>
+                  <li>Деталь рухається без JS: <code>translateX</code> і <code>opacity</code>.</li>
+                  <li>Працює лише на десктопі, де панелі стоять поруч.</li>
+                </ul>
+                <span class="source">Правило <code>@view-transition</code> живе в <a href="../design-system/components/split.css">split.css</a>.</span>
+              </article>
+              <article class="decision differentiator">
+                <h3>Розмір через transform</h3>
+                <ul>
+                  <li>Браузер за замовчуванням веде знімок картки через <code>width</code> і <code>height</code>.</li>
+                  <li><a href="../design-system/components/split.js">split.js</a> підміняє цю анімацію на <code>scale</code> від лівого верхнього кута.</li>
+                  <li>Кадр той самий, але розмір не перераховується.</li>
+                </ul>
+                <span class="source">Винятку з правила transform і opacity більше немає.</span>
+              </article>
+              <article class="decision later">
+                <h3>Без підтримки</h3>
+                <ul>
+                  <li>Без JS картки не мають імен і не рухаються.</li>
+                  <li>Браузер без View Transitions просто міняє сторінку.</li>
+                  <li>З <code>prefers-reduced-motion</code> перехід вимкнено.</li>
+                </ul>
+                <span class="source">В усіх випадках людина бачить ту саму кінцеву сторінку.</span>
+              </article>
+            </div>
+          </section>
+
+          <section id="frame">
+            <div class="section-head">
+              <h2>Ціна кадру</h2>
+              <p>
+                Кадр на 60 Гц — 16.7 мс. На старому телефоні більшу частину
+                цього часу забирає сама сторінка.
+              </p>
+            </div>
+            <div class="method">
+              <div>
+                <b>Розкладка · дорого</b>
+                <p>
+                  <code>width</code>, <code>height</code>, <code>top</code>,
+                  <code>margin</code>. Браузер перераховує елемент і сусідів,
+                  потім перемальовує сторінку.
+                </p>
+              </div>
+              <div>
+                <b>Малювання · дорого</b>
+                <p>
+                  <code>color</code>, <code>background</code>,
+                  <code>box-shadow</code>. Розкладки немає, але кожен кадр
+                  перемальовує пікселі.
+                </p>
+              </div>
+              <div>
+                <b>Складання шарів · дешево</b>
+                <p>
+                  <code>transform</code> і <code>opacity</code>. GPU зсуває чи
+                  просвічує готовий шар, сусіди стоять на місці.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="check-motion">
+            <div class="section-head">
+              <h2>Як перевірити</h2>
+              <p>
+                Гейт ловить правила в коді. Вручну перевіряємо, що з «менше
+                руху» статус лишається видимим.
+              </p>
+            </div>
+            <div class="research-next">
+              <article class="question">
+                <h3>Гейт</h3>
+                <p>
+                  Запустіть <code>python3 design-system/_gate.py</code>. Він
+                  падає на число замість <code>--dur-*</code>, на криву не з
+                  <code>--ease-*</code> і на <code>transition</code> без
+                  властивості.
+                </p>
+                <p class="changes">
+                  <b>Ще:</b> рух не на <code>transform</code> чи
+                  <code>opacity</code>, файл без
+                  <code>prefers-reduced-motion</code>.
+                </p>
+              </article>
+              <article class="question">
+                <h3>Вручну</h3>
+                <p>
+                  Увімкніть у DevTools емуляцію
+                  <code>prefers-reduced-motion: reduce</code>. Потім пройдіть
+                  кнопку, шторку, екрани завантаження й спліт.
+                </p>
+                <p class="changes">
+                  <b>Очікуємо:</b> фон міняється одразу, шторка стоїть на
+                  місці, текст «Завантажуємо…» є.
+                </p>
+              </article>
+              <article class="question">
+                <h3>Автоматично</h3>
+                <p>
+                  Автоматична перевірка в браузері потребує дозволу
+                  користувача. Без дозволу гейт її блокує.
+                </p>
+                <p class="changes">
+                  <b>Очікуємо:</b> анімацій на сторінці немає або вони
+                  тривають не більше 0.01 мс.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section id="not-animated">
+            <div class="section-head">
+              <h2>Чого не анімуємо</h2>
+              <p>
+                Відсутність руху — теж рішення. Біля кожного пункту — причина.
+              </p>
+            </div>
+            <div class="cut-list">
+              <article class="cut">
+                <h3>Закриття шторки</h3>
+                <p>
+                  <code>details</code> ховає вміст одразу. Стану «закривається»
+                  в компоненті немає.
+                </p>
+              </article>
+              <article class="cut">
+                <h3>Натискання картки оголошення</h3>
+                <p>
+                  Своєї підложки в картці немає, лише колір посилання.
+                  Затемнення фото — окреме рішення.
+                </p>
+              </article>
+              <article class="cut">
+                <h3>Поява вмісту після скелетона</h3>
+                <p>
+                  Скелетон зникає разом із розміткою. Плавну появу на кожному
+                  відкритті екрана ми не вмикали.
+                </p>
+              </article>
+              <article class="cut">
+                <h3>Перемикач теми</h3>
+                <p>
+                  Колір міняється миттєво. Рядок лишився в інвентарі як
+                  нагадування, що руху тут немає свідомо.
+                </p>
+              </article>
+              <article class="cut">
+                <h3>Стани, яких ще немає на екранах</h3>
+                <p>
+                  Позначка «Надіслано», помилка надсилання, block і report.
+                  Спершу їх треба намалювати.
+                </p>
+              </article>
+              <article class="cut">
+                <h3>Галерея й вибір у сортуванні</h3>
+                <p>
+                  У їхньому CSS немає окремого стану, тож рухати нічого.
+                </p>
+              </article>
+            </div>
+          </section>
+          <p class="footer">
+            Робочі матеріали:
+            <a href="../animations/motion-inventory.md">motion-inventory.md</a> ·
+            <a href="../DESIGN.md">DESIGN.md → «Анімація»</a> ·
+            <a href="../design-system/docs/tokens.html#t-mot">токени руху</a> ·
+            <a href="../design-system/tokens.css">tokens.css</a> ·
+            <a href="../design-system/components/button.js">button.js</a> ·
+            <a href="../design-system/components/split.js">split.js</a> ·
+            <a href="../design-system/specs/button.yaml">button.yaml</a>.
+          </p>
+        </article>
         <article id="lesson-three" class="lesson-embed" aria-label="Урок 3 — Інформаційна архітектура">
           <iframe class="ia-frame" data-lesson-frame="3" src="about:blank" data-src="../ia.html?embed=1" title="Інформаційна архітектура Кутка"></iframe>
         </article>
@@ -2470,6 +3535,18 @@
                       <li><a class="tree-state" href="../wireframes/listing-error.html" target="wireframe-preview">Помилка</a></li>
                       <li><a class="tree-state" href="../wireframes/listing-loading.html" target="wireframe-preview">Завантаження</a></li>
                     </ul>
+                  </li><li>
+                    <a class="tree-screen" href="../wireframes/listing-tatarka.html" target="wireframe-preview">Інші кімнати стрічки</a>
+                    <ul class="tree-states" hidden>
+                      <li><a class="tree-state" href="../wireframes/listing-tatarka.html" target="wireframe-preview">Татарка</a></li>
+                      <li><a class="tree-state" href="../wireframes/listing-kpi.html" target="wireframe-preview">КПІ</a></li>
+                      <li><a class="tree-state" href="../wireframes/listing-zoloti-vorota.html" target="wireframe-preview">Золоті ворота</a></li>
+                      <li><a class="tree-state" href="../wireframes/listing-lvivska.html" target="wireframe-preview">Львівська площа</a></li>
+                      <li><a class="tree-state" href="../wireframes/listing-universytet.html" target="wireframe-preview">Університет</a></li>
+                      <li><a class="tree-state" href="../wireframes/listing-syrets.html" target="wireframe-preview">Сирець</a></li>
+                      <li><a class="tree-state" href="../wireframes/listing-dorohozhychi.html" target="wireframe-preview">Дорогожичі</a></li>
+                      <li><a class="tree-state" href="../wireframes/listing-nyvky.html" target="wireframe-preview">Нивки</a></li>
+                    </ul>
                   </li></ul>
                 </li>
                 <li>
@@ -2494,16 +3571,30 @@
                       <li><a class="tree-state" href="../wireframes/chat-error.html" target="wireframe-preview">Помилка</a></li>
                       <li><a class="tree-state" href="../wireframes/chat-loading.html" target="wireframe-preview">Завантаження</a></li>
                     </ul>
+                  </li><li>
+                    <a class="tree-screen" href="../wireframes/chat-maryna.html" target="wireframe-preview">Інші розмови</a>
+                    <ul class="tree-states" hidden>
+                      <li><a class="tree-state" href="../wireframes/chat-maryna.html" target="wireframe-preview">Марина</a></li>
+                      <li><a class="tree-state" href="../wireframes/chat-olia.html" target="wireframe-preview">Оля</a></li>
+                    </ul>
+                  </li><li>
+                    <a class="tree-screen" href="../wireframes/chats.html" target="wireframe-preview">Чати</a>
+                    <ul class="tree-states" hidden>
+                      <li><a class="tree-state" href="../wireframes/chats.html" target="wireframe-preview">Успіх</a></li>
+                      <li><a class="tree-state" href="../wireframes/chats-empty.html" target="wireframe-preview">Порожній</a></li>
+                      <li><a class="tree-state" href="../wireframes/chats-error.html" target="wireframe-preview">Помилка</a></li>
+                      <li><a class="tree-state" href="../wireframes/chats-loading.html" target="wireframe-preview">Завантаження</a></li>
+                    </ul>
                   </li></ul>
                 </li>
               </ul>
             </nav>
           </header>
-          <section class="wireframe-preview" aria-label="Перегляд макета">
+          <section class="wireframe-preview" aria-label="Перегляд макета" data-device="phone">
             <div class="device-switch" role="radiogroup" aria-label="Пристрій перегляду">
-              <button type="button" role="radio" aria-checked="true" title="Мобільний" aria-label="Мобільний"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="4.5" y="1.5" width="7" height="13" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7 12.2h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
-              <button type="button" role="radio" aria-checked="false" aria-disabled="true" title="Планшет — згодом" aria-label="Планшет, згодом"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="1.5" width="11" height="13" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7 12.2h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
-              <button type="button" role="radio" aria-checked="false" aria-disabled="true" title="Десктоп — згодом" aria-label="Десктоп, згодом"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="8.5" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 14h5M8 11v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+              <button type="button" role="radio" aria-checked="true" data-device="phone" data-width="390" title="Телефон · 390" aria-label="Телефон, 390 пікселів"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="4.5" y="1.5" width="7" height="13" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7 12.2h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+              <button type="button" role="radio" aria-checked="false" tabindex="-1" data-device="tablet" data-width="834" title="Планшет · 834" aria-label="Планшет, 834 пікселі"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="1.5" width="11" height="13" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7 12.2h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+              <button type="button" role="radio" aria-checked="false" tabindex="-1" data-device="desktop" data-width="1440" title="Десктоп · 1440" aria-label="Десктоп, 1440 пікселів"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="8.5" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 14h5M8 11v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
             </div>
             <nav class="preview-state-nav" aria-label="Стани вибраного екрана">
               <ul id="preview-state-list">
@@ -2516,6 +3607,7 @@
             <div class="phone-mockup" aria-label="Мокап телефона">
               <span class="phone-buttons" aria-hidden="true"></span>
               <div class="phone-screen">
+              <div class="browser-bar" aria-hidden="true"><span class="browser-dots"><i></i><i></i><i></i></span><span class="browser-url" id="browser-url">kutok.ua/listings</span></div>
               <div class="phone-status" aria-hidden="true">
                 <span>9:41</span>
                 <span class="phone-island"></span>
@@ -2584,6 +3676,9 @@
           String(current).padStart(2, "0") +
           " із 12 · " +
           titles[current];
+        // Уроки 2, 10 і 11 — статті в самому хабі; 3 і 5–9 — вбудовані сторінки; 4 — перегляд макетів.
+        var articles = { 2: "lesson-two", 10: "lesson-ten", 11: "lesson-eleven" };
+        var lessonToc = document.querySelector(".mobile-toc:not([data-toc])");
         if (current >= 3 && current <= 9) {
           document.body.classList.add(
             current === 4 ? "lesson-four-active" : "lesson-embed-active",
@@ -2595,18 +3690,28 @@
           document.getElementById("lesson-eight").classList.toggle("hidden", current !== 8);
           document.getElementById("lesson-nine").classList.toggle("hidden", current !== 9);
           document.getElementById("lesson-two").classList.add("hidden");
-          document.querySelector(".mobile-toc").classList.add("hidden");
+          lessonToc.classList.add("hidden");
+        } else if (articles[current] && current !== 2) {
+          document.getElementById("lesson-two").classList.add("hidden");
+          lessonToc.classList.add("hidden");
+          document.getElementById(articles[current]).classList.remove("hidden");
+          var ownToc = document.querySelector('.mobile-toc[data-toc="' + current + '"]');
+          if (ownToc) ownToc.classList.remove("hidden");
+          if (location.hash) {
+            var target = document.getElementById(location.hash.slice(1));
+            if (target) target.scrollIntoView();
+          }
         } else if (current !== 2) {
           document.getElementById("lesson-two").classList.add("hidden");
-          document.querySelector(".mobile-toc").classList.add("hidden");
+          lessonToc.classList.add("hidden");
           document.getElementById("placeholder").classList.remove("hidden");
           document.getElementById("placeholder-num").textContent =
             "Урок " + String(current).padStart(2, "0") + " · незабаром";
           document.getElementById("placeholder-title").textContent =
             titles[current];
         }
-        if (current === 2 && "IntersectionObserver" in window) {
-          var links = [].slice.call(document.querySelectorAll('.ct-sub[data-for="2"] a'));
+        if (articles[current] && "IntersectionObserver" in window) {
+          var links = [].slice.call(document.querySelectorAll('.ct-sub[data-for="' + current + '"] a'));
           var observer = new IntersectionObserver(
             function (entries) {
               entries.forEach(function (e) {
@@ -2619,7 +3724,7 @@
             { rootMargin: "-15% 0px -75%" },
           );
           document
-            .querySelectorAll("#lesson-two section")
+            .querySelectorAll("#" + articles[current] + " section")
             .forEach(function (s) {
               observer.observe(s);
             });
@@ -2755,14 +3860,81 @@
           }
         }
         var phoneViewport = document.getElementById("phone-viewport");
+        var wireframePreview = document.querySelector(".wireframe-preview");
+        var deviceButtons = [].slice.call(
+          document.querySelectorAll(".device-switch [data-device]"),
+        );
+        var deviceNames = { phone: "телефона", tablet: "планшета", desktop: "браузера" };
+        var narrowViewer = window.matchMedia("(max-width: 900px)");
+        var chosenDevice = new URLSearchParams(location.search).get("device");
+        if (!deviceNames[chosenDevice]) {
+          try { chosenDevice = localStorage.getItem("wireframe-device"); } catch (error) {}
+        }
+        if (!deviceNames[chosenDevice]) chosenDevice = "phone";
+        function deviceButton(name) {
+          return deviceButtons.find(function (button) {
+            return button.dataset.device === name;
+          });
+        }
+        // На вузькому вікні перемикача немає — показуємо телефон.
+        function activeDevice() {
+          return narrowViewer.matches ? "phone" : chosenDevice;
+        }
+        function frameWidth() {
+          var button = deviceButton(activeDevice());
+          return button ? Number(button.dataset.width) : 390;
+        }
         function scalePhoneViewport() {
           if (!phoneViewport) return;
+          phoneViewport.style.setProperty("--frame-w", frameWidth() + "px");
           phoneViewport.style.setProperty(
             "--s",
-            String(phoneViewport.clientWidth / 390),
+            String(phoneViewport.clientWidth / frameWidth()),
           );
         }
-        scalePhoneViewport();
+        function applyDevice() {
+          var device = activeDevice();
+          if (wireframePreview) wireframePreview.dataset.device = device;
+          deviceButtons.forEach(function (button) {
+            var on = button.dataset.device === chosenDevice;
+            button.setAttribute("aria-checked", String(on));
+            button.tabIndex = on ? 0 : -1;
+          });
+          var mockup = document.querySelector(".phone-mockup");
+          if (mockup) mockup.setAttribute("aria-label", "Мокап " + deviceNames[device]);
+          scalePhoneViewport();
+          if (typeof syncImmersive === "function") syncImmersive();
+          requestAnimationFrame(function () {
+            if (typeof sizeWireframeScroll === "function") sizeWireframeScroll();
+          });
+        }
+        function chooseDevice(name, focus) {
+          chosenDevice = name;
+          try { localStorage.setItem("wireframe-device", name); } catch (error) {}
+          if (current === 4) {
+            var url = new URL(location.href);
+            if (name === "phone") url.searchParams.delete("device");
+            else url.searchParams.set("device", name);
+            history.replaceState(null, "", url);
+          }
+          applyDevice();
+          if (focus) deviceButton(name).focus();
+        }
+        deviceButtons.forEach(function (button, index) {
+          button.addEventListener("click", function () {
+            chooseDevice(button.dataset.device);
+          });
+          button.addEventListener("keydown", function (event) {
+            var step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+            if (!step) return;
+            event.preventDefault();
+            var next = deviceButtons[(index + step + deviceButtons.length) % deviceButtons.length];
+            chooseDevice(next.dataset.device, true);
+          });
+        });
+        if (narrowViewer.addEventListener)
+          narrowViewer.addEventListener("change", applyDevice);
+        applyDevice();
         if (phoneViewport && "ResizeObserver" in window)
           new ResizeObserver(scalePhoneViewport).observe(phoneViewport);
         window.addEventListener("resize", scalePhoneViewport, { passive: true });
@@ -2808,9 +3980,23 @@
           // Екрани з фото на всю висоту (body.shell--photo-top) заходять під статус-бар:
           // він стає прозорим і білим поверх фото.
           var phoneScreen = wireframeFrame.closest(".phone-screen");
+          var browserUrl = document.getElementById("browser-url");
           function syncImmersive() {
             var doc = wireframeDocument();
+            if (browserUrl && doc)
+              browserUrl.textContent = "kutok.ua/" + doc.location.pathname.split("/").pop().replace(/\.html$/, "");
+            // Статус-бар і «шапка» під нього — лише в мокапі телефона.
+            if (activeDevice() !== "phone") {
+              if (phoneScreen) phoneScreen.classList.remove("is-immersive", "status-dark");
+              if (doc) {
+                doc.documentElement.style.removeProperty("--frame-status");
+                var oldCap = doc.getElementById("hub-cap");
+                if (oldCap) oldCap.remove();
+              }
+              return;
+            }
             var immersive = !!(doc && doc.body && doc.body.classList.contains("shell--photo-top"));
+            if (doc && !immersive) doc.documentElement.style.removeProperty("--frame-status");
             if (phoneScreen) {
               phoneScreen.classList.toggle("is-immersive", immersive);
               // Світлий фон під статус-баром (скелетон) — статус лишається темним.
@@ -2824,10 +4010,13 @@
               doc.head.appendChild(cap);
             }
             // Відкрита шторка затемнює й статус-бар мокапа, як на справжньому телефоні.
-            if (phoneScreen) phoneScreen.classList.remove("is-dimmed");
-            if (doc) doc.addEventListener("toggle", function () {
-              phoneScreen.classList.toggle("is-dimmed", !!doc.querySelector("details.sheet[open]"));
-            }, true);
+            if (phoneScreen) phoneScreen.classList.toggle("is-dimmed", !!(doc && doc.querySelector("details.sheet[open]")));
+            if (doc && !doc.hubDimWatch) {
+              doc.hubDimWatch = true;
+              doc.addEventListener("toggle", function () {
+                phoneScreen.classList.toggle("is-dimmed", !!doc.querySelector("details.sheet[open]"));
+              }, true);
+            }
           }
           wireframeFrame.addEventListener("load", function () {
             syncWireframeNavigation();

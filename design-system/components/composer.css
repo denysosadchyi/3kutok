@@ -44,13 +44,32 @@
   font-size: var(--size-20);
   text-decoration: none;
   cursor: pointer;
-  transition: background-color var(--duration-180) var(--ease-out);
+  position: relative;
+  isolation: isolate;
+  /* Стає активною (aria-disabled знято) — прозорість base.css розвиднюється, не стрибає */
+  transition: opacity var(--dur-fast) var(--ease-standard);
 }
-.composer__send:hover { background: var(--color-action-hover); }
-.composer__send:active { background: var(--color-action-active); }
+/* Наведення й натискання — шари-підложки під іконкою, росте лише opacity
+   (як у .button): відповідь на дію, --dur-fast */
+.composer__send::before,
+.composer__send::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-minus-1);
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+.composer__send::before { background: var(--color-action-hover); }
+.composer__send::after { background: var(--color-action-active); }
+.composer__send:hover::before,
+.composer__send:active::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .composer__send,
+  .composer__send::before,
+  .composer__send::after { transition: none; }
+}
 /* Неактивна (aria-disabled): поле порожнє, розмова вантажиться або не завантажилась —
    глушиться загальним правилом base.css (--opacity-disabled), не перефарбовується */
-
-@media (prefers-reduced-motion: reduce) {
-  .composer__send { transition: none; }
-}

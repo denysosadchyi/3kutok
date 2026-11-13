@@ -1,0 +1,50 @@
+<!--
+  Патерн: Список і деталь (split-view)
+  Композиція: div.split з двома панелями — ліворуч перелік (шапка + рядки
+  чатів або картки стрічки, вибраний — aria-current="page"), праворуч деталь
+  (шапка з «назад» і ×, вміст, свій нижній пояс) → після .split — нижнє меню.
+  Компоненти: split (--detail, --solo, --tablet, __close), shell (--split,
+  --tabbar), header, topbar, tabbar, person-row або listing-card; у деталі —
+  наявні рамки («Рамка чату», «Деталі з контактом», «Стан замість екрана»).
+  Де стоїть (3+): wireframes/chat, chat-maryna, chat-olia, chat-empty,
+  chat-error, chat-loading (--tablet), listing, listing-<slug>, listing-empty,
+  listing-error, listing-loading (від --bp-desktop); без деталі — chats
+  («Обери чат ліворуч»), chats-*, listings* (--solo).
+  Коли брати: перелік і деталь — одна задача, людина перескакує між
+  елементами. На телефоні — одна панель за раз (--detail відкриває деталь і
+  ховає меню), на ширині — поруч: «назад» сховано, × закриває деталь і веде на
+  перелік без вибору.
+  Нічого не вибрано: сітка карток — --solo (картки на всю ширину), перелік
+  рядків — права панель зі станом «Обери чат ліворуч».
+  Коли — окремі компоненти: зліва нема чого вибирати (профіль, «оголошення
+  зняли» без стрічки) — звичайна оболонка в одну колонку.
+  Рівно один <main> — у панелі, головній на телефоні; друга — div.shell__main.
+  Нижче — chat (перелік чатів + чат з Іриною). У рамці телефона видно лише чат;
+  поруч панелі стають лише на сторінці (body.shell.shell--split).
+  Не входить: кнопка теми (.theme-slot) — разовий блок wireframes/screens.css;
+  на екранах × стоїть у ній поруч із ⋯.
+  Нових стилів немає: лише класи з design-system/index.css.
+-->
+<div class="shell shell--tabbar shell--composer shell--split">
+  <div class="split split--tablet split--detail">
+    <section class="split__pane split__pane--list" aria-label="Перелік">
+      <header class="header"><div class="header__top"><p class="header__title">Чати</p></div></header>
+      <div class="shell__main">
+        <ul class="group">
+          <li class="group__row"><a class="person-row" href="#" aria-current="page"><span class="avatar avatar--md"><img src="../../visuals/person-iryna.jpg" alt=""></span><span class="person-row__text"><strong class="person-row__name">Ірина</strong><span class="person-row__caption">Так, домовилися. Напишу адресу в суботу зранку.</span></span><iconify-icon class="chevron" icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></a></li>
+          <li class="group__row"><a class="person-row" href="#"><span class="avatar avatar--md"><img src="../../visuals/person-maryna.jpg" alt=""></span><span class="person-row__text"><strong class="person-row__name">Марина</strong><span class="person-row__caption">Можна в неділю після 11:00.</span></span><iconify-icon class="chevron" icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></a></li>
+        </ul>
+      </div>
+    </section>
+    <section class="split__pane split__pane--detail">
+      <header class="topbar topbar--person"><a class="topbar__back" href="#" aria-label="Назад до чатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><a class="topbar__person" href="#"><span class="avatar"><img src="../../visuals/person-iryna.jpg" alt=""></span><strong class="topbar__name">Ірина</strong></a><a class="topbar__action split__close" href="#" aria-label="Закрити чат"><iconify-icon icon="solar:close-linear" aria-hidden="true"></iconify-icon></a></header>
+      <h1 class="sr-only">Чат з Іриною</h1>
+      <main class="shell__main">
+        <a class="chat-context" href="#"><img class="chat-context__thumb" src="../../visuals/room-lukianivska-bedroom.jpg" alt="Фото кімнати"><span class="chat-context__text"><strong class="chat-context__title">Кімната біля Лук’янівської</strong><span class="chat-context__meta">10&nbsp;500&nbsp;грн/міс · з&nbsp;1&nbsp;жовтня</span></span><iconify-icon class="chevron" icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></a>
+        <!-- або: повідомлення .bubble, стан, скелетон; у стрічці — оголошення з панеллю дії -->
+      </main>
+      <form class="composer"><label class="sr-only" for="pattern-split-message">Повідомлення Ірині</label><textarea class="composer__input" id="pattern-split-message" rows="1" placeholder="Повідомлення"></textarea><button class="composer__send" type="submit" aria-label="Надіслати" disabled><iconify-icon icon="solar:plain-2-linear" aria-hidden="true"></iconify-icon></button></form>
+    </section>
+  </div>
+  <nav class="tabbar" aria-label="Головна навігація"><ul class="tabbar__list"><li><a class="tabbar__item" href="#"><iconify-icon icon="streamline-freehand:search-magnifier" aria-hidden="true"></iconify-icon><span>Пошук</span></a></li><li><a class="tabbar__item" href="#" aria-current="page"><iconify-icon icon="streamline-freehand:messages-bubble-smile" aria-hidden="true"></iconify-icon><span>Чати</span></a></li><li><a class="tabbar__item" aria-disabled="true"><iconify-icon icon="streamline-freehand:smiley-happy" aria-hidden="true"></iconify-icon><span>Профіль</span></a></li></ul></nav>
+</div>

@@ -1,4 +1,16 @@
 /* Список карток — стрічка оголошень
    Колір — лише semantic-токени з tokens.css, геометрія — primitive. */
 
-.card-list { display: grid; gap: var(--space-6); margin: 0; padding: 0; list-style: none; }
+.card-list { display: grid; gap: var(--grid-gap); margin: 0; padding: 0; list-style: none; }
+
+/* Адаптив (урок 10): телефон — одна колонка; від --bp-tablet (48rem) —
+   --col-count-tablet, від --bp-desktop (72rem) — --col-count-desktop.
+   var() у @media не працює — число звіряє гейт із tokens.css.
+   Лише на сторінці (body.shell): зразки в рамці телефона у вітрині лишаються
+   однією колонкою на будь-якому моніторі (як і tabbar.css). */
+@media (min-width: 48rem) {
+  body.shell .card-list { grid-template-columns: repeat(var(--col-count-tablet), minmax(0, 1fr)); }
+}
+@media (min-width: 72rem) {
+  body.shell .card-list { grid-template-columns: repeat(var(--col-count-desktop), minmax(0, 1fr)); }
+}
