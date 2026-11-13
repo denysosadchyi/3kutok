@@ -11,6 +11,8 @@
 
 Повний продуктовий бриф — у [CLAUDE.md](./CLAUDE.md).
 
+**Розробнику:** почніть з [handoff/README.md](./handoff/README.md). Там посилання на живий продукт, запуск локально й склад пакета передачі.
+
 ## Lesson hub (курс Design Engineering)
 
 Статичний сайт без збірки: відкрити `index.html` або задеплоїти корінь
@@ -33,14 +35,14 @@
 | Папка | Що там | Статус |
 |---|---|---|
 | [research/](./research/research.md) | Desk research: конкуренти, бенчмарк довіри, рішення та гіпотези; скріншоти в `research/screens/`; живі інтерв'ю ще не проведено | desk research завершено; потрібні інтерв'ю |
-| [wireframes/](./wireframes/) | 16 мобільних екранів MVP зі станами, зібрані з кіта (`_build.py`) | уроки 4–9: на `design-system/index.css`, критика й аудит пройдені |
+| [wireframes/](./wireframes/) | Чинні екрани MVP зі станами, зібрані з `design-system/` (`_build.py`). Назва теки історична | уроки 4–9: на `design-system/index.css`, критика й аудит пройдені |
 | [concept/](./concept/) | Візуальний напрям «Бирка з ключем», референси, токени уроку 6 | урок 6 завершено; значення живуть у [`tokens.css`](./design-system/tokens.css) |
 | [ui/](./ui/) | Оболонка, вітрина кіта, інвентар | уроки 7–8 |
 | [visuals/](./visuals/README.md) | Власні згенеровані фото продукту + промпт | урок 7 |
 | [design-system/tokens.css](./design-system/tokens.css) | Дизайн-токени у два рівні: primitive і semantic + темна тема; аудит — [tokens-audit.md](./tokens-audit.md) | урок 8 завершено |
 | [design-system/components/](./design-system/components/README.md) | Один CSS-файл на компонент, збірка — `components/index.css` | урок 8 завершено |
 | [design-system/](./design-system/README.md) | Система одним пакетом: `index.css` (вхід) = `tokens.css` + `components/`; `patterns/` (композиції 3+ екранів), `docs/` (вітрина), `examples/` (екрани-зразки) | урок 9 завершено |
-| [handoff/](./handoff/) | Матеріали для передачі в розробку | не розпочато |
+| [handoff/](./handoff/README.md) | Матеріали для передачі в розробку: прогалини онбордингу, специфікація поведінки | 2026-11-13: специфікація поведінки |
 
 ## Дизайн-система
 

@@ -228,6 +228,31 @@ Mobile-first веб. Адаптив під десктоп — наступний
   вище. JS-гачок без стилів (як `.theme-toggle`) — рядок у `JS_HOOKS`
   гейта з поясненням.
 
+## Хендофф
+
+Пакет передачі в розробку — `handoff/`, реліз `v1.0` (git-тег). Вхід —
+`handoff/README.md`: посилання, запуск, межа «продукт / курс», склад.
+
+- `handoff/onboarding-gaps.md` — питання нового розробника G1–G43 і
+  рішення до них. Борг доступності — G41–G43.
+- `handoff/behavior/` — специфікація поведінки п'яти флоу. Посилається на
+  код, ключі `microcopy.md` і вузли `flows.md`, а не копіює їх. Мітки:
+  **код**, **спека**, **[?] Qn** → `behavior/open-questions.md`.
+- `handoff/map.md` — карта «екран → компонент → токени → ключ» і зворотний
+  список «токен → екрани». Генерує `python3 handoff/_map.py`; руками
+  правити лише прозу поза маркерами `<!-- _map.py:… -->`.
+- `handoff/a11y.md` — чекліст доступності уроків 8–11: де в коді, як
+  перевірити.
+- `microcopy.md` і `voice.md` — частина пакета через посилання, без копій.
+- Живі адреси (GitHub Pages, гілка `main`, корінь):
+  - showcase — `https://denysosadchyi.github.io/3kutok/design-system/docs/`;
+  - продукт — `https://denysosadchyi.github.io/3kutok/wireframes/listings.html`.
+- Правило: хендофф документує зроблене, а не доробляє. Діру в системі
+  записати як пункт G у `onboarding-gaps.md`, а виправляти — в
+  `design-system/` за «Внесок у систему».
+- Після зміни екранів чи системи: `python3 wireframes/_build.py`,
+  `python3 handoff/_map.py`, `python3 design-system/_gate.py`.
+
 ## Текст: STE-UA
 
 - Службові тексти проєкту пишемо за STE-UA: `.md`, `.html`, документація
