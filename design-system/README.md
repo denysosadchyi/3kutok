@@ -5,11 +5,16 @@
 
 ```html
 <link rel="stylesheet" href="../design-system/index.css">
+<script src="../design-system/theme.js"></script>
 ```
+
+Другий рядок — перемикач теми (`theme.js`). Без нього темна тема
+є, але кнопка `.theme-toggle` нічого не робить.
 
 | Шлях | Що там |
 |---|---|
 | [`index.css`](index.css) | Точка входу: імпортує `tokens.css`, потім `components/index.css` |
+| [`theme.js`](theme.js) | Перемикач теми: `data-theme` до першого кадру, вибір у `localStorage` (ключ `kutok-theme`), кнопки `.theme-toggle`, клас `.in-frame` в iframe (B9) |
 | [`tokens.css`](tokens.css) | Значення у два рівні: PRIMITIVE і SEMANTIC + темна тема (урок 8) |
 | [`components/`](components/README.md) | Один CSS-файл на компонент, збірка — `components/index.css` (урок 8) |
 | [`patterns/`](patterns/README.md) | Композиції компонентів, що вже стоять на 3+ екранах: один HTML-фрагмент на патерн, без нових стилів (урок 9) |

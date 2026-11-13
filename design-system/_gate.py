@@ -58,7 +58,7 @@ PRODUCT = {"component", "screen-css", "screen", "pattern", "example"}
 
 # Класи-гачки для JS, без стилів у кіті. Новий гачок — рядок тут (видно в diff).
 JS_HOOKS = {
-    "theme-toggle",  # кнопка-місяць: перемикає data-theme (wireframes/_build.py, docs/docs.js)
+    "theme-toggle",  # кнопка-місяць: перемикає data-theme (design-system/theme.js)
     "status-dark",   # позначка для мокапа хабу уроків: темний статус-бар над фото
 }
 

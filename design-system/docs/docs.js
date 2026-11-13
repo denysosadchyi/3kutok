@@ -2,32 +2,6 @@
    щоб тема стояла до першого рендера. Згенеровано разом зі сторінками
    (docs/_build.py) — правити тут, а не в HTML. */
 
-/* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23.
-   Той самий код, що в ui/kit.html і wireframes/_build.py: ключ kutok-theme
-   спільний, тож вибір теми переходить між вітриною, екранами й документацією. */
-(function () {
-  var KEY = "kutok-theme", root = document.documentElement;
-  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
-  function apply(dark) {
-    if (dark) root.setAttribute("data-theme", "dark"); else root.removeAttribute("data-theme");
-    document.querySelectorAll(".theme-toggle").forEach(function (b) {
-      b.setAttribute("aria-pressed", dark ? "true" : "false");
-      var i = b.querySelector("iconify-icon");
-      if (i) i.setAttribute("icon", dark ? "solar:sun-2-linear" : "solar:moon-linear");
-    });
-  }
-  apply(saved() === "dark");
-  document.addEventListener("DOMContentLoaded", function () { apply(saved() === "dark"); });
-  document.addEventListener("click", function (e) {
-    var b = e.target.closest(".theme-toggle");
-    if (!b) return;
-    var dark = root.getAttribute("data-theme") !== "dark";
-    apply(dark);
-    try { localStorage.setItem(KEY, dark ? "dark" : "light"); } catch (err) {}
-  });
-  window.addEventListener("storage", function (e) { if (e.key === KEY) apply(e.newValue === "dark"); });
-})();
-
 /* Шторки: закрити «Скасувати», тапом поза панеллю або Esc; посилання-заглушки нікуди не ведуть.
    Як у ui/kit.html. */
 document.addEventListener("click", function (e) {

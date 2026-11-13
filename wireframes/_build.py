@@ -10,38 +10,11 @@ from pathlib import Path
 OUT = Path(__file__).resolve().parent
 
 # Темна тема — частина продукту з 2026-10-23
-# (tokens.css, блок [data-theme="dark"]). Скрипт стоїть у <head>: ставить
-# data-theme на <html> до першого рендера (без блимання), пам'ятає вибір у
-# localStorage і синхронізує кнопки .theme-toggle (aria-pressed, іконка).
-# Той самий текст скрипта — у ui/kit.html і ui/shell.html; лише тут є рядок
-# in-frame: в iframe хабу уроків кнопку теми ховає topbar.css (2026-11-13).
-THEME_SCRIPT = """<script>
-/* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23 */
-(function () {
-  var KEY = "kutok-theme", root = document.documentElement;
-  /* Екран у мокапі хабу уроків (iframe): тему перемикає кнопка хабу, місяць в екрані сховано */
-  if (window.self !== window.top) root.classList.add("in-frame");
-  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
-  function apply(dark) {
-    if (dark) root.setAttribute("data-theme", "dark"); else root.removeAttribute("data-theme");
-    document.querySelectorAll(".theme-toggle").forEach(function (b) {
-      b.setAttribute("aria-pressed", dark ? "true" : "false");
-      var i = b.querySelector("iconify-icon");
-      if (i) i.setAttribute("icon", dark ? "solar:sun-2-linear" : "solar:moon-linear");
-    });
-  }
-  apply(saved() === "dark");
-  document.addEventListener("DOMContentLoaded", function () { apply(saved() === "dark"); });
-  document.addEventListener("click", function (e) {
-    var b = e.target.closest(".theme-toggle");
-    if (!b) return;
-    var dark = root.getAttribute("data-theme") !== "dark";
-    apply(dark);
-    try { localStorage.setItem(KEY, dark ? "dark" : "light"); } catch (err) {}
-  });
-  window.addEventListener("storage", function (e) { if (e.key === KEY) apply(e.newValue === "dark"); });
-})();
-</script>"""
+# (tokens.css, блок [data-theme="dark"]). Скрипт — design-system/theme.js
+# (B9, 2026-11-13), один на всіх споживачів. Стоїть у <head> без defer: ставить
+# data-theme на <html> до першого рендера (без блимання), пам'ятає вибір і
+# синхронізує кнопки .theme-toggle. В iframe хабу ставить .in-frame.
+THEME_SCRIPT = '<script src="../design-system/theme.js"></script>'
 # Кнопка теми — наявний клас кіта .topbar__action (поверх фото — кругла на
 # затемненні, як ⋯), без нового компонента. Поруч з іншою дією — у кластері
 # .topbar__end (components/topbar.css, B10).

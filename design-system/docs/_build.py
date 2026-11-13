@@ -9,7 +9,7 @@ showcase index.html і why.html.
 Сторінки підключають той самий ../index.css, що й екрани продукту: кожен
 приклад — справжній компонент системи, не картинка й не копія коду.
 Оформлення самої документації — лише docs.css (класи .doc-*), поведінка —
-docs.js (тема, шторки, мітки анатомії).
+../theme.js (тема), docs.js (шторки, мітки анатомії).
 """
 
 import re
@@ -62,6 +62,7 @@ def head(title, description):
 <link rel="stylesheet" href="../index.css">
 <link rel="stylesheet" href="docs.css">
 {ICONIFY}
+<script src="../theme.js"></script>
 <script src="docs.js"></script>
 <script src="../components/button.js" defer></script>
 </head>
