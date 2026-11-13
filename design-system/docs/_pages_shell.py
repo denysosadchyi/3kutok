@@ -267,7 +267,7 @@ PAGES = [
             ("із заголовком · profile*", stage(topbar(), "flush"), "phone"),
             ("«Назад» у фокусі", stage(topbar().replace('class="topbar__back"', 'class="topbar__back is-focus"', 1), "flush"), "phone"),
             ("<code>--person</code> · chat*", stage(topbar_person(), "flush"), "phone"),
-            ("<code>--over-photo</code> · listing — круглі кнопки на затемненні з розмиттям", photo_frame(topbar_photo()), "phone"),
+            ("<code>--over-photo</code> · listing — круглі кнопки на затемненні з розмиттям; в екрані (<code>.shell--photo-top</code>) шапка липка", photo_frame(topbar_photo()), "phone"),
             ("дві дії справа · <code>__end</code> — тема + ⋯", stage(topbar_end(), "flush"), "phone"),
             ("дві дії справа над фото — окремі кола з проміжком <code>--space-2</code>", photo_frame(topbar_photo_end()), "phone"),
         ],

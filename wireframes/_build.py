@@ -13,11 +13,14 @@ OUT = Path(__file__).resolve().parent
 # (tokens.css, блок [data-theme="dark"]). Скрипт стоїть у <head>: ставить
 # data-theme на <html> до першого рендера (без блимання), пам'ятає вибір у
 # localStorage і синхронізує кнопки .theme-toggle (aria-pressed, іконка).
-# Той самий текст скрипта — у ui/kit.html і ui/shell.html.
+# Той самий текст скрипта — у ui/kit.html і ui/shell.html; лише тут є рядок
+# in-frame: в iframe хабу уроків кнопку теми ховає topbar.css (2026-11-13).
 THEME_SCRIPT = """<script>
 /* Темна тема (tokens.css, [data-theme="dark"]) — частина продукту з 2026-10-23 */
 (function () {
   var KEY = "kutok-theme", root = document.documentElement;
+  /* Екран у мокапі хабу уроків (iframe): тему перемикає кнопка хабу, місяць в екрані сховано */
+  if (window.self !== window.top) root.classList.add("in-frame");
   function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
   function apply(dark) {
     if (dark) root.setAttribute("data-theme", "dark"); else root.removeAttribute("data-theme");
