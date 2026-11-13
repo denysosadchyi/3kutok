@@ -1,27 +1,74 @@
-/* Shared lesson-hub foundation. Page-specific layout remains in each document. */
+/* Основа хабу курсу на токенах Кутка.
+   Сторінки курсу (lessons/, research/, concept-lesson, voice, ia) мають свої
+   змінні палітри в <style>. Цей файл підключено ПІСЛЯ <style>, тож його :root
+   перевизначає ці змінні ролями з design-system/tokens.css. Наслідок: хаб
+   має шрифт, кольори й радіуси сервісу, а темна тема працює через semantic.
+   Розкладку кожна сторінка тримає сама. */
+@import url("../../design-system/tokens.css");
+
 :root {
-  --ds-paper: #faf9f7;
-  --ds-surface: #ffffff;
-  --ds-wash: #f3efe9;
-  --ds-line: #dfd9d0;
-  --ds-line-strong: #c7beb2;
-  --ds-ink: #201e1a;
-  --ds-muted: #696258;
-  --ds-accent: #ad492c;
-  --ds-accent-dark: #78301d;
-  --ds-accent-wash: #f4e4dc;
-  --ds-radius: 12px;
+  /* Фон і поверхні: сторінка біла, картка й підкладка сірі — як у Кутку. */
+  --paper: var(--color-page);
+  --bg: var(--color-page);
+  --white: var(--color-page);
+  --surface: var(--color-page);
+  --wash: var(--color-card);
+  /* Лінії: тонка — роздільник, сильна — межа контролу в стані active. */
+  --line: var(--color-divider);
+  --border: var(--color-divider);
+  --line2: var(--color-control-active);
+  --line-strong: var(--color-control-active);
+  --border-strong: var(--color-control-active);
+  /* Текст. */
+  --ink: var(--color-text);
+  --text: var(--color-text);
+  --muted: var(--color-text-secondary);
+  --text-muted: var(--color-text-secondary);
+  /* Акцент: текст і лінії — --color-current, підкладка — корал. */
+  --rust: var(--color-current);
+  --accent: var(--color-current);
+  --hard: var(--color-current);
+  --rust-dark: var(--color-link-hover);
+  --rust-wash: color-mix(in srgb, var(--color-action) 16%, var(--color-page)); /* current на ній 4.57 (світла), 9.7+ (темна) */
+  --accent-soft: var(--rust-wash);
+  /* Додаткові сигнали: зелений — «перевірено», решта — нейтральні. */
+  --green: var(--color-verified);
+  --asp: var(--color-verified);
+  --green-wash: color-mix(in srgb, var(--color-verified) 8%, var(--color-page)); /* verified на ній 4.68 (світла), 6.1+ (темна) */
+  --ochre: var(--color-text);
+  --soft: var(--color-text);
+  --ochre-wash: var(--color-control-hover);
+  --blue: var(--color-text-secondary);
+  --blue-wash: var(--color-card);
+  /* Радіуси Кутка: 14 — контрол і блок, 18 — картка. */
+  --r: var(--radius-14);
+  --radius: var(--radius-14);
+
+  /* Ролі самого хабу (старі --ds-* лишено, їх читає розмітка). */
+  --ds-paper: var(--color-page);
+  --ds-surface: var(--color-page);
+  --ds-wash: var(--color-card);
+  --ds-line: var(--color-divider);
+  --ds-line-strong: var(--color-control-active);
+  --ds-ink: var(--color-text);
+  --ds-muted: var(--color-text-secondary);
+  --ds-accent: var(--color-current);
+  --ds-accent-dark: var(--color-link-hover);
+  --ds-accent-wash: var(--rust-wash);
+  --ds-radius: var(--radius-14);
   --ds-rail: 296px;
   --ds-reading: 72ch;
   --ds-page: 1120px;
-  color-scheme: light;
-  scrollbar-color: var(--ds-line-strong) var(--ds-paper);
+  scrollbar-color: var(--color-control-active) var(--color-page);
 }
 
-html { scroll-padding-top: 24px; }
+html { scroll-padding-top: var(--space-5); }
 
 body {
   min-width: 320px;
+  background: var(--color-page);
+  color: var(--color-text);
+  font-family: var(--font-onest);
   overflow-wrap: break-word;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -34,41 +81,120 @@ textarea { font: inherit; }
 
 button,
 summary,
-a { -webkit-tap-highlight-color: color-mix(in srgb, var(--ds-accent) 16%, transparent); }
+a { -webkit-tap-highlight-color: color-mix(in srgb, var(--color-action) 24%, transparent); }
 
 ::selection {
-  background: var(--ds-accent-wash);
-  color: var(--ds-ink);
+  background: var(--rust-wash);
+  color: var(--color-text);
 }
 
 * { scrollbar-width: thin; }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--ds-paper); }
+::-webkit-scrollbar-track { background: var(--color-page); }
 ::-webkit-scrollbar-thumb {
-  border: 3px solid var(--ds-paper);
-  border-radius: 10px;
-  background: var(--ds-line-strong);
+  border: 3px solid var(--color-page);
+  border-radius: var(--radius-round);
+  background: var(--color-control-active);
 }
 
-a { text-decoration-thickness: 1px; text-underline-offset: 3px; }
-a:hover { text-decoration-thickness: 2px; }
+a {
+  color: var(--color-current);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+a:hover { color: var(--color-link-hover); text-decoration-thickness: 2px; }
 
-:where(a, button, summary, [tabindex]):focus-visible {
-  outline: 3px solid var(--ds-accent);
+/* Кільце фокусу Кутка: зелене, 3px, з відступом. */
+:where(a, button, summary, [tabindex], .matrix-wrap):focus-visible {
+  outline: 3px solid var(--color-focus) !important;
   outline-offset: 3px;
 }
 
 :where(p, li, dd, figcaption) { max-width: var(--ds-reading); }
 
+/* Заголовки: Onest, щільний трекінг — як заголовки екранів. */
+:where(h1, h2, h3, h4) {
+  font-family: var(--font-onest);
+  letter-spacing: -0.015em;
+}
 :where(.hero h1, header.hero h1) {
   font-size: clamp(2.25rem, 3.3vw + 1rem, 3.75rem);
+  font-weight: 800;
   line-height: 1.04;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
   text-wrap: balance;
 }
 
 :where(.section-head h2, section h2, .document > h1) { text-wrap: balance; }
+:where(section h2, .section-head h2) { font-weight: 750; letter-spacing: -0.025em; }
+
+:where(code, kbd, samp) {
+  padding: 0.08em 0.36em;
+  border-radius: var(--radius-4);
+  background: var(--color-card);
+  font-size: 0.9em;
+}
+:where(pre) code { padding: 0; background: none; }
+
+/* Темні заголовки таблиць і бейдж «основне» читають ролі інверсії й current,
+   щоб у темній темі текст не зливався з фоном. */
+:where(thead th, .matrix-wrap tbody th) {
+  background: var(--color-inverted) !important;
+  color: var(--color-text-on-inverted) !important;
+}
+:where(.evidence.primary) {
+  background: var(--color-current) !important;
+  color: var(--color-text-on-current) !important;
+}
+
+/* Картки контенту — як .group у Кутку: сіра підкладка без рамки, радіус 18.
+   Варіанти з власною рамкою (.persona.primary-card, .callout.good) мають
+   вищу специфічність, тож свій колір рамки лишають. */
+.persona,
+.question,
+.card,
+.content-card,
+.section-card,
+.object-grid > li {
+  border-color: transparent;
+  border-radius: var(--radius-18);
+  background: var(--color-card);
+}
+.persona.scenario { border-color: var(--color-control-active); }
+.decision {
+  border-radius: 0 0 var(--radius-14) var(--radius-14);
+  background: var(--color-card);
+}
+.callout {
+  border-color: transparent;
+  border-left-color: var(--color-current);
+  background: var(--color-card);
+}
+
+/* Кнопка теми (assets/scripts/theme.js) — кругла, як .topbar__action. */
+.hub-theme {
+  position: fixed;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  width: var(--size-48);
+  height: var(--size-48);
+  padding: 0;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-round);
+  background: var(--color-page);
+  color: var(--color-text);
+  box-shadow: var(--shadow-near);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-standard);
+}
+.hub-theme:hover { background: var(--color-ghost-hover); }
+.hub-theme:active { background: var(--color-ghost-active); transform: scale(0.94); }
+.hub-theme svg { width: var(--size-22); height: var(--size-22); }
+html.embed .hub-theme { display: none; }
 
 :where(.rail, nav.course-nav) {
   width: var(--ds-rail);
@@ -95,7 +221,7 @@ a:hover { text-decoration-thickness: 2px; }
   border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
   transform: translateY(-65%) rotate(45deg);
-  transition: transform 180ms cubic-bezier(.16, 1, .3, 1);
+  transition: transform var(--dur-base) var(--ease-enter);
 }
 
 :where(.mobile-nav, .mobile-toc, .mobile-lessons)[open] summary::after {
@@ -111,14 +237,13 @@ a:hover { text-decoration-thickness: 2px; }
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 7px;
+  border-radius: var(--radius-8);
   background: transparent;
   color: var(--ds-muted);
   cursor: pointer;
-  transition: background-color 160ms ease-out, color 160ms ease-out;
 }
 :is(.rail-toggle, .course-nav-toggle):hover {
-  background: var(--ds-wash);
+  background: var(--color-ghost-hover);
   color: var(--ds-ink);
 }
 .course-head { margin-bottom: 2px; }
@@ -148,7 +273,7 @@ a:hover { text-decoration-thickness: 2px; }
   background: var(--ds-line);
 }
 .course-meter i[data-status="done"] { background: var(--ds-ink); }
-.course-meter i[data-status="active"] { background: var(--ds-accent); }
+.course-meter i[data-status="active"] { background: var(--color-action); }
 
 .course-tree ol,
 .course-tree ul {
@@ -180,8 +305,7 @@ a:hover { text-decoration-thickness: 2px; }
   position: relative;
   display: flex;
   align-items: flex-start;
-  border-radius: 8px;
-  transition: background-color 160ms ease-out;
+  border-radius: var(--radius-8);
 }
 .ct-row:hover { background: var(--ds-wash); }
 .ct-link {
@@ -219,8 +343,8 @@ a:hover { text-decoration-thickness: 2px; }
   color: var(--ds-surface);
 }
 .ct-lesson[data-status="active"] .ct-glyph {
-  background: var(--ds-accent);
-  color: #fff;
+  background: var(--color-action);
+  color: var(--color-text-on-action);
 }
 .ct-lesson[data-status="upcoming"] .ct-glyph {
   background: var(--ds-surface);
@@ -260,7 +384,7 @@ a:hover { text-decoration-thickness: 2px; }
   color: var(--ds-muted);
   cursor: pointer;
   opacity: 0.55;
-  transition: opacity 160ms ease-out, background-color 160ms ease-out;
+  transition: opacity var(--dur-fast) var(--ease-standard);
 }
 .ct-row:hover .ct-twisty,
 .ct-twisty:focus-visible,
@@ -270,7 +394,7 @@ a:hover { text-decoration-thickness: 2px; }
   width: 12px;
   height: 12px;
   transform: rotate(90deg);
-  transition: transform 200ms cubic-bezier(0.25, 1, 0.5, 1);
+  transition: transform var(--dur-base) var(--ease-enter);
 }
 .ct-twisty[aria-expanded="true"] svg { transform: rotate(-90deg); }
 
@@ -290,7 +414,6 @@ a:hover { text-decoration-thickness: 2px; }
   font-size: 12px;
   line-height: 1.3;
   text-decoration: none;
-  transition: background-color 160ms ease-out, color 160ms ease-out;
 }
 .ct-sub a:hover { background: var(--ds-wash); color: var(--ds-ink); }
 .ct-sub a:is(.active, [aria-current]) {
@@ -305,7 +428,7 @@ a:hover { text-decoration-thickness: 2px; }
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--ds-accent);
+  background: var(--color-action);
   transform: translateY(-50%);
 }
 
@@ -359,14 +482,15 @@ a:hover { text-decoration-thickness: 2px; }
   html { scroll-behavior: auto; }
   *, *::before, *::after {
     scroll-behavior: auto !important;
-    animation-duration: .01ms !important;
+    animation-duration: var(--dur-instant) !important;
     animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
+    transition-duration: var(--dur-instant) !important;
   }
 }
 
 @media print {
-  body { background: #fff; }
+  body { background: var(--color-page); }
+  .hub-theme { display: none; }
   :where(.rail, nav.course-nav, .mobile-nav, .mobile-toc, .mobile-lessons, .skip, .skip-link) {
     display: none !important;
   }

@@ -42,7 +42,7 @@
   .mobile-lessons .mobile-list{display:grid;padding:0 10px 10px;}
   .mobile-lessons a{display:block;min-height:44px;padding:10px;color:var(--text-muted);text-decoration:none;border-top:1px solid var(--border);}
   .mobile-lessons a[aria-current="page"]{color:var(--text);font-weight:700;}
-  .skip-link{position:fixed;left:12px;top:12px;z-index:10;transform:translateY(-150%);padding:10px 14px;background:var(--text);color:#fff;border-radius:8px;}
+  .skip-link{position:fixed;left:12px;top:12px;z-index:10;transform:translateY(-150%);padding:10px 14px;background:var(--text);color:var(--bg);border-radius:8px;}
   .skip-link:focus{transform:none;}
 
   header.hero{margin-bottom:56px;}
@@ -93,9 +93,9 @@
     border-radius:999px; text-transform:uppercase; letter-spacing:.03em;
     justify-self:start; width:fit-content;
   }
-  .badge.hard{background:#f6e2da; color:var(--hard);}
-  .badge.soft{background:#efe9d6; color:var(--soft);}
-  .badge.asp{background:#dcebe4; color:var(--asp);}
+  .badge.hard{background:var(--rust-wash); color:var(--hard);}
+  .badge.soft{background:var(--ochre-wash); color:var(--soft);}
+  .badge.asp{background:var(--green-wash); color:var(--asp);}
 
   .card-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px; margin:20px 0 28px;}
   .card{
@@ -149,6 +149,7 @@
   @media (max-width: 520px){td{grid-template-columns:1fr;gap:3px;}}
 </style>
 <link rel="stylesheet" href="../assets/styles/lesson-system.css">
+  <script src="../assets/scripts/theme.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#content">Перейти до матеріалу</a>

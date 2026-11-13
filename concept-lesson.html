@@ -48,7 +48,7 @@
       position: fixed; z-index: 30; top: 12px; left: 12px;
       transform: translateY(-160%);
       padding: 10px 14px; border-radius: 8px;
-      background: var(--ink); color: #fff;
+      background: var(--ink); color: var(--paper);
     }
     .skip:focus { transform: none; }
 
@@ -133,7 +133,7 @@
     .dont > span { color: var(--rust-dark); }
     .say q, .dont q { display: block; quotes: none; }
     .say q + q, .dont q + q { margin-top: 4px; }
-    .dont q { text-decoration: line-through; text-decoration-color: rgb(120 48 29 / 45%); }
+    .dont q { text-decoration: line-through; text-decoration-color: var(--muted); }
     .dont small { color: var(--rust-dark); font-size: 12px; }
     details.why { margin-top: 12px; font-size: 14px; color: var(--muted); }
     details.why summary { cursor: pointer; color: var(--ink); font-weight: 600; }
@@ -226,10 +226,10 @@
     .shots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
     .shot { display: grid; gap: 8px; font-size: 14px; }
     /* Екран завжди верстається на справжніх 390 px і масштабується в мініатюру */
-    .shot .frame { --s: 0.6; position: relative; aspect-ratio: 390 / 760; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: #fff; }
+    .shot .frame { --s: 0.6; position: relative; aspect-ratio: 390 / 760; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); }
     .shot iframe { position: absolute; top: 0; left: 0; width: 390px; height: 760px; border: 0; transform: scale(var(--s)); transform-origin: 0 0; }
     .shot a { font-weight: 600; }
-    .stand { margin-top: 32px; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fff; }
+    .stand { margin-top: 32px; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--paper); }
     .stand iframe { display: block; width: 100%; height: min(86vh, 1100px); border: 0; }
     .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
     .links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 10px; color: var(--ink); font-weight: 600; text-decoration: none; background: var(--surface); }
@@ -240,6 +240,7 @@
     @media (max-width: 860px) { .dirs { grid-template-columns: 1fr; } .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } .timeline li { grid-template-columns: 1fr; gap: 4px; } }
   </style>
   <link rel="stylesheet" href="assets/styles/lesson-system.css">
+  <script src="assets/scripts/theme.js"></script>
 </head>
 <body>
   <a class="skip" href="#content">Перейти до матеріалу</a>

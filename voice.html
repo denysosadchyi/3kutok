@@ -48,7 +48,7 @@
       position: fixed; z-index: 30; top: 12px; left: 12px;
       transform: translateY(-160%);
       padding: 10px 14px; border-radius: 8px;
-      background: var(--ink); color: #fff;
+      background: var(--ink); color: var(--paper);
     }
     .skip:focus { transform: none; }
 
@@ -133,7 +133,7 @@
     .dont > span { color: var(--rust-dark); }
     .say q, .dont q { display: block; quotes: none; }
     .say q + q, .dont q + q { margin-top: 4px; }
-    .dont q { text-decoration: line-through; text-decoration-color: rgb(120 48 29 / 45%); }
+    .dont q { text-decoration: line-through; text-decoration-color: var(--muted); }
     .dont small { color: var(--rust-dark); font-size: 12px; }
     details.why { margin-top: 12px; font-size: 14px; color: var(--muted); }
     details.why summary { cursor: pointer; color: var(--ink); font-weight: 600; }
@@ -212,6 +212,7 @@
     }
   </style>
   <link rel="stylesheet" href="assets/styles/lesson-system.css">
+  <script src="assets/scripts/theme.js"></script>
 </head>
 <body>
   <a class="skip" href="#content">Перейти до матеріалу</a>

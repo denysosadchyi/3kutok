@@ -68,7 +68,7 @@
         transform: translateY(-150%);
         padding: 10px 14px;
         background: var(--ink);
-        color: #fff;
+        color: var(--paper);
         border-radius: 8px;
       }
       .skip:focus {
@@ -309,7 +309,7 @@
       .device-switch button[aria-checked="true"] {
         color: var(--ink);
         background: var(--white);
-        box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgb(32 30 26 / 8%);
+        box-shadow: 0 0 0 1px var(--line), 0 1px 2px var(--black-12);
       }
       .preview-state-nav {
         position: absolute;
@@ -351,7 +351,7 @@
       .preview-state-nav a[aria-current="page"] {
         color: var(--ink);
         background: var(--white);
-        box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgb(32 30 26 / 8%);
+        box-shadow: 0 0 0 1px var(--line), 0 1px 2px var(--black-12);
       }
       @media (max-width: 900px) {
         .preview-state-nav {
@@ -420,7 +420,7 @@
         height: 100%;
         overflow: hidden;
         border-radius: 37px;
-        background: #fff;
+        background: var(--paper);
       }
       .phone-status {
         position: relative;
@@ -430,8 +430,8 @@
         justify-content: space-between;
         height: 44px;
         padding: 6px 24px 0 30px;
-        color: #111;
-        background: #fff;
+        color: var(--ink);
+        background: var(--paper);
         font: 600 13px/1 -apple-system, "SF Pro Text", system-ui, sans-serif;
         font-variant-numeric: tabular-nums;
       }
@@ -503,7 +503,7 @@
       .phone-home {
         position: relative;
         flex: 0 0 18px;
-        background: #fff;
+        background: var(--paper);
       }
       .phone-home::after {
         content: "";
@@ -513,7 +513,7 @@
         width: 36%;
         height: 4px;
         border-radius: 3px;
-        background: #111;
+        background: var(--ink);
         transform: translateX(-50%);
       }
       /* Режими перемикача: та сама рамка, інша ширина розкладки.
@@ -904,7 +904,7 @@
       .hypothesis-job p {
         margin: 0;
         font-size: 13px;
-        color: #55400e;
+        color: var(--muted);
       }
       .decision-grid {
         display: grid;
@@ -1004,14 +1004,14 @@
       }
       thead th {
         background: var(--ink);
-        color: #fff;
+        color: var(--paper);
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.04em;
       }
       tbody th {
         width: 210px;
-        background: #f6f3ee;
+        background: var(--wash);
         font-weight: 750;
       }
       .relevance {
@@ -1175,7 +1175,7 @@
         .matrix-wrap tbody th {
           display: block;
           background: var(--ink);
-          color: #fff;
+          color: var(--paper);
           font-size: 14px;
         }
         .matrix-wrap td::before {
@@ -1334,7 +1334,7 @@
         .matrix-wrap tbody th {
           display: block;
           background: var(--ink);
-          color: #fff;
+          color: var(--paper);
           font-size: 14px;
         }
         .matrix-wrap td::before {
@@ -1398,6 +1398,7 @@
       }
     </style>
     <link rel="stylesheet" href="../assets/styles/lesson-system.css" />
+  <script src="../assets/scripts/theme.js"></script>
   </head>
   <body>
     <!-- Direction: inherit Lesson 1 warm editorial research notebook. Read mode. Evidence status must remain visible at point of claim. -->

@@ -462,12 +462,12 @@
     .flow-tools .expand-flow {
       border-color: var(--ink);
       background: var(--ink);
-      color: #fff;
+      color: var(--paper);
     }
     .flow-tools .expand-flow:hover {
       border-color: var(--rust-dark);
       background: var(--rust-dark);
-      color: #fff;
+      color: var(--paper);
     }
     .flow-viewport {
       width: 100%;
@@ -476,7 +476,7 @@
       padding: 24px;
       border: 1px solid var(--line);
       border-radius: 0 0 var(--radius) var(--radius);
-      background: #fff;
+      background: var(--paper);
       scrollbar-color: var(--line-strong) var(--wash);
     }
     .flow-viewport .mermaid {
@@ -593,6 +593,7 @@
     }
   </style>
   <link rel="stylesheet" href="assets/styles/lesson-system.css">
+  <script src="assets/scripts/theme.js"></script>
 </head>
 <body>
   <a class="skip" href="#content">Перейти до матеріалу</a>
@@ -1877,26 +1878,28 @@ flowchart TD
         mainVariants[0].parentNode.insertBefore(switcher, mainVariants[0]);
       }
 
+      /* Кольори схем — з токенів Кутка, тож схема бере поточну тему. */
+      const tok = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
       mermaid.initialize({
         startOnLoad: false,
         securityLevel: "strict",
         theme: "base",
         flowchart: { curve: "linear", htmlLabels: true, useMaxWidth: false },
         themeVariables: {
-          fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
-          primaryColor: "#f4e4dc",
-          primaryTextColor: "#201e1a",
-          primaryBorderColor: "#ad492c",
-          secondaryColor: "#e6eef3",
-          secondaryTextColor: "#201e1a",
-          secondaryBorderColor: "#36546c",
-          tertiaryColor: "#f5ecca",
-          tertiaryTextColor: "#201e1a",
-          tertiaryBorderColor: "#684f12",
-          lineColor: "#696258",
-          edgeLabelBackground: "#faf9f7",
-          clusterBkg: "#f3efe9",
-          clusterBorder: "#c7beb2"
+          fontFamily: "Onest, system-ui, sans-serif",
+          primaryColor: tok("--color-card"),
+          primaryTextColor: tok("--color-text"),
+          primaryBorderColor: tok("--color-current"),
+          secondaryColor: tok("--color-page"),
+          secondaryTextColor: tok("--color-text"),
+          secondaryBorderColor: tok("--color-field-edge"),
+          tertiaryColor: tok("--color-control-hover"),
+          tertiaryTextColor: tok("--color-text"),
+          tertiaryBorderColor: tok("--color-verified"),
+          lineColor: tok("--color-text-secondary"),
+          edgeLabelBackground: tok("--color-page"),
+          clusterBkg: tok("--color-card"),
+          clusterBorder: tok("--color-divider")
         }
       });
       await mermaid.run({ nodes: document.querySelectorAll(".mermaid") });
