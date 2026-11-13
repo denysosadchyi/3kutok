@@ -8,15 +8,15 @@
 <style>
   :root{
     --bg:#faf9f7; --surface:#ffffff; --border:#e4e0da; --border-strong:#d3cdc3;
-    --text:#201e1a; --text-muted:#6b6459; --accent:#b5502f; --accent-soft:#f4e6df;
+    --hub-text:#201e1a; --text-muted:#6b6459; --accent:#b5502f; --accent-soft:#f4e6df;
     --hard:#7f301b; --soft:#5f522f; --asp:#2f5848;
     --radius:10px;
   }
   *{box-sizing:border-box;}
-  ::selection{background:var(--accent-soft); color:var(--text);}
+  ::selection{background:var(--accent-soft); color:var(--hub-text);}
   a:focus-visible{outline:3px solid var(--accent); outline-offset:3px; border-radius:3px;}
   body{
-    margin:0; background:var(--bg); color:var(--text);
+    margin:0; background:var(--bg); color:var(--hub-text);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     font-size:16px; line-height:1.55;
   }
@@ -30,7 +30,7 @@
   .course-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;}
   .course-nav-toggle{
     display:grid;place-items:center;width:28px;min-height:28px;margin:0;padding:0;
-    border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);color:var(--text);cursor:pointer;
+    border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);color:var(--hub-text);cursor:pointer;
   }
   .course-nav-toggle:hover{border-color:var(--accent);color:var(--accent);}
   .course-nav-toggle svg{display:block;width:16px;height:16px;transition:transform 160ms ease;}
@@ -41,8 +41,8 @@
   .mobile-lessons summary{min-height:48px;padding:13px 16px;font-weight:700;cursor:pointer;}
   .mobile-lessons .mobile-list{display:grid;padding:0 10px 10px;}
   .mobile-lessons a{display:block;min-height:44px;padding:10px;color:var(--text-muted);text-decoration:none;border-top:1px solid var(--border);}
-  .mobile-lessons a[aria-current="page"]{color:var(--text);font-weight:700;}
-  .skip-link{position:fixed;left:12px;top:12px;z-index:10;transform:translateY(-150%);padding:10px 14px;background:var(--text);color:var(--bg);border-radius:8px;}
+  .mobile-lessons a[aria-current="page"]{color:var(--hub-text);font-weight:700;}
+  .skip-link{position:fixed;left:12px;top:12px;z-index:10;transform:translateY(-150%);padding:10px 14px;background:var(--hub-text);color:var(--bg);border-radius:8px;}
   .skip-link:focus{transform:none;}
 
   header.hero{margin-bottom:56px;}
@@ -52,8 +52,8 @@
     margin-top:20px; display:flex; gap:24px; flex-wrap:wrap;
     font-size:13px; color:var(--text-muted);
   }
-  header.hero .meta b{color:var(--text); font-weight:600;}
-  header.hero .meta a{color:var(--text);}
+  header.hero .meta b{color:var(--hub-text); font-weight:600;}
+  header.hero .meta a{color:var(--hub-text);}
 
   section{margin-bottom:72px; scroll-margin-top:24px;}
   section h2{
@@ -121,7 +121,7 @@
   .sources a{color:var(--accent);}
   .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
   .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0 8px;}
-  .summary-block{padding-top:16px;border-top:2px solid var(--text);}
+  .summary-block{padding-top:16px;border-top:2px solid var(--hub-text);}
   .summary-block h3{margin:0 0 10px;}
   .summary-block ul{margin:0;padding-left:20px;}
   .summary-block li{margin:0 0 8px;}
@@ -130,7 +130,7 @@
   .screens-grid a{display:block;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--surface);}
   .screens-grid img{display:block;width:100%;aspect-ratio:1440/1100;object-fit:cover;object-position:top;height:auto;}
   .screens-grid figcaption{padding:10px 2px 0;font-size:13px;color:var(--text-muted);}
-  .screens-grid figcaption b{display:block;color:var(--text);font-size:14px;margin-bottom:3px;}
+  .screens-grid figcaption b{display:block;color:var(--hub-text);font-size:14px;margin-bottom:3px;}
   .screens-grid figure:first-child{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(220px,.55fr);align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
   .screens-grid figure:first-child a{border:0;border-radius:0;}
   .screens-grid figure:first-child figcaption{padding:24px;font-size:14px;}

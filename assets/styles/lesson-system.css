@@ -10,7 +10,7 @@
   /* Фон і поверхні: сторінка біла, картка й підкладка сірі — як у Кутку. */
   --paper: var(--color-page);
   --bg: var(--color-page);
-  --white: var(--color-page);
+  --hub-white: var(--color-page);
   --surface: var(--color-page);
   --wash: var(--color-card);
   /* Лінії: тонка — роздільник, сильна — межа контролу в стані active. */
@@ -20,8 +20,8 @@
   --line-strong: var(--color-control-active);
   --border-strong: var(--color-control-active);
   /* Текст. */
-  --ink: var(--color-text);
-  --text: var(--color-text);
+  --hub-ink: var(--color-text);
+  --hub-text: var(--color-text);
   --muted: var(--color-text-secondary);
   --text-muted: var(--color-text-secondary);
   /* Акцент: текст і лінії — --color-current, підкладка — корал. */
@@ -32,7 +32,7 @@
   --rust-wash: color-mix(in srgb, var(--color-action) 16%, var(--color-page)); /* current на ній 4.57 (світла), 9.7+ (темна) */
   --accent-soft: var(--rust-wash);
   /* Додаткові сигнали: зелений — «перевірено», решта — нейтральні. */
-  --green: var(--color-verified);
+  --hub-green: var(--color-verified);
   --asp: var(--color-verified);
   --green-wash: color-mix(in srgb, var(--color-verified) 8%, var(--color-page)); /* verified на ній 4.68 (світла), 6.1+ (темна) */
   --ochre: var(--color-text);

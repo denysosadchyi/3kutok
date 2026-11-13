@@ -14,12 +14,12 @@
       --wash: #f3efe9;
       --line: #dfd9d0;
       --line-strong: #c7beb2;
-      --ink: #201e1a;
+      --hub-ink: #201e1a;
       --muted: #696258;
       --rust: #ad492c;
       --rust-dark: #78301d;
       --rust-wash: #f4e4dc;
-      --green: #295142;
+      --hub-green: #295142;
       --green-wash: #e1ece6;
       --ochre: #684f12;
       --ochre-wash: #f5ecca;
@@ -34,12 +34,12 @@
     body {
       margin: 0;
       background: var(--paper);
-      color: var(--ink);
+      color: var(--hub-ink);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       font-size: 16px;
       line-height: 1.58;
     }
-    ::selection { background: var(--rust-wash); color: var(--ink); }
+    ::selection { background: var(--rust-wash); color: var(--hub-ink); }
     a { color: var(--rust-dark); text-underline-offset: 3px; }
     a:hover { text-decoration-thickness: 2px; }
     a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
@@ -57,7 +57,7 @@
       transform: translateY(-160%);
       padding: 10px 14px;
       border-radius: 8px;
-      background: var(--ink);
+      background: var(--hub-ink);
       color: white;
     }
     .skip:focus { transform: none; }
@@ -108,12 +108,12 @@
       line-height: 1.35;
       text-decoration: none;
     }
-    .rail a:hover, .rail a.active { background: var(--wash); color: var(--ink); }
+    .rail a:hover, .rail a.active { background: var(--wash); color: var(--hub-ink); }
     .rail a.active { font-weight: 740; }
     .rail .primary-link {
       min-height: 44px;
       padding-top: 11px;
-      color: var(--ink);
+      color: var(--hub-ink);
       font-weight: 750;
     }
 
@@ -148,7 +148,7 @@
     .lesson-toc a:hover,
     .lesson-toc a.active {
       background: var(--wash);
-      color: var(--ink);
+      color: var(--hub-ink);
     }
     .lesson-toc a.active { font-weight: 750; }
     .mobile-nav { display: none; }
@@ -188,7 +188,7 @@
       font-size: 13px;
       font-weight: 600;
     }
-    .tag.strong { background: transparent; color: var(--ink); }
+    .tag.strong { background: transparent; color: var(--hub-ink); }
 
     .overview {
       display: grid;
@@ -197,7 +197,7 @@
       align-items: start;
       margin-bottom: 78px;
       padding: 22px 0;
-      border-top: 2px solid var(--ink);
+      border-top: 2px solid var(--hub-ink);
       border-bottom: 1px solid var(--line);
     }
     .overview strong { font-size: 13px; }
@@ -361,10 +361,10 @@
       font-size: 13px;
       font-weight: 720;
     }
-    .flow-switch button:hover { color: var(--ink); }
+    .flow-switch button:hover { color: var(--hub-ink); }
     .flow-switch button[aria-selected="true"] {
       background: var(--surface);
-      color: var(--ink);
+      color: var(--hub-ink);
       box-shadow: 0 1px 3px rgba(32, 30, 26, .12);
     }
     .flow-switch button:focus-visible {
@@ -383,7 +383,7 @@
       color: var(--muted);
     }
     #screens ~ ul li strong {
-      color: var(--ink);
+      color: var(--hub-ink);
     }
 
     .document table {
@@ -453,15 +453,15 @@
       border: 1px solid var(--line-strong);
       border-radius: 7px;
       background: var(--surface);
-      color: var(--ink);
+      color: var(--hub-ink);
       cursor: pointer;
       font-size: 12px;
       font-weight: 720;
     }
     .flow-tools button:hover { border-color: var(--rust); color: var(--rust-dark); }
     .flow-tools .expand-flow {
-      border-color: var(--ink);
-      background: var(--ink);
+      border-color: var(--hub-ink);
+      background: var(--hub-ink);
       color: var(--paper);
     }
     .flow-tools .expand-flow:hover {
@@ -559,7 +559,7 @@
         color: var(--muted);
         text-decoration: none;
       }
-      .mobile-links a:hover { background: var(--wash); color: var(--ink); }
+      .mobile-links a:hover { background: var(--wash); color: var(--hub-ink); }
       .overview { grid-template-columns: 1fr; gap: 8px; }
       .card-grid,
       .object-grid { grid-template-columns: 1fr; }

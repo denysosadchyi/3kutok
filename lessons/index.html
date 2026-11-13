@@ -8,18 +8,18 @@
     <style>
       :root {
         --paper: #faf9f7;
-        --white: #fff;
+        --hub-white: #fff;
         --wash: #f3efe9;
         --line: #dfd9d0;
         --line2: #c9c0b5;
-        --ink: #201e1a;
+        --hub-ink: #201e1a;
         --muted: #696258;
         --rust: #ad492c;
         --rust-dark: #78301d;
         --rust-wash: #f4e4dc;
         --ochre: #684f12;
         --ochre-wash: #f5ecca;
-        --green: #295142;
+        --hub-green: #295142;
         --green-wash: #e1ece6;
         --blue: #36546c;
         --blue-wash: #e6eef3;
@@ -33,12 +33,12 @@
       }
       ::selection {
         background: var(--rust-wash);
-        color: var(--ink);
+        color: var(--hub-ink);
       }
       body {
         margin: 0;
         background: var(--paper);
-        color: var(--ink);
+        color: var(--hub-ink);
         font-family:
           -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
           Arial, sans-serif;
@@ -67,7 +67,7 @@
         z-index: 20;
         transform: translateY(-150%);
         padding: 10px 14px;
-        background: var(--ink);
+        background: var(--hub-ink);
         color: var(--paper);
         border-radius: 8px;
       }
@@ -86,7 +86,7 @@
         height: 100vh;
         overflow: auto;
         padding: 20px 12px;
-        background: var(--white);
+        background: var(--hub-white);
         border-right: 1px solid var(--line);
       }
       .rail-toggle {
@@ -98,8 +98,8 @@
         padding: 0;
         border: 1px solid var(--line2);
         border-radius: 8px;
-        background: var(--white);
-        color: var(--ink);
+        background: var(--hub-white);
+        color: var(--hub-ink);
         cursor: pointer;
       }
       .rail-toggle:hover {
@@ -189,7 +189,7 @@
         min-width: 0;
         padding: 20px 12px;
         overflow: auto;
-        background: var(--white);
+        background: var(--hub-white);
         border-right: 1px solid var(--line);
       }
       .wireframe-nav h1 {
@@ -212,7 +212,7 @@
         min-height: 32px;
         padding: 5px 8px;
         border-radius: 6px;
-        color: var(--ink);
+        color: var(--hub-ink);
         font-size: 13px;
         line-height: 1.3;
         text-decoration: none;
@@ -307,8 +307,8 @@
         cursor: not-allowed;
       }
       .device-switch button[aria-checked="true"] {
-        color: var(--ink);
-        background: var(--white);
+        color: var(--hub-ink);
+        background: var(--hub-white);
         box-shadow: 0 0 0 1px var(--line), 0 1px 2px var(--black-12);
       }
       .preview-state-nav {
@@ -342,15 +342,15 @@
         text-decoration: none;
       }
       .preview-state-nav a:hover {
-        color: var(--ink);
+        color: var(--hub-ink);
       }
       .preview-state-nav a[data-na] {
         text-decoration: line-through;
         text-decoration-color: var(--line2);
       }
       .preview-state-nav a[aria-current="page"] {
-        color: var(--ink);
-        background: var(--white);
+        color: var(--hub-ink);
+        background: var(--hub-white);
         box-shadow: 0 0 0 1px var(--line), 0 1px 2px var(--black-12);
       }
       @media (max-width: 900px) {
@@ -430,7 +430,7 @@
         justify-content: space-between;
         height: 44px;
         padding: 6px 24px 0 30px;
-        color: var(--ink);
+        color: var(--hub-ink);
         background: var(--paper);
         font: 600 13px/1 -apple-system, "SF Pro Text", system-ui, sans-serif;
         font-variant-numeric: tabular-nums;
@@ -513,7 +513,7 @@
         width: 36%;
         height: 4px;
         border-radius: 3px;
-        background: var(--ink);
+        background: var(--hub-ink);
         transform: translateX(-50%);
       }
       /* Режими перемикача: та сама рамка, інша ширина розкладки.
@@ -570,7 +570,7 @@
         padding: 3px 12px;
         overflow: hidden;
         border-radius: 6px;
-        background: var(--white);
+        background: var(--hub-white);
         color: var(--muted);
         font-size: 11px;
         text-align: center;
@@ -628,7 +628,7 @@
       }
       .evidence.market {
         background: var(--green-wash);
-        color: var(--green);
+        color: var(--hub-green);
       }
       .evidence.need {
         background: var(--ochre-wash);
@@ -648,7 +648,7 @@
         gap: 24px;
         margin: 0 0 64px;
         padding: 20px 0;
-        border-top: 2px solid var(--ink);
+        border-top: 2px solid var(--hub-ink);
         border-bottom: 1px solid var(--line);
       }
       .outcome strong {
@@ -704,7 +704,7 @@
         overflow: hidden;
       }
       .method div {
-        background: var(--white);
+        background: var(--hub-white);
         padding: 18px;
       }
       .method b {
@@ -724,7 +724,7 @@
         align-items: start;
       }
       .persona {
-        background: var(--white);
+        background: var(--hub-white);
         border: 1px solid var(--line);
         border-radius: var(--r);
         overflow: hidden;
@@ -835,7 +835,7 @@
         gap: 25px;
         padding: 25px 0;
         margin-bottom: 18px;
-        border-top: 2px solid var(--ink);
+        border-top: 2px solid var(--hub-ink);
         border-bottom: 1px solid var(--line);
       }
       .job-id {
@@ -913,8 +913,8 @@
       }
       .decision {
         padding: 20px;
-        border-top: 3px solid var(--ink);
-        background: var(--white);
+        border-top: 3px solid var(--hub-ink);
+        background: var(--hub-white);
       }
       .decision.differentiator {
         border-color: var(--rust);
@@ -953,7 +953,7 @@
         overflow: auto;
         border: 1px solid var(--line2);
         border-radius: var(--r);
-        background: var(--white);
+        background: var(--hub-white);
         scrollbar-color: var(--rust) var(--wash);
         scrollbar-width: thin;
       }
@@ -1003,7 +1003,7 @@
         border-bottom: 0;
       }
       thead th {
-        background: var(--ink);
+        background: var(--hub-ink);
         color: var(--paper);
         font-size: 11px;
         text-transform: uppercase;
@@ -1016,7 +1016,7 @@
       }
       .relevance {
         font-weight: 750;
-        color: var(--green);
+        color: var(--hub-green);
       }
       .unknown {
         font-weight: 800;
@@ -1032,7 +1032,7 @@
       }
       .cut {
         padding: 18px 0;
-        border-top: 2px solid var(--ink);
+        border-top: 2px solid var(--hub-ink);
       }
       .cut h3 {
         margin: 0 0 6px;
@@ -1050,7 +1050,7 @@
       }
       .question {
         padding: 19px;
-        background: var(--white);
+        background: var(--hub-white);
         border: 1px solid var(--line);
         border-radius: var(--r);
       }
@@ -1077,7 +1077,7 @@
       }
       .placeholder {
         max-width: 680px;
-        border-top: 2px solid var(--ink);
+        border-top: 2px solid var(--hub-ink);
         padding-top: 24px;
       }
       .hidden {
@@ -1096,7 +1096,7 @@
           margin-bottom: 20px;
           border: 1px solid var(--line);
           border-radius: var(--r);
-          background: var(--white);
+          background: var(--hub-white);
         }
         .mobile-nav summary,
         .mobile-toc summary {
@@ -1157,7 +1157,7 @@
         .matrix-wrap tr {
           display: block;
           margin-bottom: 14px;
-          background: var(--white);
+          background: var(--hub-white);
           border: 1px solid var(--line2);
           border-radius: var(--r);
           overflow: hidden;
@@ -1174,7 +1174,7 @@
         }
         .matrix-wrap tbody th {
           display: block;
-          background: var(--ink);
+          background: var(--hub-ink);
           color: var(--paper);
           font-size: 14px;
         }
@@ -1244,7 +1244,7 @@
           margin-bottom: 20px;
           border: 1px solid var(--line);
           border-radius: var(--r);
-          background: var(--white);
+          background: var(--hub-white);
         }
         .mobile-nav summary,
         .mobile-toc summary {
@@ -1316,7 +1316,7 @@
         .matrix-wrap tr {
           display: block;
           margin-bottom: 14px;
-          background: var(--white);
+          background: var(--hub-white);
           border: 1px solid var(--line2);
           border-radius: var(--r);
           overflow: hidden;
@@ -1333,7 +1333,7 @@
         }
         .matrix-wrap tbody th {
           display: block;
-          background: var(--ink);
+          background: var(--hub-ink);
           color: var(--paper);
           font-size: 14px;
         }
