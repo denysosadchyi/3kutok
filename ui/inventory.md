@@ -28,6 +28,7 @@
 | Кнопка «Назад» в app bar | ті самі 12 сторінок | звичайна; кругла на затемненні з розмиттям поверх фото (`listing`, `listing-loading`); focus | — |
 | Велика шапка екрана (заголовок + підзаголовок) | listings, listings-loading, listings-empty, listings-error | — | — |
 | Людина в app bar (аватар + ім'я + щит перевірки) | chat, chat-loading, chat-empty, chat-error | посилання на профіль; focus | аватар |
+| Дві дії справа в app bar (`.topbar__end`): тема + ⋯, у спліті ще × | listing*, profile, profile-empty, chat* (20 сторінок) | 2026-11-13 (B10): кластер у правій комірці, кнопки впритул; над фото — окремі кола з проміжком `--space-2`; стани — у кожної кнопки свої (hover, active, focus) | — |
 | Кнопка-іконка ⋯ «Заблокувати чи поскаржитися» | chat, chat-loading, chat-empty, chat-error, profile, profile-empty, listing, listing-loading | focus; кругла на затемненні поверх фото (`listing`, `listing-loading`) | — |
 | Нижнє меню (Пошук · Чати · Профіль) | listings, listings-loading, listings-empty, listings-error | пункт активний (`aria-current`, колір посилання, 700), неактивний; «Профіль» — не посилання (екрана немає); від `--bp-desktop` — шапка вгорі, ті самі пункти й стани | — |
 | Панель дії внизу (одна кнопка на всю ширину) | listing, listing-loading, profile, profile-loading, profile-empty | звичайна; завантаження — скелетон кнопки (`listing-loading`, `profile-loading`) | — |

@@ -21,8 +21,8 @@
   Рівно один <main> — у панелі, головній на телефоні; друга — div.shell__main.
   Нижче — chat (перелік чатів + чат з Іриною). У рамці телефона видно лише чат;
   поруч панелі стають лише на сторінці (body.shell.shell--split).
-  Не входить: кнопка теми (.theme-slot) — разовий блок wireframes/screens.css;
-  на екранах × стоїть у ній поруч із ⋯.
+  Справа в шапці деталі — кластер .topbar__end (components/topbar.css): ⋯ і ×.
+  Не входить: кнопка теми — на екранах вона стоїть у тому самому кластері.
   Нових стилів немає: лише класи з design-system/index.css.
 -->
 <div class="shell shell--tabbar shell--composer shell--split">
@@ -37,7 +37,7 @@
       </div>
     </section>
     <section class="split__pane split__pane--detail">
-      <header class="topbar topbar--person"><a class="topbar__back" href="#" aria-label="Назад до чатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><a class="topbar__person" href="#"><span class="avatar"><img src="../../visuals/person-iryna.jpg" alt=""></span><strong class="topbar__name">Ірина</strong></a><a class="topbar__action split__close" href="#" aria-label="Закрити чат"><iconify-icon icon="solar:close-linear" aria-hidden="true"></iconify-icon></a></header>
+      <header class="topbar topbar--person"><a class="topbar__back" href="#" aria-label="Назад до чатів"><iconify-icon icon="solar:alt-arrow-left-linear" aria-hidden="true"></iconify-icon></a><a class="topbar__person" href="#"><span class="avatar"><img src="../../visuals/person-iryna.jpg" alt=""></span><strong class="topbar__name">Ірина</strong></a><span class="topbar__end"><button class="topbar__action" type="button" aria-label="Заблокувати чи поскаржитися"><iconify-icon icon="solar:menu-dots-linear" aria-hidden="true"></iconify-icon></button><a class="topbar__action split__close" href="#" aria-label="Закрити чат"><iconify-icon icon="solar:close-linear" aria-hidden="true"></iconify-icon></a></span></header>
       <h1 class="sr-only">Чат з Іриною</h1>
       <main class="shell__main">
         <a class="chat-context" href="#"><img class="chat-context__thumb" src="../../visuals/room-lukianivska-bedroom.jpg" alt="Фото кімнати"><span class="chat-context__text"><strong class="chat-context__title">Кімната біля Лук’янівської</strong><span class="chat-context__meta">10&nbsp;500&nbsp;грн/міс · з&nbsp;1&nbsp;жовтня</span></span><iconify-icon class="chevron" icon="solar:alt-arrow-right-linear" aria-hidden="true"></iconify-icon></a>

@@ -69,7 +69,23 @@
    --color-divider / --color-page, -card             grey-100 / white, grey-50  1.23 / 1.12
    --color-card / --color-page (край картки)         grey-50 / white  1.09
    --color-grabber / --color-sheet (ручка шторки)    grey-50 / white  1.09  — ручку майже не видно,
-                                                     див. таблицю дефектів кроку 06</pre><pre class="doc-pre">── Контраст темних пар (WCAG 2.x, відносна яскравість; напівпрозорі
+                                                     див. таблицю дефектів кроку 06
+   [урок 11] заглушки, затемнення, отвір бирки
+   --color-stub / --color-page (.skeleton, фон фото й аватара) grey-50 / white 1.09
+                                                     — пульс до --opacity-disabled: 1.04.
+                                                     Скелетон має aria-hidden, статус дає
+                                                     role=&quot;status&quot;. Поріг 3:1 не діє.
+                                                     Блок видно, як край картки (1.09).
+   --color-stub-on-card / --color-card (.group .skeleton) grey-100 / grey-50 1.12
+                                                     — пульс 1.05. Поріг 3:1 не діє.
+   --color-sheet-scrim / --color-page                ink-38·white / white 2.41
+                                                     — затемнення не є межею. Поріг 3:1 не діє.
+   --color-sheet / --color-sheet-scrim               white / ink-38·white 2.41
+                                                     (над карткою: white / ink-38·grey-50 2.60)
+                                                     — край шторки видно.
+   --color-tag-hole / --color-over-photo (отвір бирки) grey-50 / white 1.09
+                                                     — отвір видно через обвідку
+                                                     --color-tag-hole-edge (17.96, вище).</pre><pre class="doc-pre">── Контраст темних пар (WCAG 2.x, відносна яскравість; напівпрозорі
       змішано з фоном). Пороги: 4.5 текст, 3 великий текст / іконки /
       межі контролів (1.4.11). Перераховано після кроку 06. ──
 
@@ -133,6 +149,20 @@
    --color-card / --color-page (край картки)   grey-900 / black       1.33  (світла: 1.09)
    --color-control-hover / --color-control     grey-800 / grey-900    1.17
    --color-sheet / сторінка під затемненням    grey-900 / ink-60·black 1.23
+   [урок 11] заглушки, затемнення, отвір бирки
+   --color-stub / --color-page (.skeleton, фон фото й аватара) grey-900 / black 1.33
+                                               — пульс до --opacity-disabled: 1.09.
+                                               Скелетон має aria-hidden. Поріг 3:1 не діє.
+   --color-stub-on-card / --color-card (.group .skeleton) grey-800 / grey-900 1.17
+                                               — пульс 1.06. Поріг 3:1 не діє.
+   --color-sheet-scrim / --color-page          ink-60·black / black   1.09
+                                               — затемнення над чорним майже не видно.
+                                               Шторку відділяє --color-sheet (1.23, вище),
+                                               тінь і ручка --color-grabber (4.65).
+                                               Над карткою: ink-60·grey-900 / grey-900 1.09.
+   --color-tag-hole / --color-over-photo (отвір бирки) black / grey-900 1.33
+                                               — отвір видно через обвідку
+                                               --color-tag-hole-edge (4.65, вище).
 
    ── Результат стрес-тесту і що з ним зроблено на кроці 06 ──
    Стрес-тест показав три дірки палітри — не semantic-шару: кожну закрито

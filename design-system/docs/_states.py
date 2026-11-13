@@ -9,7 +9,7 @@ import re
 
 from _pages_shell import chat_rows, close, current_card
 
-from _kit import (back, button, card_list, chat_context, chip, composer, field, more,
+from _kit import (back, button, theme_btn, end_cluster, topbar_photo_end, card_list, chat_context, chip, composer, field, more,
                   listing_card, person_row, tabbar, topbar_photo, screen, photo_frame, desk)
 
 
@@ -77,6 +77,9 @@ STATES = {
         ("назад · наведення", f'<header class="topbar">{_on(back(), "is-hover", "topbar__back")}<p class="topbar__title">Профіль Ірини</p>{more()}</header>'),
         ("меню · натискання", f'<header class="topbar">{back()}<p class="topbar__title">Профіль Ірини</p>{_on(more(), "is-active", "topbar__action")}</header>'),
         ("назад · фокус", f'<header class="topbar">{_on(back(), "is-focus", "topbar__back")}<p class="topbar__title">Профіль Ірини</p>{more()}</header>'),
+        ("дві дії · тема під курсором", f'<header class="topbar">{back()}<p class="topbar__title">Профіль Ірини</p>{end_cluster(_on(theme_btn(), "is-hover", "topbar__action"), more())}</header>'),
+        ("дві дії · ⋯ у фокусі", f'<header class="topbar">{back()}<p class="topbar__title">Профіль Ірини</p>{end_cluster(theme_btn(), _on(more(), "is-focus", "topbar__action"))}</header>'),
+        ("дві дії над фото · ⋯ під курсором", photo_frame(topbar_photo_end().replace('class="topbar__action" type="button" aria-label="Заблокувати', 'class="topbar__action is-hover" type="button" aria-label="Заблокувати', 1)), "phone"),
     ]),
     "tabbar": ("Неактивна вкладка під курсором темнішає до основного тексту; під пальцем капсула іконки отримує підложку; фокус з клавіатури — кільце. "
                "Підйом вкладки — розкладка, а не стан. На десктопі (від <code>--bp-desktop</code>) меню — шапка вгорі, а стани ті самі правила: "

@@ -49,6 +49,9 @@
 .topbar__back iconify-icon { font-size: var(--size-22); }
 .topbar__action { justify-self: end; }
 .topbar__action iconify-icon { font-size: var(--size-20); }
+/* Дві й більше дії справа (тема + ⋯, у спліті ще ×): кластер займає праву комірку
+   сітки, кнопки впритул — ціль 48 уже дає відступ між іконками (B10, 2026-11-13) */
+.topbar__end { display: flex; align-items: center; justify-self: end; }
 .topbar__title {
   max-width: var(--size-220);
   overflow: hidden;
@@ -94,6 +97,8 @@
   color: var(--color-text-on-photo);
   backdrop-filter: blur(var(--size-8));
 }
+/* Над фото кожна кнопка — окреме коло на затемненні: між колами проміжок --space-2 */
+.topbar--over-photo .topbar__end { gap: var(--space-2); }
 /* Затемнення напівпрозоре: шар на шар дав би темніше за --color-over-photo-dim-hover.
    Тому шари міняються місцями — спокійний (::before) гасне, наведений (::after)
    проступає; кінцеві кольори точно ролі, 4.70 і 9.7 (tokens.css). */

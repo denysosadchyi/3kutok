@@ -41,6 +41,25 @@ def more(pin=""):
     return f'<button class="topbar__action"{pin} type="button" aria-label="Заблокувати чи поскаржитися">{ico("solar:menu-dots-linear")}</button>'
 
 
+def theme_btn(pin=""):
+    """Кнопка-місяць: той самий .topbar__action, клас .theme-toggle — JS-гачок (docs.js)."""
+    return f'<button class="topbar__action theme-toggle"{pin} type="button" aria-pressed="false" aria-label="Темна тема">{ico("solar:moon-linear")}</button>'
+
+
+def end_cluster(*actions, pin=""):
+    """Кластер дій у правій комірці шапки — коли дій дві чи більше (B10)."""
+    return f'<span class="topbar__end"{pin}>' + "".join(actions) + '</span>'
+
+
+def topbar_end(title="Профіль Ірини"):
+    """Компактна шапка з двома діями справа: тема + ⋯ (profile*, chat*, listing*)."""
+    return f'<header class="topbar">{back()}<p class="topbar__title">{title}</p>{end_cluster(theme_btn(), more())}</header>'
+
+
+def topbar_photo_end():
+    return f'<header class="topbar topbar--over-photo">{back("Назад до результатів")}<span></span>{end_cluster(theme_btn(), more())}</header>'
+
+
 def topbar(title="Профіль Ірини", back_label="Назад до оголошення"):
     return f'<header class="topbar">{back(back_label)}<p class="topbar__title">{title}</p>{more()}</header>'
 

@@ -40,13 +40,14 @@ THEME_SCRIPT = """<script>
 })();
 </script>"""
 # Кнопка теми — наявний клас кіта .topbar__action (поверх фото — кругла на
-# затемненні, як ⋯), без нового компонента. Розміщення — у screens.css.
+# затемненні, як ⋯), без нового компонента. Поруч з іншою дією — у кластері
+# .topbar__end (components/topbar.css, B10).
 THEME = '<button class="topbar__action theme-toggle" type="button" aria-pressed="false" aria-label="Темна тема"><iconify-icon icon="solar:moon-linear" aria-hidden="true"></iconify-icon></button>'
 
 
 def end_slot(action=""):
     """Права комірка app bar: кнопка теми, а за нею — наявна дія (⋯), якщо є."""
-    return f'<span class="theme-slot">{THEME}{action}</span>' if action else THEME
+    return f'<span class="topbar__end">{THEME}{action}</span>' if action else THEME
 
 
 # Усі екрани зібрані з кіта компонентів (урок 7). Система підключається одним

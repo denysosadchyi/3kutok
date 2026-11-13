@@ -87,8 +87,8 @@ def close(label="Закрити чат", cls="", pin=""):
 
 
 def _chat_top(pin_close=""):
-    """Шапка чату в спліті: «Назад до чатів» і × замість ⋯ (на екранах × стоїть поруч із ⋯)."""
-    return topbar_person().replace(back(), back("Назад до чатів"), 1).replace(more(), close(pin=pin_close), 1)
+    """Шапка чату в спліті: «Назад до чатів», справа кластер ⋯ і × (.topbar__end)."""
+    return topbar_person().replace(back(), back("Назад до чатів"), 1).replace(more(), end_cluster(more(), close(pin=pin_close)), 1)
 
 
 def _chat_pane(pin_close=""):
@@ -111,7 +111,7 @@ def _feed_pane(selected=False):
 
 
 def _listing_pane():
-    top = f'<header class="topbar topbar--over-photo">{back("Назад до результатів")}<span></span>{close("Закрити оголошення")}</header>'
+    top = f'<header class="topbar topbar--over-photo">{back("Назад до результатів")}<span></span>{end_cluster(more(), close("Закрити оголошення"))}</header>'
     return top + f'<div class="shell__main">{hero_photo()}{listing_title()}{group(FLAT)}</div>' + actionbar()
 
 
@@ -245,7 +245,7 @@ PAGES = [
     dict(
         slug="topbar", name="Компактна шапка", group="Навігація", api="topbar",
         files=["topbar.css"],
-        classes="<code>.topbar</code> · <code>__back</code> <code>__title</code> <code>__action</code> <code>__person</code> <code>__name</code> <code>__verified</code> · <code>--person</code> <code>--over-photo</code>",
+        classes="<code>.topbar</code> · <code>__back</code> <code>__title</code> <code>__action</code> <code>__person</code> <code>__name</code> <code>__verified</code> <code>__end</code> · <code>--person</code> <code>--over-photo</code>",
         role="App bar 48 на деталях: стрілка «назад», заголовок або людина і ⋯ «Заблокувати чи поскаржитися». Тримає людину в ланцюжку пошук → оголошення → профіль → чат.",
         card_role="App bar 48: назад, заголовок або людина, ⋯.",
         preview=stage(topbar(), "flush"), preview_mod="flush center",
@@ -254,23 +254,30 @@ PAGES = [
             + '<header class="topbar topbar--person">' + back()
             + f'<a class="topbar__person"{P(4)} href="#">{avatar(mark=False, alt="Фото профілю Ірини")}<strong class="topbar__name">Ірина</strong>'
             + f'<span class="topbar__verified"{P(5, "tr")} title="Номер підтверджено 12 вересня">{ico("solar:shield-check-linear")}<span class="sr-only">Номер підтверджено</span></span></a>'
-            + more() + '</header>', "flush"), legend=[
+            + more() + '</header>'
+            + f'<header class="topbar">{back()}<p class="topbar__title">Профіль Ірини</p>{end_cluster(theme_btn(), more(), pin=P(6, "tr"))}</header>', "flush"), legend=[
             (1, "Назад", "<code>.topbar__back</code> — Solar 24, підпис для скрінрідера: «Назад до оголошення» / «Назад до результатів»"),
             (2, "Заголовок", "<code>.topbar__title</code> — 16/700; <code>h1</code>, якщо нижче немає власного"),
             (3, "Дія ⋯", "<code>.topbar__action</code> — «Заблокувати чи поскаржитися»; у чаті, профілі й оголошенні"),
             (4, "Людина", "<code>.topbar__person</code> — аватар 28 + ім’я, посилання на профіль (<code>--person</code>, чат)"),
             (5, "Щит перевірки", "<code>.topbar__verified</code> — зелений щит 20 замість позначки на аватарі"),
+            (6, "Дві дії справа", "<code>.topbar__end</code> — кластер у правій комірці: тема + ⋯, у спліті ще ×. Кнопки впритул, над фото — проміжок <code>--space-2</code>"),
         ]),
         variants=[
             ("із заголовком · profile*", stage(topbar(), "flush"), "phone"),
             ("«Назад» у фокусі", stage(topbar().replace('class="topbar__back"', 'class="topbar__back is-focus"', 1), "flush"), "phone"),
             ("<code>--person</code> · chat*", stage(topbar_person(), "flush"), "phone"),
             ("<code>--over-photo</code> · listing — круглі кнопки на затемненні з розмиттям", photo_frame(topbar_photo()), "phone"),
+            ("дві дії справа · <code>__end</code> — тема + ⋯", stage(topbar_end(), "flush"), "phone"),
+            ("дві дії справа над фото — окремі кола з проміжком <code>--space-2</code>", photo_frame(topbar_photo_end()), "phone"),
         ],
         usage=("<p>Компактна шапка стоїть на всіх екранах-деталях: оголошення, профіль, чат (12 сторінок). Стрілка завжди веде на крок назад і "
                "каже куди: «Назад до результатів», «Назад до оголошення» — одна назва для однієї дії на всіх екранах (D1, D2).</p>"
                "<p>У чаті замість заголовка — людина: аватар, ім’я і зелений щит «Номер підтверджено 12 вересня». Праворуч ⋯ «Заблокувати чи поскаржитися» — "
-               "report і block входять у MVP, бо прямий чат без match-гейту без них небезпечний. Поверх фото кнопки круглі на затемненні, щоб їх було видно на будь-якому знімку.</p>"),
+               "report і block входять у MVP, бо прямий чат без match-гейту без них небезпечний. Поверх фото кнопки круглі на затемненні, щоб їх було видно на будь-якому знімку.</p>"
+               "<p><strong>Дві дії справа.</strong> Права комірка тримає одну дію. Якщо дій дві чи більше (тема + ⋯, у спліті ще ×), "
+               "загорни їх у <code>.topbar__end</code>: кластер стає в праву комірку. Кнопки йдуть впритул, бо ціль 48 уже дає відступ. "
+               "Над фото кожна кнопка — окреме коло, тому між ними проміжок <code>--space-2</code>; одну дію не загортай.</p>"),
         sources="<code>DESIGN.md</code> → Components → Navigation; <code>microcopy.md</code> → D1, D2, D8, «Звірка після переписування»; <code>CLAUDE.md</code> → Довіра",
         do=("деталь із дорогою назад", stage(topbar(), "flush"),
             "<p>Профіль відкрився з оголошення — стрілка повертає туди ж, заголовок каже, де людина зараз.</p>"),
